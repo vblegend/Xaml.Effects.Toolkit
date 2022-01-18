@@ -1,0 +1,265 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:control="clr-namespace:Xaml.Effects.Toolkit.Controls">
+
+    <SolidColorBrush x:Key="Button.Static.Background" Color="#FFDDDDDD" />
+    <SolidColorBrush x:Key="Button.Static.Border" Color="#FF707070" />
+    <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD" />
+    <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1" />
+    <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6" />
+    <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B" />
+    <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4" />
+    <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5" />
+    <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383" />
+
+    <!--  Default Button Style  -->
+    <Style TargetType="{x:Type Button}">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Background" Value="{DynamicResource GLOBAL_BUTTON_BACKGROUND}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource GLOBAL_BUTTON_BORDER_COLOR}" />
+        <Setter Property="Foreground" Value="{DynamicResource GLOBAL_FOREGROUND_COLOR}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Padding" Value="1" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border
+                        x:Name="border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="true">
+                        <ContentPresenter
+                            x:Name="contentPresenter"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Focusable="False"
+                            RecognizesAccessKey="True"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsDefaulted" Value="true">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_DEFAULT_COLOR}" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_OVER_COLOR}" />
+                            <!--<Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource GLOBAL_BUTTON_OVER_COLOR}"/>-->
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="true">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_COLOR}" />
+                            <!--<Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_COLOR}"/>-->
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_DISABLE_FOREGROUND}" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource GLOBAL_BUTTON_DISABLE_FOREGROUND}" />
+                            <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="{StaticResource Button.Disabled.Foreground}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Fill Path Button Style  -->
+    <Style x:Key="xKit-Graphic-Button Stroke Fill" TargetType="{x:Type Button}">
+        <Setter Property="Foreground" Value="{DynamicResource GLOBAL_FOREGROUND_COLOR}" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid x:Name="btn">
+                        <Border
+                            x:Name="border"
+                            Padding="0"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            SnapsToDevicePixels="true">
+                            <!--  点击时显示  -->
+                            <Grid x:Name="PressedLayer" Visibility="Collapsed">
+                                <Rectangle
+                                    Height="3"
+                                    VerticalAlignment="Top"
+                                    Fill="#1F000000"
+                                    RadiusX="4"
+                                    RadiusY="4" />
+                            </Grid>
+                        </Border>
+                        <Border BorderThickness="{TemplateBinding BorderThickness}">
+                            <Viewbox Width="{Binding Path=(control:GeometryButton.GeometryWidth), RelativeSource={RelativeSource TemplatedParent}}" Height="{Binding Path=(control:GeometryButton.GeometryHeight), RelativeSource={RelativeSource TemplatedParent}}">
+                                <Path
+                                    x:Name="graphic"
+                                    Data="{Binding Path=(control:GeometryButton.Geometry), RelativeSource={RelativeSource TemplatedParent}}"
+                                    Fill="{TemplateBinding Foreground}"
+                                    SnapsToDevicePixels="True">
+                                    <!--<Path.RenderTransform>
+                                        <ScaleTransform ScaleX="-1" />
+                                    </Path.RenderTransform>-->
+                                </Path>
+                            </Viewbox>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter TargetName="btn" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_OVER_COLOR}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="true">
+                            <!--<Setter TargetName="PressedLayer" Property="Visibility" Value="Visible" />-->
+                            <Setter TargetName="btn" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_COLOR}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter TargetName="graphic" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_DISABLE_FOREGROUND}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Stroke Path Button Style  -->
+    <Style x:Key="xKit-Graphic-Button Stroke" TargetType="{x:Type Button}">
+
+        <Setter Property="Foreground" Value="{DynamicResource GLOBAL_FOREGROUND_COLOR}" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid x:Name="btn">
+                        <Border
+                            x:Name="border"
+                            Padding="0"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            SnapsToDevicePixels="true">
+                            <!--  点击时显示  -->
+                            <Grid x:Name="PressedLayer" Visibility="Collapsed">
+                                <Rectangle
+                                    Height="3"
+                                    VerticalAlignment="Top"
+                                    Fill="#1F000000"
+                                    RadiusX="4"
+                                    RadiusY="4" />
+                            </Grid>
+                        </Border>
+                        <Border BorderThickness="{TemplateBinding BorderThickness}">
+                            <Viewbox Width="{Binding Path=(control:GeometryButton.GeometryWidth), RelativeSource={RelativeSource TemplatedParent}}" Height="{Binding Path=(control:GeometryButton.GeometryHeight), RelativeSource={RelativeSource TemplatedParent}}">
+                                <Path
+                                    x:Name="graphic"
+                                    Data="{Binding Path=(control:GeometryButton.Geometry), RelativeSource={RelativeSource TemplatedParent}}"
+                                    RenderTransformOrigin="0.5,0.5"
+                                    SnapsToDevicePixels="True"
+                                    Stroke="{TemplateBinding Foreground}"
+                                    StrokeThickness="{Binding Path=(control:GeometryButton.StrokeThickness), RelativeSource={RelativeSource TemplatedParent}}">
+                                    <Path.RenderTransform>
+                                        <ScaleTransform ScaleX="-1" />
+                                    </Path.RenderTransform>
+                                </Path>
+                            </Viewbox>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter TargetName="btn" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_OVER_COLOR}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="true">
+                            <Setter TargetName="PressedLayer" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="btn" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_COLOR}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter TargetName="graphic" Property="Stroke" Value="{DynamicResource GLOBAL_BUTTON_DISABLE_FOREGROUND}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+
+
+
+
+
+
+
+
+    <Style x:Key="ButtonBaseBaseStyle" TargetType="{x:Type ButtonBase}">
+        <Setter Property="Height" Value="{DynamicResource DefaultControlHeight}" />
+        <Setter Property="Foreground" Value="{DynamicResource ButtonForeground}" />
+        <Setter Property="Padding" Value="{DynamicResource DefaultControlPadding}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
+    <Style
+        x:Key="ButtonBaseStyle"
+        BasedOn="{StaticResource ButtonBaseBaseStyle}"
+        TargetType="{x:Type Button}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid x:Name="btn">
+                        <Border
+                            x:Name="border"
+                            Padding="0"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            SnapsToDevicePixels="true">
+                            <!--  点击时显示  -->
+                            <!--<Grid x:Name="PressedLayer" Visibility="Collapsed">
+                                <Rectangle
+                                    Height="3"
+                                    VerticalAlignment="Top"
+                                    Fill="#1F000000"
+                                    RadiusX="4"
+                                    RadiusY="4" />
+                            </Grid>-->
+                        </Border>
+                        <Border BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                RecognizesAccessKey="True"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter TargetName="btn" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_OVER_COLOR}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="true">
+                            <Setter Property="Foreground" Value="{DynamicResource GLOBAL_BUTTON_DISABLE_FOREGROUND}" />
+                            <!--<Setter TargetName="PressedLayer" Property="Visibility" Value="Visible" />-->
+                            <Setter TargetName="btn" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_COLOR}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="{DynamicResource GLOBAL_BUTTON_DISABLE_FOREGROUND}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Stroke Path Button Style   xKit-Content-Button  -->
+    <Style
+        x:Key="xKit-Content-Button"
+        BasedOn="{StaticResource ButtonBaseStyle}"
+        TargetType="{x:Type Button}">
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+
+
+</ResourceDictionary>

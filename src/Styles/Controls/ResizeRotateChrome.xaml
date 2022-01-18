@@ -1,0 +1,159 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:adorners="clr-namespace:Xaml.Effects.Toolkit.Adorners"
+    xmlns:control="clr-namespace:Xaml.Effects.Toolkit.Controls"
+    xmlns:convert="clr-namespace:Xaml.Effects.Toolkit.Converter">
+
+    <!--<convert:DoubleFormatConverter x:Key="doubleFormatConverter" />-->
+
+    <Style x:Key="RouteThumbCorner" TargetType="{x:Type Shape}">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="Stroke" Value="#FFFFFFFF" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Width" Value="7" />
+        <Setter Property="Height" Value="7" />
+        <Setter Property="Margin" Value="-2" />
+        <Setter Property="Fill">
+            <Setter.Value>
+                <RadialGradientBrush Center="0.2, 0.2" GradientOrigin="0.2, 0.2" RadiusX="0.8" RadiusY="0.8">
+                    <GradientStop Offset="0.0" Color="White" />
+                    <GradientStop Offset="0.8" Color="Gray" />
+                </RadialGradientBrush>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ReSizeThumbCorner" TargetType="{x:Type Shape}">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="Stroke" Value="#FF0078d7" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Width" Value="7" />
+        <Setter Property="Height" Value="7" />
+        <Setter Property="Margin" Value="-2" />
+        <Setter Property="Fill" Value="#80FFFFFF" />
+    </Style>
+
+
+    <Style TargetType="{x:Type adorners:ResizeRotateChrome}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type adorners:ResizeRotateChrome}">
+                    <Grid>
+                        <Grid Margin="-1" Opacity="0">
+                            <!--<c:RotateThumb
+                                Width="7"
+                                Height="7"
+                                Margin="0,-20,0,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
+                                Cursor="Hand" />-->
+                            <control:ResizeThumb
+                                Height="3"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Top"
+                                Cursor="SizeNS"
+                                Visibility="{Binding IsCanResize, Converter={convert:B2VConverter}}" />
+                            <control:ResizeThumb
+                                Width="3"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Stretch"
+                                Cursor="SizeWE"
+                                Visibility="{Binding IsCanResize, Converter={convert:B2VConverter}}" />
+                            <control:ResizeThumb
+                                Width="3"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Cursor="SizeWE"
+                                Visibility="{Binding IsCanResize, Converter={convert:B2VConverter}}" />
+                            <control:ResizeThumb
+                                Height="3"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Bottom"
+                                Cursor="SizeNS"
+                                Visibility="{Binding IsCanResize, Converter={convert:B2VConverter}}" />
+                            <control:ResizeThumb
+                                Width="7"
+                                Height="7"
+                                Margin="-2"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Cursor="SizeNWSE"
+                                Visibility="{Binding IsCanResize, Converter={convert:B2VConverter}}" />
+                            <control:ResizeThumb
+                                Width="7"
+                                Height="7"
+                                Margin="-2"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Cursor="SizeNESW"
+                                Visibility="{Binding IsCanResize, Converter={convert:B2VConverter}}" />
+                            <control:ResizeThumb
+                                Width="7"
+                                Height="7"
+                                Margin="-2"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Bottom"
+                                Cursor="SizeNESW"
+                                Visibility="{Binding IsCanResize, Converter={convert:B2VConverter}}" />
+                            <control:ResizeThumb
+                                Width="7"
+                                Height="7"
+                                Margin="-2"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                Cursor="SizeNWSE"
+                                Visibility="{Binding IsCanResize, Converter={convert:B2VConverter}}" />
+                        </Grid>
+                        <Grid
+                            Margin="-1"
+                            IsHitTestVisible="False"
+                            Opacity="1">
+                            <Rectangle
+                                Margin="1"
+                                SnapsToDevicePixels="True"
+                                Stroke="#FF1E90FF"
+                                StrokeThickness="1" />
+                            <!--<Line
+                                Margin="0,-19,0,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
+                                Stroke="#FF1E90FF"
+                                StrokeThickness="1"
+                                X1="0"
+                                X2="0"
+                                Y1="0"
+                                Y2="20" />
+                            <Ellipse
+                                Margin="-1,-20,0,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
+                                Style="{StaticResource RouteThumbCorner}" />-->
+                            <Rectangle
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Style="{StaticResource ReSizeThumbCorner}"
+                                Visibility="{Binding IsCanResize, Converter={convert:B2VConverter}}" />
+                            <Rectangle
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Style="{StaticResource ReSizeThumbCorner}"
+                                Visibility="{Binding IsCanResize, Converter={convert:B2VConverter}}" />
+                            <Rectangle
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Bottom"
+                                Style="{StaticResource ReSizeThumbCorner}"
+                                Visibility="{Binding IsCanResize, Converter={convert:B2VConverter}}" />
+                            <Rectangle
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                Style="{StaticResource ReSizeThumbCorner}"
+                                Visibility="{Binding IsCanResize, Converter={convert:B2VConverter}}" />
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

@@ -1,0 +1,85 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style TargetType="{x:Type GroupBox}">
+        <Setter Property="BorderBrush" Value="#D5DFE5" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type GroupBox}">
+                    <Grid Background="{DynamicResource GLOBAL_GROUP_TITLE_BACKGROUND}" SnapsToDevicePixels="true">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="23" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid
+                            x:Name="HeaderGrid"
+                            Grid.Row="0"
+                            Grid.Column="0">
+                            <Grid x:Name="title" Background="{DynamicResource GLOBAL_GROUP_TITLE_BACKGROUND}">
+
+                                <StackPanel Margin="0,0,8,0" Orientation="Horizontal">
+                                    <ContentControl
+                                        x:Name="titlebox"
+                                        Height="15"
+                                        Margin="10,4,0,4"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}">
+                                        <ContentPresenter
+                                            Margin="0"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Center"
+                                            ContentSource="Header"
+                                            RecognizesAccessKey="True"
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    </ContentControl>
+                                    <Rectangle
+                                        Width="{Binding ElementName=title, Path=ActualWidth}"
+                                        Margin="10,7,0,7"
+                                        HorizontalAlignment="Left"
+                                        SnapsToDevicePixels="true">
+                                        <Rectangle.Fill>
+                                            <DrawingBrush
+                                                TileMode="Tile"
+                                                Viewbox="0,0,4,4"
+                                                ViewboxUnits="Absolute"
+                                                Viewport="0,0,4,4"
+                                                ViewportUnits="Absolute">
+                                                <DrawingBrush.Drawing>
+                                                    <DrawingGroup>
+                                                        <GeometryDrawing Brush="Gray" Geometry="M 0 0 L 0 1 L 1 1 L 1 0 z" />
+                                                    </DrawingGroup>
+                                                </DrawingBrush.Drawing>
+                                            </DrawingBrush>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+                                </StackPanel>
+
+                            </Grid>
+                        </Grid>
+                        <!--    -->
+                        <Grid
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Background="{DynamicResource GLOBAL_GROUP_CLIENT_BACKGROUND}">
+                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Grid>
+
+                        <Border
+                            x:Name="contentBorder"
+                            Grid.RowSpan="2"
+                            Margin="0,0,0,0"
+                            BorderBrush="{DynamicResource GLOBAL_GROUP_BRODER_BRUSH}"
+                            BorderThickness="0.2" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="title" Property="Background" Value="{DynamicResource GLOBAL_GROUP_TITLE_ACTIVE}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

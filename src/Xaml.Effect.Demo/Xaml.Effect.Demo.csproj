@@ -1,0 +1,57 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>disable</Nullable>
+    <UseWPF>true</UseWPF>
+    <StartupObject>Xaml.Effect.Demo.App</StartupObject>
+    <ApplicationIcon>Assets\Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\Icon.ico" />
+    <None Remove="Assets\Icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="Themes\Black.xaml" />
+    <Page Remove="Themes\Image.xaml" />
+    <Page Remove="Themes\White.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\Icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Themes\Black.xaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Themes\Image.xaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Themes\White.xaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Xaml.Effects.Toolkit\src\Xaml.Effects.Toolkit.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Themes\background.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -18,7 +18,7 @@
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Background" Value="{DynamicResource GLOBAL_BUTTON_BACKGROUND}" />
         <Setter Property="BorderBrush" Value="{DynamicResource GLOBAL_BUTTON_BORDER_COLOR}" />
-        <Setter Property="Foreground" Value="{DynamicResource GLOBAL_FOREGROUND_COLOR}" />
+        <Setter Property="Foreground" Value="{DynamicResource GLOBAL_FOREGROUND}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -66,7 +66,7 @@
 
     <!--  Fill Path Button Style  -->
     <Style x:Key="xKit-Graphic-Button Stroke Fill" TargetType="{x:Type Button}">
-        <Setter Property="Foreground" Value="{DynamicResource GLOBAL_FOREGROUND_COLOR}" />
+        <Setter Property="Foreground" Value="{DynamicResource GLOBAL_FOREGROUND}" />
 
         <Setter Property="Template">
             <Setter.Value>
@@ -123,7 +123,7 @@
     <!--  Stroke Path Button Style  -->
     <Style x:Key="xKit-Graphic-Button Stroke" TargetType="{x:Type Button}">
 
-        <Setter Property="Foreground" Value="{DynamicResource GLOBAL_FOREGROUND_COLOR}" />
+        <Setter Property="Foreground" Value="{DynamicResource GLOBAL_FOREGROUND}" />
 
         <Setter Property="Template">
             <Setter.Value>

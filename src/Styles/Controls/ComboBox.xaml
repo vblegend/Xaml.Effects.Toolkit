@@ -38,8 +38,8 @@
                 <ControlTemplate TargetType="{x:Type ToggleButton}">
                     <Border
                         x:Name="templateRoot"
-                        Background="{DynamicResource GLOBAL_TEXTBOX_BACKGROUND}"
-                        BorderBrush="{DynamicResource GLOBAL_TEXTBOX_BORDER_BACKGROUND}"
+                        Background="{DynamicResource TEXTBOX_BACKGROUND}"
+                        BorderBrush="{DynamicResource TEXTBOX_BORDER_COLOR}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         SnapsToDevicePixels="true">
                         <Border
@@ -56,7 +56,7 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Data="F1 M 0,0 L 2.667,2.66665 L 5.3334,0 L 5.3334,-1.78168 L 2.6667,0.88501 L0,-1.78168 L0,0 Z"
-                                Fill="{DynamicResource GLOBAL_FOREGROUND_COLOR}" />
+                                Fill="{DynamicResource GLOBAL_FOREGROUND}" />
                         </Border>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -67,10 +67,10 @@
                                 <Condition Binding="{Binding IsPressed, RelativeSource={RelativeSource Self}}" Value="false" />
                                 <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="true" />
                             </MultiDataTrigger.Conditions>
-                            <Setter TargetName="templateRoot" Property="Background" Value="{DynamicResource GLOBAL_TEXTBOX_BACKGROUND}" />
-                            <Setter TargetName="templateRoot" Property="BorderBrush" Value="{DynamicResource GLOBAL_TEXTBOX_BORDER_BACKGROUND}" />
-                            <Setter TargetName="splitBorder" Property="Background" Value="{DynamicResource GLOBAL_TEXTBOX_BACKGROUND}" />
-                            <Setter TargetName="splitBorder" Property="BorderBrush" Value="{DynamicResource GLOBAL_TEXTBOX_BORDER_BACKGROUND}" />
+                            <Setter TargetName="templateRoot" Property="Background" Value="{DynamicResource TEXTBOX_BACKGROUND}" />
+                            <Setter TargetName="templateRoot" Property="BorderBrush" Value="{DynamicResource TEXTBOX_BORDER_COLOR}" />
+                            <Setter TargetName="splitBorder" Property="Background" Value="{DynamicResource TEXTBOX_BACKGROUND}" />
+                            <Setter TargetName="splitBorder" Property="BorderBrush" Value="{DynamicResource TEXTBOX_BORDER_COLOR}" />
                         </MultiDataTrigger>
 
                         <MultiDataTrigger>
@@ -78,7 +78,7 @@
                                 <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="true" />
                                 <Condition Binding="{Binding IsEditable, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}" Value="false" />
                             </MultiDataTrigger.Conditions>
-                            <Setter TargetName="templateRoot" Property="BorderBrush" Value="{DynamicResource GLOBAL_TEXTBOX_OVER_BORDER_BACKGROUND}" />
+                            <Setter TargetName="templateRoot" Property="BorderBrush" Value="{DynamicResource TEXTBOX_OVER_BORDER_COLOR}" />
                         </MultiDataTrigger>
 
 
@@ -87,7 +87,7 @@
                                 <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="true" />
                                 <Condition Binding="{Binding IsEditable, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}" Value="true" />
                             </MultiDataTrigger.Conditions>
-                            <Setter TargetName="templateRoot" Property="BorderBrush" Value="{DynamicResource GLOBAL_TEXTBOX_OVER_BORDER_BACKGROUND}" />
+                            <Setter TargetName="templateRoot" Property="BorderBrush" Value="{DynamicResource TEXTBOX_OVER_BORDER_COLOR}" />
                         </MultiDataTrigger>
 
 
@@ -315,7 +315,7 @@
             <Border
                 x:Name="border"
                 Margin="{TemplateBinding BorderThickness}"
-                Background="{DynamicResource GLOBAL_TEXTBOX_BACKGROUND}">
+                Background="{DynamicResource TEXTBOX_BACKGROUND}">
                 <TextBox
                     x:Name="PART_EditableTextBox"
                     Margin="{TemplateBinding Padding}"
@@ -331,7 +331,7 @@
                 <Setter TargetName="border" Property="Opacity" Value="0.56" />
             </Trigger>
             <Trigger Property="IsKeyboardFocusWithin" Value="true">
-                <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource GLOBAL_TEXTBOX_FOCU_BORDER_FOREGROUND}" />
+                <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource TEXTBOX_FOCU_BORDER_COLOR}" />
             </Trigger>
             <Trigger SourceName="PART_Popup" Property="HasDropShadow" Value="true">
                 <!--<Setter Property="Margin" TargetName="shadow" Value="0,0,5,5"/>
@@ -358,8 +358,8 @@
     <Style TargetType="{x:Type ComboBox}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderBrush" Value="{DynamicResource GLOBAL_TEXTBOX_BORDER_BACKGROUND}" />
-        <Setter Property="Foreground" Value="{DynamicResource GLOBAL_FOREGROUND_COLOR}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource TEXTBOX_BORDER_COLOR}" />
+        <Setter Property="Foreground" Value="{DynamicResource GLOBAL_FOREGROUND}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />

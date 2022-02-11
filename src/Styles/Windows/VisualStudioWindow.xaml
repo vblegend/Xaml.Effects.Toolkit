@@ -31,7 +31,7 @@
     <ControlTemplate x:Key="VisualStudioFixedWindowTemplate" TargetType="{x:Type Window}">
         <Border BorderBrush="{Binding Path=(windows:WindowTheme.Theme).BorderBrush, RelativeSource={RelativeSource TemplatedParent}}" BorderThickness="{Binding Path=(windows:WindowTheme.Theme).BorderThickness, RelativeSource={RelativeSource TemplatedParent}}">
 
-            <Grid Background="{DynamicResource GLOBAL_BACKGROUND_COLOR}">
+            <Grid Background="{DynamicResource GLOBAL_BACKGROUND}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="32" />
                     <RowDefinition Height="auto" />
@@ -65,10 +65,10 @@
                             VerticalAlignment="Top"
                             HorizontalContentAlignment="Center"
                             VerticalContentAlignment="Center"
-                            Background="{DynamicResource GLOBAL_WINDOW_TITLE_BACKGROUND}"
+                            Background="{DynamicResource WINDOW_TITLE_BACKGROUND}"
                             Content="{TemplateBinding Title}"
                             FontWeight="Bold"
-                            Foreground="{DynamicResource GLOBAL_WINDOW_TITLE_FOREGROUND}"
+                            Foreground="{DynamicResource WINDOW_TITLE_FOREGROUND}"
                             MouseDown="Grid_MouseDown"
                             ToolTip="{TemplateBinding Title}" />
                     </WrapPanel>
@@ -77,7 +77,7 @@
                         Margin="0,0,1,0"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
-                        Background="{DynamicResource GLOBAL_SYSTEM_BUTTON_BACKGROUND}"
+                        Background="{DynamicResource WINDOW_BUTTON_BACKGROUND}"
                         FlowDirection="RightToLeft">
                         <!--  关闭按钮  -->
                         <Button

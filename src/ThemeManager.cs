@@ -43,7 +43,7 @@ namespace Xaml.Effects.Toolkit
                 using (var stream = File.OpenRead(fileName))
                 {
                     ParserContext pc = new ParserContext();
-                    pc.XmlnsDictionary.Add("", "Magic.Tools");
+                    pc.XmlnsDictionary.Add("", "Xaml.Effect.Demo");
                     pc.XmlnsDictionary.Add("", "Xaml.Effects.Toolkit");
                     var path = Environment.CurrentDirectory;
                     if (!path.EndsWith("\\"))

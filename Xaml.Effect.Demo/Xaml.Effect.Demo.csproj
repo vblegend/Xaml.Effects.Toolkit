@@ -37,7 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Xaml.Effects.Toolkit.csproj" />
+    <ProjectReference Include="..\src\Xaml.Effects.Toolkit.csproj" />
   </ItemGroup>
 
   <ItemGroup>

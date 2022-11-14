@@ -37,11 +37,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\Icon.ico" />
+    <ProjectReference Include="..\Xaml.Effects.Toolkit.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Xaml.Effects.Toolkit\src\Xaml.Effects.Toolkit.csproj" />
+    <Resource Include="Assets\Icon.ico" />
   </ItemGroup>
 
   <ItemGroup>

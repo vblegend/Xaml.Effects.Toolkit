@@ -45,7 +45,7 @@ using System.Windows.Markup;
 
 //[assembly: XmlnsDefinition("http://schemas.l2030.com/xkit", "Magic.Styles")]
 //[assembly: XmlnsDefinition("http://schemas.l2030.com/xkit", "Magic.Styles.Controls")]
-[assembly: XmlnsDefinition("http://schemas.l2030.com/xkit", "Xaml.Effects.Toolkit.Styles.Windows")]
+//[assembly: XmlnsDefinition("http://schemas.l2030.com/xkit", "Xaml.Effects.Toolkit.Styles.Windows")]
 //[assembly: XmlnsDefinition("http://schemas.l2030.com/xkit", "Magic.Adorners")]
 //[assembly: XmlnsDefinition("http://schemas.l2030.com/xkit", "Magic.Decorators")]
 

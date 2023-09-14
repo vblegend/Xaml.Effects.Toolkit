@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xaml.Effects.Toolkit", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xaml.Effect.Demo", "Xaml.Effect.Demo\Xaml.Effect.Demo.csproj", "{050C0298-9300-4BCA-9829-EA5E6B4BDD7A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Assets.Editor", "AssetsEditor\Assets.Editor.csproj", "{DF37E7B4-6340-4764-9C10-ABC4C3D93066}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{050C0298-9300-4BCA-9829-EA5E6B4BDD7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{050C0298-9300-4BCA-9829-EA5E6B4BDD7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{050C0298-9300-4BCA-9829-EA5E6B4BDD7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF37E7B4-6340-4764-9C10-ABC4C3D93066}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF37E7B4-6340-4764-9C10-ABC4C3D93066}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF37E7B4-6340-4764-9C10-ABC4C3D93066}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF37E7B4-6340-4764-9C10-ABC4C3D93066}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

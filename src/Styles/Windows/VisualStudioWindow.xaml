@@ -13,14 +13,19 @@
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <Grid
+                <DockPanel
                     Grid.Row="0"
                     Background="#01ffffff"
                     MouseDown="Grid_MouseDown"
                     MouseMove="Grid_MouseMove">
                     <!--  图标 菜单 标题  -->
 
-                    <WrapPanel>
+
+
+
+
+
+                    <WrapPanel DockPanel.Dock="Left">
                         <!--  图标  -->
                         <Image
                             x:Name="IconImage"
@@ -33,25 +38,10 @@
                             Source="{TemplateBinding Icon}" />
                         <!--  菜单  -->
                         <ContentPresenter Content="{Binding Path=(windows:WindowTheme.Theme).Menu, RelativeSource={RelativeSource TemplatedParent}}" />
-                        <!--  标题  -->
-                        <Label
-                            Height="24"
-                            Margin="10,4,0,0"
-                            Padding="10,0,10,0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center"
-                            Width="auto"
-                            Background="{DynamicResource GLOBAL_WINDOW_TITLE_BACKGROUND}"
-                            Content="{TemplateBinding Title}"
-                            FontWeight="Bold"
-                            Foreground="{DynamicResource GLOBAL_WINDOW_TITLE_FOREGROUND}"
-                            MouseDown="Grid_MouseDown"
-                            ToolTip="{TemplateBinding Title}" />
+
                     </WrapPanel>
                     <!--  系统按钮  -->
-                    <WrapPanel
+                    <WrapPanel DockPanel.Dock="Right"
                         Margin="0,2,1,0"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
@@ -96,7 +86,27 @@
                         <!--  帮助按钮  -->
                         <ContentPresenter Content="{Binding Path=(windows:WindowTheme.Theme).AttachedButtons, RelativeSource={RelativeSource TemplatedParent}}" />
                     </WrapPanel>
-                </Grid>
+
+
+                    <!--  标题  -->
+                    <Label     DockPanel.Dock="Top"
+                            Height="24"
+                            Margin="10,4,0,0"
+                            Padding="10,0,10,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Width="auto"
+                            Background="{DynamicResource GLOBAL_WINDOW_TITLE_BACKGROUND}"
+                            Content="{TemplateBinding Title}"
+                            FontWeight="Bold"
+                            Foreground="{DynamicResource GLOBAL_WINDOW_TITLE_FOREGROUND}"
+                            MouseDown="Grid_MouseDown"
+                            ToolTip="{TemplateBinding Title}" />
+
+
+                </DockPanel>
                 <Grid
                     Grid.Row="1"
                     Background="#01ffffff"

@@ -4,34 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:control="clr-namespace:Xaml.Effects.Toolkit.Controls"
     xmlns:windows="clr-namespace:Xaml.Effects.Toolkit.Styles.Windows" >
-
-    <ResourceDictionary.MergedDictionaries>
-
-        <!--  pack://application:,,,/ResourceFile.xaml  -->
-        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Common.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/CheckBox.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/SpinControl.xaml" />
-        <!--<ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/ColorPicker.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/ColorPickerPanel.xaml" />-->
-        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/ScrollBar.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/Button.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/ComboBox.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/Label.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/ProgressBar.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/TextBox.xaml" />
-        <!--<ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/TextBoxEx.xaml" />-->
-        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/ToolBar.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/Table.xaml" />
-        <!--<ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/TreeListBox.xaml" />-->
-        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/GroupBox.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/ScrollViewer.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/ContextMenu.xaml" />
-    </ResourceDictionary.MergedDictionaries>
-
     <ControlTemplate x:Key="VisualStudioFixedWindowTemplate" TargetType="{x:Type Window}">
         <Border BorderBrush="{Binding Path=(windows:WindowTheme.Theme).BorderBrush, RelativeSource={RelativeSource TemplatedParent}}" BorderThickness="{Binding Path=(windows:WindowTheme.Theme).BorderThickness, RelativeSource={RelativeSource TemplatedParent}}">
 
-            <Grid Background="{DynamicResource GLOBAL_BACKGROUND}">
+            <Grid Background="{DynamicResource GLOBAL_BACKGROUND_COLOR}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="32" />
                     <RowDefinition Height="auto" />
@@ -43,6 +19,7 @@
                     MouseDown="Grid_MouseDown"
                     MouseMove="Grid_MouseMove">
                     <!--  图标 菜单 标题  -->
+
                     <WrapPanel>
                         <!--  图标  -->
                         <Image
@@ -58,26 +35,27 @@
                         <ContentPresenter Content="{Binding Path=(windows:WindowTheme.Theme).Menu, RelativeSource={RelativeSource TemplatedParent}}" />
                         <!--  标题  -->
                         <Label
-                            Height="26"
+                            Height="24"
                             Margin="10,4,0,0"
                             Padding="10,0,10,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top"
                             HorizontalContentAlignment="Center"
                             VerticalContentAlignment="Center"
-                            Background="{DynamicResource WINDOW_TITLE_BACKGROUND}"
+                            Width="auto"
+                            Background="{DynamicResource GLOBAL_WINDOW_TITLE_BACKGROUND}"
                             Content="{TemplateBinding Title}"
                             FontWeight="Bold"
-                            Foreground="{DynamicResource WINDOW_TITLE_FOREGROUND}"
+                            Foreground="{DynamicResource GLOBAL_WINDOW_TITLE_FOREGROUND}"
                             MouseDown="Grid_MouseDown"
                             ToolTip="{TemplateBinding Title}" />
                     </WrapPanel>
                     <!--  系统按钮  -->
                     <WrapPanel
-                        Margin="0,0,1,0"
+                        Margin="0,2,1,0"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
-                        Background="{DynamicResource WINDOW_BUTTON_BACKGROUND}"
+                        Background="{DynamicResource GLOBAL_SYSTEM_BUTTON_BACKGROUND}"
                         FlowDirection="RightToLeft">
                         <!--  关闭按钮  -->
                         <Button
@@ -85,14 +63,11 @@
                             Width="48"
                             Height="32"
                             Margin="0,0,1,0"
-                            control:GeometryButton.Geometry="M2,2 L14,14 M2,14 L14,2"
-                            control:GeometryButton.GeometryHeight="16"
-                            control:GeometryButton.GeometryWidth="16"
-                            Background="Transparent"
-                            BorderThickness="0"
+                            Content="&#xeaf2;"
+                            FontSize="14"
+                            FontFamily="{DynamicResource WIcon}"
                             Click="close_btn_Click"
                             Command="{Binding Path=(windows:WindowTheme.Theme).ExitCommand, RelativeSource={RelativeSource TemplatedParent}}"
-                            Style="{StaticResource xKit-Graphic-Button Stroke}"
                             ToolTip="关闭" />
                         <!--  最大化 还原按钮  -->
                         <Button
@@ -100,13 +75,10 @@
                             Width="48"
                             Height="32"
                             Margin="0,0,1,0"
-                            control:GeometryButton.Geometry="M3,4 L3,1 14,1 14,11 11,11 M2,4 L11,4 11,14 2,14 Z"
-                            control:GeometryButton.GeometryHeight="16"
-                            control:GeometryButton.GeometryWidth="16"
-                            Background="Transparent"
-                            BorderThickness="0"
+                            Content="&#xe692;"
+                            FontSize="14"
+                            FontFamily="{DynamicResource WIcon}"
                             Click="max_btn_Click"
-                            Style="{StaticResource xKit-Graphic-Button Stroke}"
                             ToolTip="最大化/还原"
                             Visibility="{Binding Path=(windows:WindowTheme.Theme).MaxButton, RelativeSource={RelativeSource TemplatedParent}}" />
                         <!--  最小化按钮  -->
@@ -115,13 +87,10 @@
                             Width="48"
                             Height="32"
                             Margin="0,0,0,0"
-                            control:GeometryButton.Geometry="M2,10 L14,10"
-                            control:GeometryButton.GeometryHeight="16"
-                            control:GeometryButton.GeometryWidth="16"
-                            Background="Transparent"
-                            BorderThickness="0"
+                            Content="&#xe650;"
+                            FontSize="14"
+                            FontFamily="{DynamicResource WIcon}"
                             Click="min_btn_Click"
-                            Style="{StaticResource xKit-Graphic-Button Stroke}"
                             ToolTip="最小化"
                             Visibility="{Binding Path=(windows:WindowTheme.Theme).MinButton, RelativeSource={RelativeSource TemplatedParent}}" />
                         <!--  帮助按钮  -->

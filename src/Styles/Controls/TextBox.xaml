@@ -3,9 +3,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Xaml.Effects.Toolkit.Styles.Controls">
     <Style TargetType="{x:Type TextBox}">
-        <Setter Property="Background" Value="{DynamicResource TEXTBOX_BACKGROUND}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource TEXTBOX_BORDER_COLOR}" />
-        <Setter Property="Foreground" Value="{DynamicResource TEXTBOX_FOREGROUND}" />
+        <Setter Property="Background" Value="{DynamicResource GLOBAL_TEXTBOX_BACKGROUND}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource GLOBAL_TEXTBOX_BORDER_BACKGROUND}" />
+        <Setter Property="Foreground" Value="{DynamicResource GLOBAL_TEXTBOX_FOREGROUND}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="KeyboardNavigation.TabNavigation" Value="None" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -33,10 +33,10 @@
                             <Setter TargetName="border" Property="Opacity" Value="0.56" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource TEXTBOX_OVER_BORDER_COLOR}" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource GLOBAL_TEXTBOX_OVER_BORDER_BACKGROUND}" />
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="true">
-                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource TEXTBOX_FOCU_BORDER_COLOR}" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource GLOBAL_TEXTBOX_FOCU_BORDER_FOREGROUND}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

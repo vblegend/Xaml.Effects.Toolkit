@@ -23,7 +23,7 @@
                 <ControlTemplate TargetType="{x:Type RepeatButton}">
                     <Border
                         x:Name="border"
-                        Background="{DynamicResource SCROLLBAR_BACKGROUND}"
+                        Background="{DynamicResource GLOBAL_SCROLLBAR_BACKGROUND}"
                         BorderThickness="0"
                         SnapsToDevicePixels="true">
                         <ContentPresenter
@@ -36,11 +36,11 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <!--<Setter TargetName="border" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_OVER_COLOR}" />-->
+                            <!--<Setter TargetName="border" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_OVER_FOREGROUND}" />-->
                             <!--<Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource }" />-->
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
-                            <!--<Setter TargetName="border" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_COLOR}" />-->
+                            <!--<Setter TargetName="border" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_FOREGROUND}" />-->
                             <!--<Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ScrollBar.Pressed.Border}" />-->
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
@@ -79,14 +79,14 @@
                         x:Name="rectangle"
                         Width="{TemplateBinding Width}"
                         Height="{TemplateBinding Height}"
-                        Fill="{DynamicResource SCROLLBAR_BUTTON_BACKGROUND}"
+                        Fill="{DynamicResource GLOBAL_SCROLLBAR_BUTTON}"
                         SnapsToDevicePixels="True" />
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter TargetName="rectangle" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_OVER_COLOR}" />
+                            <Setter TargetName="rectangle" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_OVER_FOREGROUND}" />
                         </Trigger>
                         <Trigger Property="IsDragging" Value="true">
-                            <Setter TargetName="rectangle" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_COLOR}" />
+                            <Setter TargetName="rectangle" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_FOREGROUND}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -103,14 +103,14 @@
                         x:Name="rectangle"
                         Width="{TemplateBinding Width}"
                         Height="{TemplateBinding Height}"
-                        Fill="{DynamicResource SCROLLBAR_BUTTON_BACKGROUND}"
+                        Fill="{DynamicResource GLOBAL_SCROLLBAR_BUTTON}"
                         SnapsToDevicePixels="True" />
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter TargetName="rectangle" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_OVER_COLOR}" />
+                            <Setter TargetName="rectangle" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_OVER_FOREGROUND}" />
                         </Trigger>
                         <Trigger Property="IsDragging" Value="true">
-                            <Setter TargetName="rectangle" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_COLOR}" />
+                            <Setter TargetName="rectangle" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_FOREGROUND}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -120,8 +120,8 @@
     <Style TargetType="{x:Type ScrollBar}">
         <Setter Property="Stylus.IsPressAndHoldEnabled" Value="false" />
         <Setter Property="Stylus.IsFlicksEnabled" Value="false" />
-        <Setter Property="Background" Value="{DynamicResource SCROLLBAR_BACKGROUND}" />
-        <Setter Property="Foreground" Value="{DynamicResource GLOBAL_FOREGROUND}" />
+        <Setter Property="Background" Value="{DynamicResource GLOBAL_SCROLLBAR_BACKGROUND}" />
+        <Setter Property="Foreground" Value="{DynamicResource GLOBAL_FOREGROUND_COLOR}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Width" Value="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" />
         <Setter Property="MinWidth" Value="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" />
@@ -148,7 +148,7 @@
                                 x:Name="ArrowTop"
                                 Margin="3,4,3,3"
                                 Data="M 0,4 C0,4 0,6 0,6 0,6 3.5,2.5 3.5,2.5 3.5,2.5 7,6 7,6 7,6 7,4 7,4 7,4 3.5,0.5 3.5,0.5 3.5,0.5 0,4 0,4 z"
-                                Fill="{DynamicResource GLOBAL_FOREGROUND}"
+                                Fill="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
                                 Stretch="Uniform" />
                         </RepeatButton>
                         <Track
@@ -176,7 +176,7 @@
                                 x:Name="ArrowBottom"
                                 Margin="3,4,3,3"
                                 Data="M 0,2.5 C0,2.5 0,0.5 0,0.5 0,0.5 3.5,4 3.5,4 3.5,4 7,0.5 7,0.5 7,0.5 7,2.5 7,2.5 7,2.5 3.5,6 3.5,6 3.5,6 0,2.5 0,2.5 z"
-                                Fill="{DynamicResource GLOBAL_FOREGROUND}"
+                                Fill="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
                                 Stretch="Uniform" />
                         </RepeatButton>
                     </Grid>
@@ -186,28 +186,28 @@
                                 <Condition Binding="{Binding IsMouseOver, ElementName=PART_LineDownButton}" Value="true" />
                                 <Condition Binding="{Binding IsPressed, ElementName=PART_LineDownButton}" Value="true" />
                             </MultiDataTrigger.Conditions>
-                            <Setter TargetName="ArrowBottom" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_COLOR}" />
+                            <Setter TargetName="ArrowBottom" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_FOREGROUND}" />
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsMouseOver, ElementName=PART_LineUpButton}" Value="true" />
                                 <Condition Binding="{Binding IsPressed, ElementName=PART_LineUpButton}" Value="true" />
                             </MultiDataTrigger.Conditions>
-                            <Setter TargetName="ArrowTop" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_COLOR}" />
+                            <Setter TargetName="ArrowTop" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_FOREGROUND}" />
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsMouseOver, ElementName=PART_LineDownButton}" Value="true" />
                                 <Condition Binding="{Binding IsPressed, ElementName=PART_LineDownButton}" Value="false" />
                             </MultiDataTrigger.Conditions>
-                            <Setter TargetName="ArrowBottom" Property="Fill" Value="{DynamicResource GLOBAL_FOREGROUND}" />
+                            <Setter TargetName="ArrowBottom" Property="Fill" Value="{DynamicResource GLOBAL_FOREGROUND_COLOR}" />
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsMouseOver, ElementName=PART_LineUpButton}" Value="true" />
                                 <Condition Binding="{Binding IsPressed, ElementName=PART_LineUpButton}" Value="false" />
                             </MultiDataTrigger.Conditions>
-                            <Setter TargetName="ArrowTop" Property="Fill" Value="{DynamicResource GLOBAL_FOREGROUND}" />
+                            <Setter TargetName="ArrowTop" Property="Fill" Value="{DynamicResource GLOBAL_FOREGROUND_COLOR}" />
                         </MultiDataTrigger>
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter TargetName="ArrowTop" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_DISABLE_FOREGROUND}" />
@@ -247,7 +247,7 @@
                                         x:Name="ArrowLeft"
                                         Margin="3"
                                         Data="M 3.18,7 C3.18,7 5,7 5,7 5,7 1.81,3.5 1.81,3.5 1.81,3.5 5,0 5,0 5,0 3.18,0 3.18,0 3.18,0 0,3.5 0,3.5 0,3.5 3.18,7 3.18,7 z"
-                                        Fill="{DynamicResource GLOBAL_FOREGROUND}"
+                                        Fill="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
                                         Stretch="Uniform" />
                                 </RepeatButton>
                                 <Track
@@ -274,7 +274,7 @@
                                         x:Name="ArrowRight"
                                         Margin="3"
                                         Data="M 1.81,7 C1.81,7 0,7 0,7 0,7 3.18,3.5 3.18,3.5 3.18,3.5 0,0 0,0 0,0 1.81,0 1.81,0 1.81,0 5,3.5 5,3.5 5,3.5 1.81,7 1.81,7 z"
-                                        Fill="{DynamicResource GLOBAL_FOREGROUND}"
+                                        Fill="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
                                         Stretch="Uniform" />
                                 </RepeatButton>
                             </Grid>
@@ -284,28 +284,28 @@
                                         <Condition Binding="{Binding IsMouseOver, ElementName=PART_LineRightButton}" Value="true" />
                                         <Condition Binding="{Binding IsPressed, ElementName=PART_LineRightButton}" Value="true" />
                                     </MultiDataTrigger.Conditions>
-                                    <Setter TargetName="ArrowRight" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_COLOR}" />
+                                    <Setter TargetName="ArrowRight" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_FOREGROUND}" />
                                 </MultiDataTrigger>
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
                                         <Condition Binding="{Binding IsMouseOver, ElementName=PART_LineLeftButton}" Value="true" />
                                         <Condition Binding="{Binding IsPressed, ElementName=PART_LineLeftButton}" Value="true" />
                                     </MultiDataTrigger.Conditions>
-                                    <Setter TargetName="ArrowLeft" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_COLOR}" />
+                                    <Setter TargetName="ArrowLeft" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_FOREGROUND}" />
                                 </MultiDataTrigger>
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
                                         <Condition Binding="{Binding IsMouseOver, ElementName=PART_LineRightButton}" Value="true" />
                                         <Condition Binding="{Binding IsPressed, ElementName=PART_LineRightButton}" Value="false" />
                                     </MultiDataTrigger.Conditions>
-                                    <Setter TargetName="ArrowRight" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_OVER_COLOR}" />
+                                    <Setter TargetName="ArrowRight" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_OVER_FOREGROUND}" />
                                 </MultiDataTrigger>
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
                                         <Condition Binding="{Binding IsMouseOver, ElementName=PART_LineLeftButton}" Value="true" />
                                         <Condition Binding="{Binding IsPressed, ElementName=PART_LineLeftButton}" Value="false" />
                                     </MultiDataTrigger.Conditions>
-                                    <Setter TargetName="ArrowLeft" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_OVER_COLOR}" />
+                                    <Setter TargetName="ArrowLeft" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_OVER_FOREGROUND}" />
                                 </MultiDataTrigger>
                                 <Trigger Property="IsEnabled" Value="false">
                                     <Setter TargetName="ArrowLeft" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_DISABLE_FOREGROUND}" />

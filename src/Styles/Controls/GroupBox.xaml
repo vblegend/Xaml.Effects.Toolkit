@@ -24,7 +24,7 @@
                                         Margin="10,4,0,4"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
-                                        Foreground="{DynamicResource GLOBAL_FOREGROUND}">
+                                        Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}">
                                         <ContentPresenter
                                             Margin="0"
                                             HorizontalAlignment="Stretch"

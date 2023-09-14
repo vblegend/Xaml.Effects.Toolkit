@@ -5,6 +5,7 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
+            <FontFamily x:Key="GraceFont">/Xaml.Effect.Demo;component/Assets/Fonts/#graceicon</FontFamily>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Theme.xaml" />
                 <!--<ResourceDictionary Source="/Styles/Common.xaml" />-->

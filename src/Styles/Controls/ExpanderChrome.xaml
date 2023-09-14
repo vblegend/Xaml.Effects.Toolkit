@@ -15,14 +15,14 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Data="M 0 0 L 4 4 L 8 0 Z"
-                            Fill="{DynamicResource GLOBAL_FOREGROUND}" />
+                            Fill="{DynamicResource GLOBAL_FOREGROUND_COLOR}" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="ToggleButton.IsMouseOver" Value="true">
-                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_OVER_COLOR}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_OVER_FOREGROUND}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
-                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_COLOR}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_FOREGROUND}" />
                         </Trigger>
                         <Trigger Property="IsChecked" Value="true">
                             <Setter TargetName="Arrow" Property="Data" Value="M 0 4 L 4 0 L 8 4 Z" />
@@ -41,7 +41,7 @@
 
 
     <Style TargetType="Expander">
-        <Setter Property="Control.Foreground" Value="{DynamicResource GLOBAL_FOREGROUND}" />
+        <Setter Property="Control.Foreground" Value="{DynamicResource GLOBAL_FOREGROUND_COLOR}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Expander">
@@ -53,8 +53,8 @@
                         <Border
                             Name="Border"
                             Grid.Row="0"
-                            Background="{DynamicResource GLOBAL_BACKGROUND}"
-                            BorderBrush="{DynamicResource TEXTBOX_BORDER_COLOR}"
+                            Background="{DynamicResource GLOBAL_BACKGROUND_COLOR}"
+                            BorderBrush="{DynamicResource GLOBAL_TEXTBOX_BORDER_BACKGROUND}"
                             BorderThickness="1"
                             CornerRadius="0,0,0,0">
                             <Grid>
@@ -64,7 +64,7 @@
                                 </Grid.ColumnDefinitions>
                                 <ToggleButton
                                     Grid.Column="1"
-                                    Background="{DynamicResource CHECKBOX_BACKGROUND}"
+                                    Background="{DynamicResource GLOBAL_CHECKBOX_BACKGROUND}"
                                     IsChecked="{Binding Path=IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                     OverridesDefaultStyle="True" />
                                 <ContentPresenter
@@ -76,7 +76,7 @@
                         <Border
                             Name="Content"
                             Grid.Row="1"
-                            BorderBrush="{DynamicResource TEXTBOX_BORDER_COLOR}"
+                            BorderBrush="{DynamicResource GLOBAL_TEXTBOX_BORDER_BACKGROUND}"
                             BorderThickness="1,0,1,1"
                             CornerRadius="0,0,2,2">
                             <ContentPresenter />

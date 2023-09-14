@@ -5,7 +5,7 @@
 
 
     <Style TargetType="{x:Type ContextMenu}">
-        <Setter Property="Foreground" Value="{DynamicResource GLOBAL_FOREGROUND}" />
+        <Setter Property="Foreground" Value="{DynamicResource GLOBAL_FOREGROUND_COLOR}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="FontFamily" Value="微软雅黑" />
         <Setter Property="Template">
@@ -71,7 +71,7 @@
                                 Margin="7,1,0,0"
                                 VerticalAlignment="Center"
                                 Data="F1M10,1.2L4.7,9.1 4.5,9.1 0,5.2 1.3,3.5 4.3,6.1 8.3,0 10,1.2z"
-                                Fill="{DynamicResource GLOBAL_FOREGROUND}"
+                                Fill="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
                                 FlowDirection="LeftToRight"
                                 Visibility="Collapsed" />
 
@@ -82,7 +82,7 @@
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 Data="M0,0 L0,6 L6,3 z"
-                                Fill="{DynamicResource GLOBAL_FOREGROUND}"
+                                Fill="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
                                 StrokeThickness="0"
                                 Visibility="Collapsed" />
                             <!--  文字部分  -->
@@ -109,8 +109,8 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter TargetName="Arrow" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_OVER_COLOR}" />
-                            <Setter TargetName="ChildItem" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_OVER_COLOR}" />
+                            <Setter TargetName="Arrow" Property="Fill" Value="{DynamicResource GLOBAL_BUTTON_OVER_BACKGROUND}" />
+                            <Setter TargetName="ChildItem" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_OVER_BACKGROUND}" />
                         </Trigger>
                         <Trigger Property="HasItems" Value="true">
                             <Setter TargetName="Arrow" Property="Visibility" Value="Visible" />
@@ -120,7 +120,7 @@
                             <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
-                            <Setter TargetName="ChildItem" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_COLOR}" />
+                            <Setter TargetName="ChildItem" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_FOREGROUND}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter TargetName="ChildItem" Property="TextBlock.Foreground" Value="{DynamicResource GLOBAL_BUTTON_DISABLE_FOREGROUND}" />

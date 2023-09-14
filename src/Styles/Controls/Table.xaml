@@ -18,7 +18,7 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="{StaticResource TabItem.Selected.Border}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Foreground" Value="{DynamicResource GLOBAL_FOREGROUND}" />
+        <Setter Property="Foreground" Value="{DynamicResource GLOBAL_FOREGROUND_COLOR}" />
         <Setter Property="ItemTemplate">
             <Setter.Value>
                 <DataTemplate>
@@ -44,7 +44,7 @@
                                 Height="16"
                                 Data="M4,4 L12,12 M4,12 L12,4"
                                 SnapsToDevicePixels="True"
-                                Stroke="{DynamicResource GLOBAL_FOREGROUND}"
+                                Stroke="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
                                 StrokeThickness="1.2" />
                         </Button>
                     </StackPanel>
@@ -139,7 +139,7 @@
     </Style>
 
     <Style TargetType="TabItem">
-        <Setter Property="Foreground" Value="{DynamicResource GLOBAL_FOREGROUND}" />
+        <Setter Property="Foreground" Value="{DynamicResource GLOBAL_FOREGROUND_COLOR}" />
         <Setter Property="Template">
 
             <Setter.Value>

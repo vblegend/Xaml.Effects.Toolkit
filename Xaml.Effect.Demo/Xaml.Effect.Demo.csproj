@@ -10,14 +10,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Fonts\GraceIcon.ttf" />
     <None Remove="Assets\Icon.ico" />
     <None Remove="Assets\Icon.png" />
+    <None Remove="Assets\Images\background.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Page Remove="Themes\Black.xaml" />
-    <Page Remove="Themes\Image.xaml" />
-    <Page Remove="Themes\White.xaml" />
+    <Page Remove="Assets\Themes\Black.xaml" />
+    <Page Remove="Assets\Themes\Image.xaml" />
+    <Page Remove="Assets\Themes\White.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,33 +27,52 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Themes\Black.xaml">
+    <Resource Include="Assets\Fonts\GraceIcon.ttf" />
+    <Resource Include="Assets\Images\background.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Themes\Image.xaml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Themes\White.xaml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Themes\Black.xaml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Resource Include="Assets\Themes\Image.xaml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Resource Include="Assets\Themes\White.xaml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1661.34" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+    <PackageReference Include="Vlc.DotNet.Wpf" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\src\Xaml.Effects.Toolkit.csproj" />
   </ItemGroup>
-
   <ItemGroup>
+  	<None Include="libvlc\**">
+  		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  	</None>
+  </ItemGroup>
+	<ItemGroup>
+		<None Include="m3u8-tools\**">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+	<ItemGroup>
     <Resource Include="Assets\Icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Assets\Icon.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Themes\background.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

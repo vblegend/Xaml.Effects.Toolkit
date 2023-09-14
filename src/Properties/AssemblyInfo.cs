@@ -30,6 +30,7 @@ using System.Windows.Markup;
 //[assembly: XmlnsDefinition("http://schemas.l2030.com/xkit", "Magic.Commands")]
 //[assembly: XmlnsDefinition("http://schemas.l2030.com/xkit", "Magic.Common")] ///
 //[assembly: XmlnsDefinition("http://schemas.l2030.com/xkit", "Magic.Controls")]
+[assembly: XmlnsDefinition("http://schemas.l2030.com/xkit", "Xaml.Effects.Toolkit.Actions")]
 [assembly: XmlnsDefinition("http://schemas.l2030.com/xkit", "Xaml.Effects.Toolkit.Controls")]
 [assembly: XmlnsDefinition("http://schemas.l2030.com/xkit", "Xaml.Effects.Toolkit.Behaviors")]
 [assembly: XmlnsDefinition("http://schemas.l2030.com/xkit", "Xaml.Effects.Toolkit.Common")]

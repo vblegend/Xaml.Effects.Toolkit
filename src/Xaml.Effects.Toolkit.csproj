@@ -8,17 +8,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Assets\**" />
     <Compile Remove="Xaml.Effect.Demo\**" />
+    <EmbeddedResource Remove="Assets\**" />
     <EmbeddedResource Remove="Xaml.Effect.Demo\**" />
+    <None Remove="Assets\**" />
     <None Remove="Xaml.Effect.Demo\**" />
+    <Page Remove="Assets\**" />
     <Page Remove="Xaml.Effect.Demo\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Fonts\iconfont.ttf" />
     <None Remove="Shaders\GlowEffect.ps" />
     <None Remove="Shaders\HorizontalLightenEffect.ps" />
     <None Remove="Shaders\LightenEffect.ps" />
     <None Remove="Shaders\LongShadowEffect.ps" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Fonts\iconfont.ttf" />
   </ItemGroup>
 
   <ItemGroup>

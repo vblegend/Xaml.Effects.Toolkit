@@ -6,6 +6,7 @@
 
 
     <ResourceDictionary.MergedDictionaries>
+
         <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Common.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/CheckBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/SpinControl.xaml" />
@@ -24,7 +25,6 @@
         <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/GroupBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/ScrollViewer.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/ContextMenu.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Windows/VisualStudioWindow.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/RollLabel.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/MoveThumb.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/ResizeRotateChrome.xaml" />
@@ -34,105 +34,92 @@
         <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/ToolboxItem.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/ExpanderChrome.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/ListBoxChrome.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/SplitButton.xaml" />
+
+        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/GridSplitter.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/DataGrid.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/Silder.xaml" />
 
 
+
+        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Windows/VisualStudioWindow.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-
-
-
-
-
+    <FontFamily x:Key="WIcon">/Xaml.Effects.Toolkit;component/Fonts/#wicon</FontFamily>
+    
     <!--  主题名称  -->
     <sys:String x:Key="ThemeName">Default</sys:String>
 
 
-
-    <Image x:Key="TREEVIEW_FOLDER_ICON" Source="/Magic.Tools;component/Images/min_button.png" />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <!--  公用样式  -->
     <!--  全局内容画刷  -->
-    <SolidColorBrush x:Key="GLOBAL_FOREGROUND" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="GLOBAL_FOREGROUND_COLOR" Color="#FFE2E2E2" />
     <!--  全局背景画刷  -->
-    <SolidColorBrush x:Key="GLOBAL_BACKGROUND" Color="#FF2C2C2F" />
+    <SolidColorBrush x:Key="GLOBAL_BACKGROUND_COLOR" Color="#FF2C2C2F" />
     <!--  全局窗口标题背景画刷  -->
-    <SolidColorBrush x:Key="WINDOW_TITLE_BACKGROUND" Color="#FF262627" />
+    <SolidColorBrush x:Key="GLOBAL_WINDOW_TITLE_BACKGROUND" Color="#FF262627" />
     <!--  全局窗口标题内容画刷  -->
-    <SolidColorBrush x:Key="WINDOW_TITLE_FOREGROUND" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="GLOBAL_WINDOW_TITLE_FOREGROUND" Color="#FFFFFFFF" />
     <!--  全局工作区域背景画刷  -->
-    <SolidColorBrush x:Key="WINDOW_CLIENT_BACKGROUND" Color="#FF1E1E1E" />
+    <SolidColorBrush x:Key="GLOBAL_WORK_AREA_COLOR" Color="#FF1E1E1E" />
     <!--  全局窗口分割器背景画刷  -->
     <SolidColorBrush x:Key="GLOBAL_WINDOW_SPLITTER_BACKGROUND" Color="#FF2C2C2F" />
     <!--  窗口系统按钮区域背景画刷  -->
-    <SolidColorBrush x:Key="WINDOW_BUTTON_BACKGROUND" Color="#FF2C2C2F" />
+    <SolidColorBrush x:Key="GLOBAL_SYSTEM_BUTTON_BACKGROUND" Color="#FF2C2C2F" />
     <!--  主窗口右排属性栏背景  -->
     <SolidColorBrush x:Key="WINDOW_RIGHT_AREA_BACKGROUND" Color="#FF2C2C2F" />
     <!--  全局窗口边框颜色  -->
-    <SolidColorBrush x:Key="WINDOW_BORDER_COLOR" Color="#FF007ACC" />
+    <SolidColorBrush x:Key="GLOBAL_WINDOW_BORDER_COLOR" Color="#FF007ACC" />
 
 
 
-    <SolidColorBrush x:Key="CHECKBOX_BACKGROUND" Color="#10007ACC" />
-    <SolidColorBrush x:Key="CHECKBOX_BORDER_COLOR" Color="#33808080" />
+    <SolidColorBrush x:Key="GLOBAL_CHECKBOX_BACKGROUND" Color="#10007ACC" />
+    <SolidColorBrush x:Key="GLOBAL_CHECKBOX_BORDER_BACKGROUND" Color="#33808080" />
 
 
 
     <!--  ScrollBar  -->
     <!--  滑块按钮  -->
-    <SolidColorBrush x:Key="SCROLLBAR_BUTTON_BACKGROUND" Color="#FF428BCA" />
+    <SolidColorBrush x:Key="GLOBAL_SCROLLBAR_BUTTON" Color="#FF428BCA" />
     <!--  滑块背景  -->
-    <SolidColorBrush x:Key="SCROLLBAR_BACKGROUND" Color="#FF2C2C2F" />
+    <SolidColorBrush x:Key="GLOBAL_SCROLLBAR_BACKGROUND" Color="#FF2C2C2F" />
 
 
 
 
 
     <!--  ListBox 背景画刷  -->
-    <SolidColorBrush x:Key="LISTBOX_BACKGROUND" Color="#FF2C2C2F" />
+    <SolidColorBrush x:Key="GLOBAL_LISTBOX_BACKGROUND" Color="#FF2C2C2F" />
 
     <!--  ListBox 字体画刷  -->
-    <SolidColorBrush x:Key="LISTBOX_FOREGROUND" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="GLOBAL_LISTBOX_FOREGROUND" Color="#FFFFFFFF" />
 
     <!--  ListBox 禁用背景画刷  -->
-    <SolidColorBrush x:Key="LISTBOX_DISABLE_BACKGROUND" Color="#FF434347" />
+    <SolidColorBrush x:Key="GLOBAL_LISTBOX_DISABLE_BACKGROUND" Color="#FF434347" />
 
     <!--  ListBox 禁用字体画刷  -->
-    <SolidColorBrush x:Key="LISTBOX_DISABLE_FOREGROUND" Color="#FF555557" />
+    <SolidColorBrush x:Key="GLOBAL_LISTBOX_DISABLE_FOREGROUND" Color="#FF555557" />
 
     <!--  ListBox 边框画刷  -->
-    <SolidColorBrush x:Key="LISTBOX_BORDER_COLOR" Color="#FF007ACC" />
+    <SolidColorBrush x:Key="GLOBAL_LISTBOX_BORDER_BACKGROUND" Color="#FF007ACC" />
 
     <!--  ListBox 选中背景画刷  -->
-    <SolidColorBrush x:Key="LISTBOX_SELECTION_BACKGROUND" Color="#FF007ACC" />
+    <SolidColorBrush x:Key="GLOBAL_LISTBOX_SELECTION_BACKGROUND" Color="#FF007ACC" />
 
 
 
 
 
     <!--  TextBox背景色  -->
-    <SolidColorBrush x:Key="TEXTBOX_BACKGROUND" Color="#FF333337" />
+    <SolidColorBrush x:Key="GLOBAL_TEXTBOX_BACKGROUND" Color="#FF333337" />
     <!--  TextBox字体颜色  -->
-    <SolidColorBrush x:Key="TEXTBOX_FOREGROUND" Color="#FFF1F1F1" />
+    <SolidColorBrush x:Key="GLOBAL_TEXTBOX_FOREGROUND" Color="#FFF1F1F1" />
     <!--  TextBox边框颜色  -->
-    <SolidColorBrush x:Key="TEXTBOX_BORDER_COLOR" Color="#33808080" />
+    <SolidColorBrush x:Key="GLOBAL_TEXTBOX_BORDER_BACKGROUND" Color="#33808080" />
     <!--  TextBox鼠标移动上去边框颜色  -->
-    <SolidColorBrush x:Key="TEXTBOX_OVER_BORDER_COLOR" Color="#80007ACC" />
+    <SolidColorBrush x:Key="GLOBAL_TEXTBOX_OVER_BORDER_BACKGROUND" Color="#80007ACC" />
     <!--  TextBox输入焦点的边框颜色  -->
-    <SolidColorBrush x:Key="TEXTBOX_FOCU_BORDER_COLOR" Color="#FF007ACC" />
+    <SolidColorBrush x:Key="GLOBAL_TEXTBOX_FOCU_BORDER_FOREGROUND" Color="#FF007ACC" />
 
 
 
@@ -182,10 +169,19 @@
     <!--  按钮样式  -->
     <!--  全局按钮背景画刷  -->
     <SolidColorBrush x:Key="GLOBAL_BUTTON_BACKGROUND" Color="Transparent" />
+    
+    
     <!--  全局按钮鼠标悬浮状态画刷  -->
-    <SolidColorBrush x:Key="GLOBAL_BUTTON_OVER_COLOR" Color="#FF404040" />
+    <SolidColorBrush x:Key="GLOBAL_BUTTON_OVER_FOREGROUND" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="GLOBAL_BUTTON_OVER_BACKGROUND" Color="#10FFFFFF" />
+
     <!--  全局按钮按下状态画刷  -->
-    <SolidColorBrush x:Key="GLOBAL_BUTTON_PRESSED_COLOR" Color="#FF007ACC" />
+    <SolidColorBrush x:Key="GLOBAL_BUTTON_PRESSED_FOREGROUND" Color="#FF007ACC" />
+    <SolidColorBrush x:Key="GLOBAL_BUTTON_PRESSED_BACKGROUND" Color="Transparent" />
+
+
+    
+    
     <!--  全局按钮边框画刷  -->
     <SolidColorBrush x:Key="GLOBAL_BUTTON_BORDER_COLOR" Color="#FFFF4040" />
     <!--  全局按钮默认按钮状态画刷  -->
@@ -204,7 +200,7 @@
 
     <!--  状态栏样式  -->
     <!--  全局状态栏背景画刷  -->
-    <SolidColorBrush x:Key="GLOBAL_STATUSBAR_BACKGROUND" Color="#FF414141" />
+    <SolidColorBrush x:Key="GLOBAL_STATUSBAR_BACKGROUND" Color="#2d2d30" />
     <!--  全局状态栏边框画刷  -->
     <SolidColorBrush x:Key="GLOBAL_STATUSBAR_BORDERROUND" Color="#FF1E1E1E" />
 
@@ -236,8 +232,20 @@
 
 
 
+    <!--全局DataGrid 横向网格线-->
+    <SolidColorBrush x:Key="GLOBAL_DATAGRID_HLINES_BRUSH" Color="#10FBFBFB" />
+    <!--全局DataGrid 纵向网格线-->
+    <SolidColorBrush x:Key="GLOBAL_DATAGRID_VLINES_BRUSH" Color="#10FBFBFB" />
+    <!--全局DataGridHeader背景-->
+    <SolidColorBrush x:Key="GLOBAL_DATAGRID_HEADER_BACKGROUND" Color="#FF414141" />
+
+    
 
 
+    <!-- 全局Splitter -->
+    <SolidColorBrush x:Key="GLOBAL_SPLITTER_BACKGROUND" Color="#FF2C2C2F" />
+
+    
 
 
 
@@ -252,6 +260,33 @@
 
     <!--  GroupBox客户区域背景画刷  -->
     <SolidColorBrush x:Key="GLOBAL_GROUP_CLIENT_BACKGROUND" Color="#FF1E1E1E" />
+
+
+
+
+
+
+
+    <!--滑块刻度尺颜色-->
+    <SolidColorBrush x:Key="GLOBAL_SLIDER_FOREGROUND" Color="#888888" />
+    <!--滑块背景颜色-->
+    <SolidColorBrush x:Key="GLOBAL_SLIDER_BACKGROUND" Color="Transparent" />
+    <!--滑块按钮颜色-->
+    <SolidColorBrush x:Key="GLOBAL_SLIDER_BUTTON_COLOR" Color="#1d1d1d" />
+    <!--滑块按钮颜色-->
+    <SolidColorBrush x:Key="GLOBAL_SLIDER_BUTTON_OVER_COLOR" Color="#1f1f1f" />
+    <!--滑块按钮边框颜色-->
+    <SolidColorBrush x:Key="GLOBAL_SLIDER_BUTTON_BORDER_COLOR" Color="#666666" />
+    <!--滑块阴影颜色-->
+    <Color x:Key="GLOBAL_SLIDER_BUTTON_SHADOW_COLOR" >#1a1a1a</Color>
+    <!--滑块轨道颜色-->
+    <SolidColorBrush x:Key="GLOBAL_SLIDER_TRACE_BACKGROUND" Color="#4d4d4d" />
+    <!--滑块未划过的轨道颜色-->
+    <SolidColorBrush x:Key="GLOBAL_SLIDER_INCREASE_BACKGROUND" Color="Transparent" />
+    <!--滑块划过的轨道颜色-->
+    <SolidColorBrush x:Key="GLOBAL_SLIDER_DECREASE_BACKGROUND" Color="#666666" />
+    <!--选区颜色-->
+    <SolidColorBrush x:Key="GLOBAL_SLIDER_SELECTION_BACKGROUND" Color="Orange" />
 
 
 

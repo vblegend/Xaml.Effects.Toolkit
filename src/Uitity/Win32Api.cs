@@ -191,6 +191,7 @@ namespace Xaml.Effects.Toolkit.Uitity
 
         #endregion
 
+        public const uint SWP_NOSIZE = 0x0001;
         public const uint TPM_LEFTBUTTON = 0;
         public const uint TPM_RIGHTBUTTON = 2;
         public const uint TPM_LEFTALIGN = 0;
@@ -203,6 +204,7 @@ namespace Xaml.Effects.Toolkit.Uitity
         public const uint WM_SYSCOMMAND = 0x0112;
         public const int WM_GETMINMAXINFO = 0x0024;
         public const int WM_NCHITTEST = 0x0084;
+        public const int WM_WINDOWPOSCHANGING = 0x0046;
         public const int agWidth = 12; //拐角宽度
         public const int bThickness = 4; // 边框宽度
         public enum HitTest : int
@@ -238,6 +240,17 @@ namespace Xaml.Effects.Toolkit.Uitity
             HTHELP = 21,
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        public struct WINDOWPOS
+        {
+            public IntPtr hwnd;
+            public IntPtr hwndInsertAfter;
+            public int x;
+            public int y;
+            public int width;
+            public int height;
+            public uint flags;
+        }
 
         [DllImport("user32.dll", EntryPoint = "SendMessage")]
         private static extern int SendMessage(IntPtr hwnd, int wMsg, int wParam, int lParam);

@@ -5,7 +5,8 @@
     xmlns:control="clr-namespace:Xaml.Effects.Toolkit.Controls"
     xmlns:windows="clr-namespace:Xaml.Effects.Toolkit.Styles.Windows" >
     <ControlTemplate x:Key="VisualStudioFixedWindowTemplate" TargetType="{x:Type Window}">
-        <Border BorderBrush="{Binding Path=(windows:WindowTheme.Theme).BorderBrush, RelativeSource={RelativeSource TemplatedParent}}" BorderThickness="{Binding Path=(windows:WindowTheme.Theme).BorderThickness, RelativeSource={RelativeSource TemplatedParent}}">
+        <Border BorderBrush="{Binding Path=(windows:WindowTheme.Theme).BorderBrush, RelativeSource={RelativeSource TemplatedParent}}" 
+                BorderThickness="{Binding Path=(windows:WindowTheme.Theme).BorderThickness, RelativeSource={RelativeSource TemplatedParent}}">
 
             <Grid Background="{DynamicResource GLOBAL_BACKGROUND_COLOR}">
                 <Grid.RowDefinitions>

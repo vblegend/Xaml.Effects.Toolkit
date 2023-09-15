@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:Xaml.Effects.Toolkit.Styles.Controls">
+    xmlns:local="clr-namespace:Xaml.Effects.Toolkit.Styles.Controls" xmlns:sys="clr-namespace:System;assembly=System.Runtime">
 
 
 
@@ -156,6 +156,9 @@
                             Grid.Row="1"
                             IsDirectionReversed="true"
                             IsEnabled="{TemplateBinding IsMouseOver}">
+                            <Track.Resources>
+                                <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarButtonHeightKey}">100</sys:Double>
+                            </Track.Resources>
                             <Track.DecreaseRepeatButton>
                                 <RepeatButton Command="{x:Static ScrollBar.PageUpCommand}" Style="{StaticResource RepeatButtonTransparent}" />
                             </Track.DecreaseRepeatButton>
@@ -163,7 +166,7 @@
                                 <RepeatButton Command="{x:Static ScrollBar.PageDownCommand}" Style="{StaticResource RepeatButtonTransparent}" />
                             </Track.IncreaseRepeatButton>
                             <Track.Thumb>
-                                <Thumb Style="{StaticResource ScrollBarThumbVertical}" />
+                                <Thumb  Style="{StaticResource ScrollBarThumbVertical}" />
                             </Track.Thumb>
                         </Track>
                         <RepeatButton

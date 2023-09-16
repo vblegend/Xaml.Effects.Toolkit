@@ -39,7 +39,7 @@
         <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/GridSplitter.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/DataGrid.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/Silder.xaml" />
-
+        <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Controls/ListView.xaml" />
 
 
         <ResourceDictionary Source="pack://application:,,,/Xaml.Effects.Toolkit;component/Styles/Windows/VisualStudioWindow.xaml" />

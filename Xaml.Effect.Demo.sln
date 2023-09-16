@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xaml.Effect.Demo", "Xaml.Ef
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Assets.Editor", "AssetsEditor\Assets.Editor.csproj", "{DF37E7B4-6340-4764-9C10-ABC4C3D93066}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resource.Package.Assets", "Resource.Package.Assets\Resource.Package.Assets.csproj", "{19E5FD9D-FF78-47C3-B518-1D003B047145}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{DF37E7B4-6340-4764-9C10-ABC4C3D93066}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF37E7B4-6340-4764-9C10-ABC4C3D93066}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF37E7B4-6340-4764-9C10-ABC4C3D93066}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19E5FD9D-FF78-47C3-B518-1D003B047145}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19E5FD9D-FF78-47C3-B518-1D003B047145}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19E5FD9D-FF78-47C3-B518-1D003B047145}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19E5FD9D-FF78-47C3-B518-1D003B047145}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

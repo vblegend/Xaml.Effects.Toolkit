@@ -1,60 +1,84 @@
-﻿using Microsoft.Toolkit.Mvvm.Input;
+﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
+using Resource.Package.Assets;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Drawing.Imaging;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Assets.Editor.Views;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Xaml.Effects.Toolkit;
 using Xaml.Effects.Toolkit.Model;
 using Xaml.Effects.Toolkit.Uitity;
 using static System.Net.WebRequestMethods;
+using System.Windows;
 
 namespace Assets.Editor.Models
 {
+
+    public class ImageModel : ObservableObject
+    {
+        public ImageModel()
+        {
+
+        }
+
+
+
+        public BitmapSource Source
+        {
+            get
+            {
+                return this.image;
+            }
+            set
+            {
+                base.SetProperty(ref this.image, value);
+            }
+        }
+
+        private BitmapSource image;
+
+
+
+
+        public Int32 Index
+        {
+            get
+            {
+                return this.index;
+            }
+            set
+            {
+                base.SetProperty(ref this.index, value);
+            }
+        }
+
+        private Int32 index;
+
+
+    }
+
+
+
+
+
     public class MainWindowModel : DialogModel
     {
 
-        string script = @"
-                function findParent (parent){
-                    var count = 0;
-                    while(parent.parentElement != null && count < 8){
-                        if(parent.parentElement.className.startsWith('itemCol')) return parent.parentElement;
-                        parent = parent.parentElement;
-                        count++;
-                    }
-                    return null;
-                }
-                document.addEventListener('click', function (event)
-                {
-                      var root = findParent(event.srcElement)
-                        console.log(root);
-                      if(root){
-                          var titleElement = root.querySelector('div[class^=""title__""]');
-                          console.log(titleElement);
-                          if(titleElement){
-                               window.chrome.webview.postMessage('@'+titleElement.innerText);
-                          }
-                      }
-                });
+        public ObservableCollection<String> ListItems { get; set; } = new ObservableCollection<String>();
 
-                
-
-                document.body.style.opacity = '0.1';
-                console.log('监视中');
-";
-
-
-
-
+        public ObservableCollection<ImageModel> GridImages { get; set; } = new ObservableCollection<ImageModel>();
 
         /// <summary>
         /// 应用,需要时在派生类中重写
         /// </summary>
         public ICommand VideoListCommand { get; protected set; }
-
 
         /// <summary>
         /// 应用,需要时在派生类中重写
@@ -65,7 +89,9 @@ namespace Assets.Editor.Models
         public ICommand SettingCommand { get; protected set; }
 
 
-        
+        public ICommand PreviewMouseWheelCommand { get; protected set; }
+
+        public ICommand PageChangedCommand { get; protected set; }
 
 
         public ICommand HomeCommand { get; protected set; }
@@ -76,10 +102,7 @@ namespace Assets.Editor.Models
 
 
 
-
-        public ObservableCollection<VideoInfo> VideoList { get; protected set; }
-
-
+        public AssetFileStream assetFile { get; protected set; }
 
 
         public MainWindowModel()
@@ -91,15 +114,69 @@ namespace Assets.Editor.Models
             this.HomeCommand = new RelayCommand(Home_Click);
             this.GoBackCommand = new RelayCommand(Goback_Click);
             this.RefreshCommand = new RelayCommand(Refresh_Click);
-            this.VideoList = new ObservableCollection<VideoInfo>();
-            this.webOpacity = 100;
+            this.PreviewMouseWheelCommand = new RelayCommand<MouseWheelEventArgs>(MovieListView_PreviewMouseWheel);
+            this.PageChangedCommand = new RelayCommand<RoutedPropertyChangedEventArgs<double>>(ScrollBar_ValueChanged);
+            this.currentPage = 50;
             this.Title = "Console";
+            this.PageSize = 64;
+
+            this.assetFile = AssetFileStream.Open("hum.asset", "123");
+            resizePage();
+            refreshPage();
+        }
+
+        private void resizePage()
+        {
+            var pagesize2 = this.assetFile.NumberOfFiles - (this.CurrentPage * this.PageSize);
+            var pagesize = Math.Min(this.PageSize, pagesize2);
+            this.PageElementCount = pagesize;
+            this.GridImages.Clear();
+            for (int i = 0; i < pagesize; i++)
+            {
+                this.GridImages.Add(new ImageModel());
+            }
+            this.TotalPage = this.assetFile.NumberOfFiles / this.PageSize;
+            if (this.CurrentPage > this.totalPage)
+            {
+                this.CurrentPage = this.totalPage;
+            }
+        }
+
+        private void refreshPage()
+        {
+            var pagesize2 = this.assetFile.NumberOfFiles - (this.CurrentPage * this.PageSize);
+            var pagesize = Math.Min(this.PageSize, pagesize2);
+            if (this.PageElementCount != pagesize)
+            {
+                this.resizePage();
+            }
+            var startAt = this.CurrentPage * this.PageSize;
+            for (int i = 0; i < pagesize; i++)
+            {
+                if (startAt + i < this.assetFile.NumberOfFiles)
+                {
+                    var node = this.assetFile.Read(startAt + i);
+                    this.GridImages[i].Index = startAt + i;
+                    this.GridImages[i].Source = loadImageSource(node.Data);
+                }
+            }
         }
 
 
 
+        private BitmapSource loadImageSource(Byte[] data){
 
-
+            using (MemoryStream stream = new MemoryStream(data))
+            {
+                BitmapImage result = new BitmapImage();
+                result.BeginInit();
+                result.CacheOption = BitmapCacheOption.OnLoad;
+                result.StreamSource = stream;
+                result.EndInit();
+                result.Freeze();
+                return result;
+            }
+        }
 
 
 
@@ -126,7 +203,28 @@ namespace Assets.Editor.Models
         }
 
 
-        
+        private void ScrollBar_ValueChanged(RoutedPropertyChangedEventArgs<double> e)
+        {
+            refreshPage();
+        }
+
+        private void MovieListView_PreviewMouseWheel(MouseWheelEventArgs e)
+        {
+            if (e.Delta > 0 && this.CurrentPage > 0)
+            {
+                this.CurrentPage--;
+            }
+            else if (e.Delta < 0 && this.CurrentPage < this.TotalPage)
+            {
+                this.CurrentPage++;
+            }
+        }
+
+
+
+
+
+
 
         private void Settings_Click()
         {
@@ -140,7 +238,7 @@ namespace Assets.Editor.Models
 
         private void Refresh_Click()
         {
-   
+
         }
 
 
@@ -152,40 +250,74 @@ namespace Assets.Editor.Models
 
         private void VideoList_Click()
         {
-            if (this.VideoListWindow != null)
-            {
-                this.VideoListWindow.Close();
-                return;
-            }
-            this.VideoListWindow = new VideoList(this.VideoList);
-            this.VideoListWindow.Closed += Video_Closed;
-
-            this.VideoListWindow.Show();
 
         }
-
-
-        private VideoList  VideoListWindow { get; set; }
 
 
         private void Video_Closed(object sender, EventArgs e)
         {
-            this.VideoListWindow = null;
+
         }
 
-        public Int32 WebOpacity
+        /// <summary>
+        /// 当前页实际显示的元素数量
+        /// </summary>
+        public Int32 PageElementCount
         {
             get
             {
-                return this.webOpacity;
+                return this.pageEleCount;
             }
             set
             {
-                base.SetProperty(ref this.webOpacity, value);
+                base.SetProperty(ref this.pageEleCount, value);
+            }
+        }
+        private Int32 pageEleCount;
+
+        /// <summary>
+        /// 当前页最多可显示元素的空位
+        /// </summary>
+        public Int32 PageSize
+        {
+            get
+            {
+                return this.pageSize;
+            }
+            set
+            {
+                base.SetProperty(ref this.pageSize, value);
+            }
+        }
+        private Int32 pageSize;
+        public Int32 TotalPage
+        {
+            get
+            {
+                return this.totalPage;
+            }
+            set
+            {
+                base.SetProperty(ref this.totalPage, value);
+            }
+
+
+        }
+        private Int32 totalPage;
+
+        public Int32 CurrentPage
+        {
+            get
+            {
+                return this.currentPage;
+            }
+            set
+            {
+                base.SetProperty(ref this.currentPage, value);
             }
         }
 
-        private Int32 webOpacity;
+        private Int32 currentPage;
 
     }
 }

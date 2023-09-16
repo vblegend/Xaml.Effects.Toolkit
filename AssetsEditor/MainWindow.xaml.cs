@@ -25,8 +25,11 @@ namespace Assets.Editor
             Environment.Exit(0);
         }
 
-        private async void Window_Loaded(object sender, RoutedEventArgs e)
+
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
+
         }
+
     }
 }

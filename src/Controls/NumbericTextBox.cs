@@ -24,7 +24,7 @@ namespace Xaml.Effects.Toolkit.Controls
             "MaxValue",
             typeof(double),
             typeof(NumbericTextBox),
-            new PropertyMetadata(double.MaxValue));
+            new PropertyMetadata(100d));
 
         /// <summary>
         /// 最小值的依赖属性
@@ -33,7 +33,7 @@ namespace Xaml.Effects.Toolkit.Controls
             "MinValue",
             typeof(double),
             typeof(NumbericTextBox),
-            new PropertyMetadata(double.MinValue));
+            new PropertyMetadata(0d));
 
         /// <summary>
         /// 精度的依赖属性
@@ -86,7 +86,10 @@ namespace Xaml.Effects.Toolkit.Controls
         public double MaxValue
         {
             get { return (double)this.GetValue(MaxValueProperty); }
-            set { this.SetValue(MaxValueProperty, value); }
+            set
+            {
+                this.SetValue(MaxValueProperty, value);
+            }
         }
 
         /// <summary>
@@ -95,7 +98,10 @@ namespace Xaml.Effects.Toolkit.Controls
         public double MinValue
         {
             get { return (double)this.GetValue(MinValueProperty); }
-            set { this.SetValue(MinValueProperty, value); }
+            set
+            {
+                this.SetValue(MinValueProperty, value);
+            }
         }
 
         /// <summary>

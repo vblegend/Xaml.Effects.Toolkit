@@ -27,6 +27,24 @@ namespace Xaml.Effects.Toolkit.Controls
             new PropertyMetadata(100d));
 
         /// <summary>
+        /// 最大值的依赖属性
+        /// </summary>
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            "Value",
+            typeof(double),
+            typeof(NumbericTextBox),
+            new PropertyMetadata(0d, Value_PropertyChangedCallback));
+
+        public static void Value_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            //(d as NumbericTextBox).Value = (double)e.NewValue;
+            (d as NumbericTextBox).Text = e.NewValue.ToString();
+        }
+
+
+
+
+        /// <summary>
         /// 最小值的依赖属性
         /// </summary>
         public static readonly DependencyProperty MinValueProperty = DependencyProperty.Register(
@@ -93,6 +111,19 @@ namespace Xaml.Effects.Toolkit.Controls
         }
 
         /// <summary>
+        /// 值
+        /// </summary>
+        public double Value
+        {
+            get { return (double)this.GetValue(ValueProperty); }
+            set
+            {
+                this.SetValue(ValueProperty, value);
+            }
+        }
+
+
+        /// <summary>
         /// 最小值,可取
         /// </summary>
         public double MinValue
@@ -131,76 +162,12 @@ namespace Xaml.Effects.Toolkit.Controls
         protected virtual void HandlePaste()
         {
             this.isPaste = false;
-
-            // 处理符号的标志
-            bool handledSybmol = false;
-
-            // 处理小数点的标志
-            bool handledDot = false;
-
-            // 当前位对应的基数
-            double baseNumber = 1;
-
             // 转换后的数字
             double number = 0;
-
-            // 上一次合法的数字
-            double lastNumber = 0;
-
-            // 小数点后的位数
-            double precision = 0;
-            foreach (var c in this.Text)
-            {
-                if (!handledSybmol && (c == '-'))
-                {
-                    baseNumber = -1;
-                    handledSybmol = true;
-                }
-
-                if ((c >= '0') && (c <= '9'))
-                {
-                    int digit = c - '0';
-                    if (!handledDot)
-                    {
-                        number = (number * baseNumber) + digit;
-                        baseNumber = 10;
-                    }
-                    else
-                    {
-                        baseNumber = baseNumber / 10;
-                        number += digit * baseNumber;
-                    }
-
-                    // 正负号必须位于最前面
-                    handledSybmol = true;
-                }
-
-                if (c == '.')
-                {
-                    // 精度已经够了
-                    if (precision + 1 > this.Precision)
-                    {
-                        break;
-                    }
-
-                    handledDot = true;
-
-                    // 此时正负号不能起作用
-                    handledSybmol = true;
-                    baseNumber = 0.1;
-                    precision++;
-                }
-
-                if ((number < this.MinValue) || (number > this.MaxValue))
-                {
-                    this.Text = lastNumber.ToString(CultureInfo.InvariantCulture);
-                    this.SelectionStart = this.Text.Length;
-                    return;
-                }
-
-                lastNumber = number;
-            }
-
+            Double.TryParse(this.Text, out number);
+            if (number < this.MinValue) number = this.MinValue;
+            if (number > this.MaxValue) number = this.MaxValue;
+            this.Value = number;
             this.Text = number.ToString(CultureInfo.InvariantCulture);
             this.SelectionStart = this.Text.Length;
         }
@@ -226,6 +193,7 @@ namespace Xaml.Effects.Toolkit.Controls
                 val = Math.Round(val, this.Precision);
 
                 this.Text = val.ToString(CultureInfo.InvariantCulture);
+                this.Value = val;
             }
 
             this.isPaste = true;
@@ -290,7 +258,6 @@ namespace Xaml.Effects.Toolkit.Controls
             {
                 int dotPos = this.Text.IndexOf('.');
                 int cursorIndex = this.SelectionStart;
-
                 // 已经存在小数点,且小数点在光标后
                 if ((dotPos != -1) && (dotPos < cursorIndex))
                 {
@@ -343,7 +310,7 @@ namespace Xaml.Effects.Toolkit.Controls
                     this.SelectionStart = selectIndex;
                     return;
                 }
-
+                this.Value = val;
                 this.lastLegalText = this.Text;
             }
 

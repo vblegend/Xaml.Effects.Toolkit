@@ -36,22 +36,25 @@
                         Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
                         Header="文件(F)"
                         Style="{DynamicResource WindowMenuStyle}">
-
                         <MenuItem
                             Height="20"
                             Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
-                            Header="打开(E)">
+                            Header="新建资源包(N)">
                         </MenuItem>
                         <MenuItem
                             Height="20"
                             Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
-                            Header="保存(E)"
-                            IsChecked="True" />
+                            Header="打开资源包(O)">
+                        </MenuItem>
                         <MenuItem
                             Height="20"
                             Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
-                            Header="设置(E)"
-                            IsEnabled="False" />
+                            Header="保存(S)" />
+
+                        <MenuItem
+                            Height="20"
+                            Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
+                            Header="关闭(C)"/>
                         <MenuItem
                             Height="20"
                             Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
@@ -62,11 +65,37 @@
                         Height="20"
                         Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
                         Header="编辑(E)"
-                        Style="{DynamicResource WindowMenuStyle}" />
+                        Style="{DynamicResource WindowMenuStyle}">
+                        <MenuItem
+                        Height="20"
+                        Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
+                        Header="导入追加(N)">
+                        </MenuItem>
+
+                        <MenuItem
+                        Height="20"
+                        Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
+                        Header="替换当前项(N)">
+                        </MenuItem>
+                        <MenuItem
+                        Height="20"
+                        Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
+                        Header="导出选中项(O)">
+                        </MenuItem>
+                        <MenuItem
+                        Height="20"
+                        Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
+                        Header="批量导出(S)" />
+                        <MenuItem
+                        Height="20"
+                        Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
+                        Header="跳转到..(C)"/>
+                    </MenuItem>
+
                     <MenuItem
                         Height="20"
                         Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
-                        Header="设置(S)"
+                        Header="工具(T)"
                         Style="{DynamicResource WindowMenuStyle}" />
                     <MenuItem
                         Height="20"
@@ -77,16 +106,6 @@
             </xkit:WindowTheme.Menu>
             <xkit:WindowTheme.AttachedButtons>
                 <WrapPanel>
-
-
-                    <Button
-                        Width="48"
-                        Height="32"
-                        Content="&#xe795;"  
-                        FontSize="18" 
-                        FontFamily="{DynamicResource GraceFont}"
-                        Command="{Binding SettingCommand}"
-                        ToolTip="设置" />
                     <Button
                         Width="48"
                         Height="32"
@@ -95,21 +114,6 @@
                         FontFamily="{DynamicResource GraceFont}"
                         Command="{Binding ThemesCommand}"
                         ToolTip="更换主题" />
-                    <Button
-                        Width="48"
-                        Height="32"
-                        Content="&#xe64b;"  
-                        FontSize="18" 
-                        FontFamily="{DynamicResource GraceFont}"
-                        Command="{Binding VideoListCommand}"
-                        ToolTip="Help">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Click">
-                                <xkit:PlaySoundBehavior Source="./Music/ButtonMouseEnter.wav" Volume="100" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-
-                    </Button>
                 </WrapPanel>
             </xkit:WindowTheme.AttachedButtons>
             <xkit:WindowTheme.Services>
@@ -126,19 +130,53 @@
             <RowDefinition Height="26"/>
         </Grid.RowDefinitions>
 
+        <WrapPanel  Grid.Column="0">
+            <Button Content="&#xe780;" FontSize="18"  
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Command="{Binding GoBackCommand}"
+                    FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30"  />
+
+            <Button Content="&#xe738;" FontSize="18"  
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Command="{Binding HomeCommand}"
+                    FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
+
+
+
+
+
+            <Button Content="&#xe7e6;" FontSize="16"  
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Command="{Binding RefreshCommand}"
+                    FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
+
+        </WrapPanel>
+
+
+
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="170*"/>
                 <RowDefinition Height="100*" MinHeight="160"/>
             </Grid.RowDefinitions>
+
             <Grid >
-                <Slider Margin="0,0,0,0" VerticalAlignment="Bottom" />
-                <Image/>
+                <xkit:ZoomScrollViewer HorizontalScrollBarVisibility="Auto"  ZoomValue="{Binding ZoomValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
+                    <Image HorizontalAlignment="Center" VerticalAlignment="Center" Width="{Binding SelectedImage.Source.Width}" Height="{Binding SelectedImage.Source.Height}" >
+                        <Image.Source>
+                            <MultiBinding Converter="{xkit:BitmapSourceConverter}">
+                                <Binding Path="SelectedImage.Source"/>
+                                <Binding Path="DrawingMode"/>
+                            </MultiBinding>
+                        </Image.Source>
+                    </Image>
+                </xkit:ZoomScrollViewer>
             </Grid>
 
-
-
-            <GridSplitter Height="5" Grid.Row="1"  VerticalAlignment="Top"  ResizeDirection="Rows" HorizontalAlignment="Stretch" Background="#FF0B0BE8"/>
+            <GridSplitter Height="5" Grid.Row="1"  VerticalAlignment="Top"  ResizeDirection="Rows" HorizontalAlignment="Stretch" Background="{DynamicResource GLOBAL_LISTBOX_BORDER_BACKGROUND}" />
 
             <Grid Grid.Row="1"  Margin="0,5,0,0">
                 <Grid.ColumnDefinitions>
@@ -154,14 +192,19 @@
                             </Grid>
                         </DataTemplate>
                     </Grid.Resources>
-
-                    <ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled"  ScrollViewer.VerticalScrollBarVisibility="Disabled"   Grid.Row="4" Name ="MovieListView" 
+                    <Border BorderBrush="{DynamicResource GLOBAL_LISTBOX_BORDER_BACKGROUND}" BorderThickness="1">
+                    </Border>
+                    <ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled"  ScrollViewer.VerticalScrollBarVisibility="Disabled" Name ="MovieListView" BorderThickness="0"
                               ItemTemplate="{StaticResource ItemTemplate}" 
-                              ItemsSource="{Binding GridImages}" Margin="0,0,17,0">
+                              SelectionMode="Single"
+                              ItemsSource="{Binding GridImages}" Margin="1,1,16,1">
 
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="PreviewMouseWheel">
                                 <xkit:EventBehavior Action="{Binding PreviewMouseWheelCommand}" />
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <xkit:EventBehavior Action="{Binding SelectionChangedCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
 
@@ -171,7 +214,9 @@
                             </ItemsPanelTemplate>
                         </ListView.ItemsPanel>
                     </ListView>
-                    <ScrollBar HorizontalAlignment="Right" Maximum="{Binding TotalPage}" Value="{Binding CurrentPage,Mode=TwoWay}"  Minimum="0"  Width="17">
+
+
+                    <ScrollBar HorizontalAlignment="Right" Maximum="{Binding TotalPage}" Value="{Binding CurrentPage,Mode=TwoWay}"  Minimum="0"  Width="17" Margin="0,1,1,1">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="PreviewMouseWheel">
                                 <xkit:EventBehavior Action="{Binding PreviewMouseWheelCommand}" />
@@ -180,19 +225,34 @@
                             <i:EventTrigger EventName="ValueChanged">
                                 <xkit:EventBehavior Action="{Binding PageChangedCommand}" />
                             </i:EventTrigger>
-                            
+
 
 
                         </i:Interaction.Triggers>
                     </ScrollBar>
+
+
                 </Grid>
 
                 <Grid Grid.Column="1" >
+                    <Border BorderThickness="1" ></Border>
                     <Label  Content="X轴偏移量：" Margin="0,20,0,0" VerticalAlignment="Top" Width="139"/>
-                    <xkit:NumbericTextBox  Margin="9,47,9,0" TextWrapping="Wrap" Text="0" MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0"     VerticalAlignment="Top"/>
+                    <xkit:NumbericTextBox  Margin="9,47,9,0" TextWrapping="Wrap" Text="0" MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0" Value="{Binding OffsetX ,Mode=TwoWay}"    VerticalAlignment="Top" TextChanged="NumbericTextBox_TextChanged">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="TextChanged">
+                                <xkit:EventBehavior Action="{Binding OffsetXChangedCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </xkit:NumbericTextBox>
                     <Label  Content="Y轴偏移量：" Margin="0,73,0,0" VerticalAlignment="Top" Width="139"/>
-                    <xkit:NumbericTextBox  Margin="9,100,9,0" TextWrapping="Wrap" Text="0"  MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0"     VerticalAlignment="Top"/>
-                    <Button Content="保存" HorizontalAlignment="Right" Margin="0,0,12,10" VerticalAlignment="Bottom" Width="65" Height="24" />
+                    <xkit:NumbericTextBox  Margin="9,100,9,0" TextWrapping="Wrap" Text="0"  MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0"  Value="{Binding OffsetY ,Mode=TwoWay}"    VerticalAlignment="Top">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="TextChanged">
+                                <xkit:EventBehavior Action="{Binding OffsetYChangedCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </xkit:NumbericTextBox>
+                    <Button Content="保存" HorizontalAlignment="Right" Margin="0,132,10,0" VerticalAlignment="Top" Width="65" Height="24" />
                 </Grid>
 
             </Grid>
@@ -228,9 +288,17 @@
                     Value="50" />
             </StatusBarItem>
             <StatusBarItem>
-                <ComboBox Height="24"> 
-                    
-                    
+                <ComboBox Height="24" Width="100" 
+                          SelectedItem="{Binding DrawingMode, Mode=TwoWay}"
+                          ItemsSource="{Binding Source={StaticResource DrawingModes}}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={xkit:EnumDescriptionConverter}}"    >
+
+                            </TextBlock>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+
                 </ComboBox>
             </StatusBarItem>
 

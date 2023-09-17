@@ -175,6 +175,13 @@ namespace Resource.Package.Assets
         }
 
 
+        public void UpdateOffsetNoWrite(Int32 index, Point data)
+        {
+            var info = this.Infomations[index];
+            info.OffsetX += data.X;
+            info.OffsetY += data.Y;
+        }
+
 
         public void UpdateOffsets(Dictionary<Int32, Point> datas)
         {

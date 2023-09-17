@@ -31,5 +31,9 @@ namespace Assets.Editor
 
         }
 
+        private void NumbericTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+
+        }
     }
 }

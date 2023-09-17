@@ -1,4 +1,8 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+                    
+                    xmlns:mscorlib="clr-namespace:System;assembly=mscorlib"
+                    xmlns:converter="clr-namespace:Xaml.Effects.Toolkit.Converter"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <DrawingBrush
         x:Key="DESIGNER_AREA_BACKGROUND"
@@ -25,6 +29,14 @@
     </Pen>
 
 
+
+
+    <ObjectDataProvider x:Key="DrawingModes" MethodName="GetValues" ObjectType="{x:Type mscorlib:Enum}">
+        <ObjectDataProvider.MethodParameters>
+            <x:Type TypeName="converter:DrawingMode"></x:Type>
+        </ObjectDataProvider.MethodParameters>
+    </ObjectDataProvider>
+    
 
 
     <!--  设计控件，拖拽所属容器边框  -->

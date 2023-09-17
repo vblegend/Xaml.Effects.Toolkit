@@ -7,6 +7,7 @@
     <UseWPF>true</UseWPF>
     <StartupObject>Assets.Editor.App</StartupObject>
     <ApplicationIcon>Assets\Icon.ico</ApplicationIcon>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -58,10 +59,6 @@
 
   <ItemGroup>
     <Resource Include="Assets\Icon.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Views\" />
   </ItemGroup>
 
   <ItemGroup>

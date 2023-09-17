@@ -68,18 +68,20 @@
                         Style="{DynamicResource WindowMenuStyle}">
                         <MenuItem
                         Height="20"
+                        Command="{Binding ImportImageCommand}"
                         Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
                         Header="导入追加(N)">
                         </MenuItem>
-
                         <MenuItem
                         Height="20"
+                        Command="{Binding ReplaceImageCommand}"
                         Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
                         Header="替换当前项(N)">
                         </MenuItem>
                         <MenuItem
                         Height="20"
                         Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
+                            Command="{Binding ExportImageCommand}"
                         Header="导出选中项(O)">
                         </MenuItem>
                         <MenuItem
@@ -130,28 +132,96 @@
             <RowDefinition Height="26"/>
         </Grid.RowDefinitions>
 
-        <WrapPanel  Grid.Column="0">
-            <Button Content="&#xe780;" FontSize="18"  
+        <WrapPanel  Grid.Column="0" Background="#333333">
+            <Button Content="&#xe836;" FontSize="18"  
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
-                    Command="{Binding GoBackCommand}"
+                    Command="{Binding NewPackageCommand}"
+                                ToolTip="新建资源包"
                     FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30"  />
 
-            <Button Content="&#xe738;" FontSize="18"  
+            <Button Content="&#xe709;" FontSize="18"  
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
-                    Command="{Binding HomeCommand}"
+                    Command="{Binding OpenPackageCommand}"
+                                ToolTip="打开资源包"
                     FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
 
 
 
 
 
-            <Button Content="&#xe7e6;" FontSize="16"  
+            <Button Content="&#xe85f;" FontSize="16"  
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
-                    Command="{Binding RefreshCommand}"
+                    Command="{Binding SavePackageCommand}"
+                                ToolTip="保存当前资源包"
                     FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
+            <Separator Height="20">
+                <Separator.LayoutTransform>
+                    <RotateTransform Angle="90" />
+                </Separator.LayoutTransform>
+            </Separator>
+
+            <Button Content="&#xe846;" FontSize="16"  
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Command="{Binding ImportImageCommand}"
+                    ToolTip="导入图片"
+                    FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
+
+
+
+            <Button Content="&#xe845;" FontSize="16"  
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Command="{Binding ExportImageCommand}"
+                    ToolTip="导出图片"
+                    FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
+
+
+
+
+            <Button Content="&#xe87a;" FontSize="16"  
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Command="{Binding ReplaceImageCommand}"
+                                ToolTip="替换当前图片"
+                    FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
+
+            <Separator Height="20">
+                <Separator.LayoutTransform>
+                    <RotateTransform Angle="90" />
+                </Separator.LayoutTransform>
+            </Separator>
+
+
+            <Button Content="&#xe656;" FontSize="16"  
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Command="{Binding ClosePackageCommand}"
+                    ToolTip="关闭当前打开的资源包"
+                    FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
+
+            <Separator Height="20">
+                <Separator.LayoutTransform>
+                    <RotateTransform Angle="90" />
+                </Separator.LayoutTransform>
+            </Separator>
+
+            <Label VerticalContentAlignment="Center">渲染模式：</Label>
+            <ComboBox Height="24" Width="100" 
+                          SelectedItem="{Binding DrawingMode, Mode=TwoWay}"
+                          ItemsSource="{Binding Source={StaticResource DrawingModes}}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={xkit:EnumDescriptionConverter}}"    >
+
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+
+            </ComboBox>
 
         </WrapPanel>
 
@@ -240,7 +310,7 @@
                     <xkit:NumbericTextBox  Margin="9,47,9,0" TextWrapping="Wrap" Text="0" MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0" Value="{Binding OffsetX ,Mode=TwoWay}"    VerticalAlignment="Top" TextChanged="NumbericTextBox_TextChanged">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="TextChanged">
-                                <xkit:EventBehavior Action="{Binding OffsetXChangedCommand}" />
+                                <xkit:EventBehavior Action="{Binding OffsetChangedCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </xkit:NumbericTextBox>
@@ -248,11 +318,11 @@
                     <xkit:NumbericTextBox  Margin="9,100,9,0" TextWrapping="Wrap" Text="0"  MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0"  Value="{Binding OffsetY ,Mode=TwoWay}"    VerticalAlignment="Top">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="TextChanged">
-                                <xkit:EventBehavior Action="{Binding OffsetYChangedCommand}" />
+                                <xkit:EventBehavior Action="{Binding OffsetChangedCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </xkit:NumbericTextBox>
-                    <Button Content="保存" HorizontalAlignment="Right" Margin="0,132,10,0" VerticalAlignment="Top" Width="65" Height="24" />
+                    <Button Content="应用" HorizontalAlignment="Right" Margin="0,132,10,0" VerticalAlignment="Top" Width="65" Height="24" Command="{Binding OffsetCommitCommand}" />
                 </Grid>
 
             </Grid>
@@ -288,18 +358,7 @@
                     Value="50" />
             </StatusBarItem>
             <StatusBarItem>
-                <ComboBox Height="24" Width="100" 
-                          SelectedItem="{Binding DrawingMode, Mode=TwoWay}"
-                          ItemsSource="{Binding Source={StaticResource DrawingModes}}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Converter={xkit:EnumDescriptionConverter}}"    >
 
-                            </TextBlock>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-
-                </ComboBox>
             </StatusBarItem>
 
             <StatusBarItem/>

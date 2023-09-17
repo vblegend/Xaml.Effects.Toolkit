@@ -9,6 +9,10 @@ namespace Assets.Editor
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static MainWindow Instance { get; private set; }
+
+
+
         public MainWindowModel Model { get; set; } = new MainWindowModel();
 
 
@@ -18,6 +22,7 @@ namespace Assets.Editor
             this.DataContext = Model;
             InitializeComponent();
             this.Model.OnClose += Model_OnClose;
+            Instance = this;
         }
 
         private void Model_OnClose(object sender, Xaml.Effects.Toolkit.Model.WindowDestroyArgs e)

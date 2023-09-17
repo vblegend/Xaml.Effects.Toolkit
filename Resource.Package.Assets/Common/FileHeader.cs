@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,16 +12,19 @@ namespace Resource.Package.Assets.Common
         /// <summary>
         /// 永远不会压缩
         /// </summary>
+        [Description("不要压缩")]
         NeverCompress = 1,
 
         /// <summary>
         /// 尽可能压缩
         /// </summary>
+        [Description("尽可能压缩")]
         MuchPossibleCompress = 2,
 
         /// <summary>
         /// 必须压缩
         /// </summary>
+        [Description("必须压缩")]
         MustCompressed = 3
     }
 
@@ -51,7 +55,8 @@ namespace Resource.Package.Assets.Common
 
 
 
-    internal class FileAsyncCache {
+    internal class FileAsyncCache
+    {
         public FileAsyncCache()
         {
             infomation = new FileInfomation();

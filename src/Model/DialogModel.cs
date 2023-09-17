@@ -110,7 +110,7 @@ namespace Xaml.Effects.Toolkit.Model
         /// </summary>
         protected virtual void Execute_Exit()
         {
-            this.DialogResult = true;
+            this.DialogResult = false;
         }
 
         protected virtual Boolean Can_Exit()
@@ -120,22 +120,22 @@ namespace Xaml.Effects.Toolkit.Model
         /// <summary>
         /// 确定选择,需要时在派生类中重写
         /// </summary>
-        public ICommand SubmitCommand { get; protected set; }
+        public IRelayCommand SubmitCommand { get; protected set; }
 
         /// <summary>
         /// 应用,需要时在派生类中重写
         /// </summary>
-        public ICommand ApplyCommand { get; protected set; }
+        public IRelayCommand ApplyCommand { get; protected set; }
 
         /// <summary>
         /// 取消选择,需要时在派生类中重写
         /// </summary>
-        public ICommand CancelCommand { get; protected set; }
+        public IRelayCommand CancelCommand { get; protected set; }
 
         /// <summary>
         /// 取消选择,需要时在派生类中重写
         /// </summary>
-        public ICommand ExitCommand { get; protected set; }
+        public IRelayCommand ExitCommand { get; protected set; }
 
 
         /// <summary>

@@ -68,11 +68,17 @@ namespace Resource.Package.Assets
         public void ChangePassword(String password)
         {
             this.password = BuildPassword(password);
+            this.Save();
+        }
+
+        public void Save()
+        {
             using (var writer = new BinaryWriter(fileStream, Encoding.UTF8, true))
             {
                 this.WriteIndex(writer);
             }
         }
+
 
 
 
@@ -166,20 +172,21 @@ namespace Resource.Package.Assets
         public void UpdateOffset(Int32 index, Point data)
         {
             var info = this.Infomations[index];
-            info.OffsetX += data.X;
-            info.OffsetY += data.Y;
-            using (var writer = new BinaryWriter(fileStream, Encoding.UTF8, true))
-            {
-                this.WriteIndex(writer);
-            }
+            info.OffsetX = data.X;
+            info.OffsetY = data.Y;
+            this.Save();
         }
 
 
         public void UpdateOffsetNoWrite(Int32 index, Point data)
         {
             var info = this.Infomations[index];
-            info.OffsetX += data.X;
-            info.OffsetY += data.Y;
+            if (info != null)
+            {
+                info.OffsetX = data.X;
+                info.OffsetY = data.Y;
+            }
+
         }
 
 
@@ -188,13 +195,10 @@ namespace Resource.Package.Assets
             foreach (var item in datas)
             {
                 var info = this.Infomations[item.Key];
-                info.OffsetX += item.Value.X;
-                info.OffsetY += item.Value.Y;
+                info.OffsetX = item.Value.X;
+                info.OffsetY = item.Value.Y;
             }
-            using (var writer = new BinaryWriter(fileStream, Encoding.UTF8, true))
-            {
-                this.WriteIndex(writer);
-            }
+            this.Save();
         }
 
 

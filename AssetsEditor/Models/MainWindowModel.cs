@@ -3,123 +3,29 @@ using Microsoft.Toolkit.Mvvm.Input;
 using Resource.Package.Assets;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Drawing.Imaging;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Xaml.Effects.Toolkit;
 using Xaml.Effects.Toolkit.Model;
-using Xaml.Effects.Toolkit.Uitity;
-using static System.Net.WebRequestMethods;
 using System.Windows;
-using System.Windows.Documents;
-using System.Collections.Generic;
-using System.Security.Policy;
 using Xaml.Effects.Toolkit.Converter;
+using Assets.Editor.Views;
+using Microsoft.Win32;
 
 namespace Assets.Editor.Models
 {
-
-    public class ImageModel : ObservableObject
-    {
-        public ImageModel()
-        {
-
-        }
-
-        public BitmapSource Source
-        {
-            get
-            {
-                return this.image;
-            }
-            set
-            {
-                base.SetProperty(ref this.image, value);
-            }
-        }
-
-        private BitmapSource image;
-
-
-
-
-        public Int32 Index
-        {
-            get
-            {
-                return this.index;
-            }
-            set
-            {
-                base.SetProperty(ref this.index, value);
-            }
-        }
-
-        private Int32 index;
-
-
-        public Int32 OffsetX
-        {
-            get
-            {
-                return this.offsetX;
-            }
-            set
-            {
-                base.SetProperty(ref this.offsetX, value);
-            }
-        }
-
-        private Int32 offsetX;
-
-
-
-
-        public Int32 OffsetY
-        {
-            get
-            {
-                return this.offsetY;
-            }
-            set
-            {
-                base.SetProperty(ref this.offsetY, value);
-            }
-        }
-
-        private Int32 offsetY;
-
-    }
-
-
 
 
 
     public class MainWindowModel : DialogModel
     {
 
+        public readonly String ImageFilter = "Image File|*.png;*.bmp;*.jpg";
+
         public ObservableCollection<String> ListItems { get; set; } = new ObservableCollection<String>();
 
         public ObservableCollection<ImageModel> GridImages { get; set; } = new ObservableCollection<ImageModel>();
-
-        /// <summary>
-        /// 应用,需要时在派生类中重写
-        /// </summary>
-        public ICommand VideoListCommand { get; protected set; }
-
-        /// <summary>
-        /// 应用,需要时在派生类中重写
-        /// </summary>
-        public ICommand ThemesCommand { get; protected set; }
-
-
-        public ICommand SettingCommand { get; protected set; }
 
 
         public ICommand PreviewMouseWheelCommand { get; protected set; }
@@ -128,53 +34,233 @@ namespace Assets.Editor.Models
 
         public ICommand SelectionChangedCommand { get; protected set; }
 
-        public ICommand OffsetXChangedCommand { get; protected set; }
-        public ICommand OffsetYChangedCommand { get; protected set; }
+        public ICommand OffsetChangedCommand { get; protected set; }
+        public IRelayCommand OffsetCommitCommand { get; protected set; }
+
+
+        public ICommand NewPackageCommand { get; protected set; }
+
+        public ICommand OpenPackageCommand { get; protected set; }
+
+        public IRelayCommand SavePackageCommand { get; protected set; }
+
+        public IRelayCommand ClosePackageCommand { get; protected set; }
+
+
+        public IRelayCommand ReplaceImageCommand { get; protected set; }
+
+        public IRelayCommand ImportImageCommand { get; protected set; }
+
+        public IRelayCommand ExportImageCommand { get; protected set; }
 
 
 
-        public ICommand HomeCommand { get; protected set; }
-
-        public ICommand RefreshCommand { get; protected set; }
-
-        public ICommand GoBackCommand { get; protected set; }
-
-
+        public ICommand ThemesCommand { get; protected set; }
 
         public AssetFileStream assetFile { get; protected set; }
 
 
         public MainWindowModel()
         {
-            Trace.WriteLine("do");
-            this.SettingCommand = new RelayCommand(Settings_Click);
+
             this.ThemesCommand = new RelayCommand(Themes_Click);
-            this.VideoListCommand = new RelayCommand(VideoList_Click);
-            this.HomeCommand = new RelayCommand(Home_Click);
-            this.GoBackCommand = new RelayCommand(Goback_Click);
-            this.RefreshCommand = new RelayCommand(Refresh_Click);
+            this.OpenPackageCommand = new RelayCommand(OpenPackage_Click);
+            this.ClosePackageCommand = new RelayCommand(ClosePackage_Click, ClosePackage_CanClick);
+            this.SavePackageCommand = new RelayCommand(SavePackage_Click, SavePackage_CanClick);
+
+            this.ReplaceImageCommand = new RelayCommand(ReplaceImage_Click, ReplaceImage_CanClick);
+            this.ImportImageCommand = new RelayCommand(ImportImage_Click, ImportImage_CanClick);
+            this.ExportImageCommand = new RelayCommand(ExportImage_Click, ExportImage_CanClick);
+
+
             this.PreviewMouseWheelCommand = new RelayCommand<MouseWheelEventArgs>(ListView_PreviewMouseWheel);
             this.PageChangedCommand = new RelayCommand<RoutedPropertyChangedEventArgs<double>>(ScrollBar_ValueChanged);
             this.SelectionChangedCommand = new RelayCommand<System.Windows.Controls.SelectionChangedEventArgs>(ListView_SelectionChanged);
-            this.OffsetXChangedCommand = new RelayCommand<System.Windows.Controls.TextChangedEventArgs>(OffsetX_TextChanged);
-            this.OffsetYChangedCommand = new RelayCommand<System.Windows.Controls.TextChangedEventArgs>(OffsetY_TextChanged);
-
-   
+            this.OffsetChangedCommand = new RelayCommand<System.Windows.Controls.TextChangedEventArgs>(Offset_TextChanged);
+            this.OffsetCommitCommand = new RelayCommand(OffsetCommit_Click, OffsetCommit_CanClick);
+            this.NewPackageCommand = new RelayCommand(NewPackage_Click);
             this.currentPage = 0;
             this.Title = "Assets Editor - Power by Hanks";
             this.PageSize = 64;
             this.ZoomValue = 1;
-            this.DrawingMode = DrawingMode.AlphaBlend ;
-            this.assetFile = AssetFileStream.Open("12345.asset", "123");
+            this.DrawingMode = DrawingMode.Raw;
+
             resizePage();
             refreshPage();
         }
 
 
+        private void NewPackage_Click()
+        {
+            var dialog = new CreateAssetsInput();
+            dialog.Owner = MainWindow.Instance;
+            var result = dialog.ShowDialog();
+            if (result.HasValue && result.Value)
+            {
+                this.OpenAssetPackage(dialog.Model.FileName, dialog.Model.Password);
+            }
+        }
+
+
+
+
+
+
+
+
+        private Boolean ReplaceImage_CanClick()
+        {
+            return this.assetFile != null && this.SelectedImage != null;
+        }
+
+        private void ReplaceImage_Click()
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            //ofd.InitialDirectory = @"D:\";
+            ofd.Filter = ImageFilter;
+            if (ofd.ShowDialog() == true)
+            {
+                var data = File.ReadAllBytes(ofd.FileName);
+                this.assetFile.Replace(this.SelectedImage.Index, new Resource.Package.Assets.Common.DataBlock { Data = data, OffsetX = 0, OffsetY = 0 });
+                SavePackage_Click();
+                refreshPage();
+            }
+        }
+
+        private Boolean ImportImage_CanClick()
+        {
+            return this.assetFile != null;
+        }
+        private void ImportImage_Click()
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            //ofd.InitialDirectory = @"D:\";
+            ofd.Filter = ImageFilter;
+            if (ofd.ShowDialog() == true)
+            {
+                var data = File.ReadAllBytes(ofd.FileName);
+                this.assetFile.Import(new Resource.Package.Assets.Common.DataBlock { Data = data, OffsetX = 0, OffsetY = 0 });
+                SavePackage_Click();
+                refreshPage();
+            }
+        }
+
+
+        private Boolean ExportImage_CanClick()
+        {
+            return this.assetFile != null && this.SelectedImage != null;
+        }
+        private void ExportImage_Click()
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            //sfd.InitialDirectory = @"D:\";
+            sfd.Filter = ImageFilter;
+            if (sfd.ShowDialog() == true)
+            {
+                var node = this.assetFile.Read(this.SelectedImage.Index);
+                File.WriteAllBytes(sfd.FileName, node.Data);
+            }
+
+        }
+
+
+        private void OpenAssetPackage(String filename, String password)
+        {
+            ClosePackage_Click();
+            try
+            {
+                this.assetFile = AssetFileStream.Open(filename, password);
+                this.Title = $"Assets Editor - {filename}";
+                resizePage();
+                refreshPage();
+                this.ClosePackageCommand.NotifyCanExecuteChanged();
+                this.ReplaceImageCommand.NotifyCanExecuteChanged();
+                this.ImportImageCommand.NotifyCanExecuteChanged();
+                this.ExportImageCommand.NotifyCanExecuteChanged();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+        }
+
+
+
+        private Boolean needSave { get; set; } = false;
+        private Boolean SavePackage_CanClick()
+        {
+            return this.assetFile != null && this.needSave;
+        }
+        private void SavePackage_Click()
+        {
+            this.assetFile.Save();
+            this.needSave = false;
+            this.SavePackageCommand.NotifyCanExecuteChanged();
+        }
+
+
+
+        private Boolean ClosePackage_CanClick()
+        {
+            return this.assetFile != null;
+        }
+
+
+
+        private void ClosePackage_Click()
+        {
+            this.SelectedImage = null;
+            this.OffsetX = 0;
+            this.OffsetY = 0;
+            if (this.assetFile != null)
+            {
+                this.assetFile.Close();
+                this.assetFile.Dispose();
+                this.assetFile = null;
+                this.ClosePackageCommand.NotifyCanExecuteChanged();
+
+                this.offsetChanged = false;
+                this.OffsetCommitCommand.NotifyCanExecuteChanged();
+
+                this.needSave = false;
+                this.SavePackageCommand.NotifyCanExecuteChanged();
+                this.ImportImageCommand.NotifyCanExecuteChanged();
+                this.ExportImageCommand.NotifyCanExecuteChanged();
+                this.ReplaceImageCommand.NotifyCanExecuteChanged();
+
+            }
+            resizePage();
+            this.Title = "Assets Editor - Power by Hanks";
+        }
+
+
+        private void OpenPackage_Click()
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            //ofd.InitialDirectory = @"D:\";
+            ofd.Filter = "Assets Package|*.asset";
+            if (ofd.ShowDialog() == true)
+            {
+                var dialog = new PasswordInput();
+                dialog.Owner = MainWindow.Instance;
+                var result = dialog.ShowDialog();
+                if (result.HasValue && result.Value)
+                {
+                    this.OpenAssetPackage(ofd.FileName, dialog.Model.Password);
+                }
+            }
+        }
+
+
+
+
 
         private void resizePage()
         {
-            var pagesize2 = this.assetFile.NumberOfFiles - (this.CurrentPage * this.PageSize);
+            var numberOfFiles = 0;
+            if (this.assetFile != null) numberOfFiles = this.assetFile.NumberOfFiles;
+            var pagesize2 = numberOfFiles - (this.CurrentPage * this.PageSize);
             var pagesize = Math.Min(this.PageSize, pagesize2);
             this.PageElementCount = pagesize;
             this.GridImages.Clear();
@@ -182,7 +268,7 @@ namespace Assets.Editor.Models
             {
                 this.GridImages.Add(new ImageModel());
             }
-            this.TotalPage = this.assetFile.NumberOfFiles / this.PageSize;
+            this.TotalPage = numberOfFiles / this.PageSize;
             if (this.CurrentPage > this.totalPage)
             {
                 this.CurrentPage = this.totalPage;
@@ -191,6 +277,9 @@ namespace Assets.Editor.Models
 
         private void refreshPage()
         {
+            if (this.assetFile == null) return;
+
+
             var pagesize2 = this.assetFile.NumberOfFiles - (this.CurrentPage * this.PageSize);
             var pagesize = Math.Min(this.PageSize, pagesize2);
             if (this.PageElementCount != pagesize)
@@ -217,7 +306,6 @@ namespace Assets.Editor.Models
 
         private BitmapSource loadImageSource(Byte[] data)
         {
-
             using (MemoryStream stream = new MemoryStream(data))
             {
                 BitmapImage result = new BitmapImage();
@@ -229,35 +317,6 @@ namespace Assets.Editor.Models
                 return result;
             }
         }
-
-
-        private BitmapSource BitmapFilter(BitmapSource bitmap, Int32 R, Int32 G, Int32 B, Int32 Alpha = 0xff)
-        {
-            FormatConvertedBitmap fb = new FormatConvertedBitmap();//图片像素格式转换类
-            fb.BeginInit();
-            fb.Source = bitmap;
-            fb.DestinationFormat = PixelFormats.Bgra32;
-            fb.EndInit();
-            var stride = (fb.PixelWidth * fb.Format.BitsPerPixel + 7) / 8;
-            byte[] buf = new byte[fb.PixelHeight * stride];
-            fb.CopyPixels(Int32Rect.Empty, buf, stride, 0);
-            for (long ic = 0; ic < buf.LongLength; ic += 4)
-            {
-                if (buf[ic] == R && buf[ic + 1] == G && buf[ic + 2] == B && buf[ic + 3] == Alpha)
-                {
-                    buf[ic] = 0x00;
-                    buf[ic + 1] = 0x00;
-                    buf[ic + 2] = 0x00;
-                    buf[ic + 3] = 0x00;//透明处理
-                }
-            }
-            var source = new WriteableBitmap(fb.PixelWidth, fb.PixelHeight, fb.DpiX, fb.DpiY, fb.Format, fb.Palette);
-            source.WritePixels(new Int32Rect(0, 0, fb.PixelWidth, fb.PixelHeight), buf, stride, 0);
-            return source;// BitmapSource.Create(bitmap.PixelWidth, bitmap.PixelHeight, bitmap.DpiX, bitmap.DpiY, bitmap.Format, null, buf, stride);
-        }
-
-
-
 
 
         private void Themes_Click()
@@ -300,28 +359,38 @@ namespace Assets.Editor.Models
             {
                 this.SelectedImage = null;
             }
-
+            this.ReplaceImageCommand.NotifyCanExecuteChanged();
+            this.ExportImageCommand.NotifyCanExecuteChanged();
         }
 
 
 
-        private void OffsetX_TextChanged(System.Windows.Controls.TextChangedEventArgs e)
+        private void Offset_TextChanged(System.Windows.Controls.TextChangedEventArgs e)
         {
-            if (this.SelectedImage.OffsetX != this.OffsetX)
-            {
-                this.SelectedImage.OffsetX = this.OffsetX;
-                this.assetFile.UpdateOffsetNoWrite(this.SelectedImage.Index, new System.Drawing.Point(this.SelectedImage.OffsetX, this.SelectedImage.OffsetY));
-            }
+            this.offsetChanged = this.SelectedImage != null && (this.OffsetX != this.SelectedImage.OffsetX || this.OffsetY != this.SelectedImage.OffsetY);
+            this.OffsetCommitCommand.NotifyCanExecuteChanged();
         }
 
-        private void OffsetY_TextChanged(System.Windows.Controls.TextChangedEventArgs e)
+        private Boolean offsetChanged = false;
+
+
+        private Boolean OffsetCommit_CanClick()
         {
-            if (this.SelectedImage.OffsetY != this.OffsetY)
-            {
-                this.SelectedImage.OffsetY = this.OffsetY;
-                this.assetFile.UpdateOffsetNoWrite(this.SelectedImage.Index, new System.Drawing.Point(this.SelectedImage.OffsetX, this.SelectedImage.OffsetY));
-            }
+            return this.offsetChanged;
         }
+
+
+        private void OffsetCommit_Click()
+        {
+            this.SelectedImage.OffsetX = this.OffsetX;
+            this.SelectedImage.OffsetY = this.OffsetY;
+            this.assetFile.UpdateOffsetNoWrite(this.SelectedImage.Index, new System.Drawing.Point(this.OffsetX, this.OffsetY));
+            this.offsetChanged = false;
+            this.OffsetCommitCommand.NotifyCanExecuteChanged();
+            this.needSave = true;
+            this.SavePackageCommand.NotifyCanExecuteChanged();
+        }
+
 
 
 
@@ -338,49 +407,6 @@ namespace Assets.Editor.Models
             }
         }
 
-
-
-
-
-
-
-        private void Settings_Click()
-        {
-
-        }
-
-        private void Goback_Click()
-        {
-
-        }
-
-        private void Refresh_Click()
-        {
-
-        }
-
-
-        private void Home_Click()
-        {
-
-        }
-
-
-        private void VideoList_Click()
-        {
-
-        }
-
-
-        private void Video_Closed(object sender, EventArgs e)
-        {
-
-        }
-
-
-
-
-        
 
 
         /// <summary>

@@ -1,9 +1,8 @@
 ﻿using Resource.Package.Assets.Common;
 using Resource.Package.Assets.Secure;
+using Resource.Package.Assets.Version;
 using System.Drawing;
-using System.IO.Compression;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,7 +24,7 @@ namespace Resource.Package.Assets
             var meta = new FileHeader();
             meta.CompressOption = compressionOption;
             meta.Magic = MAGIC;
-            meta.Version = new byte[] { 1, 0, 0 };
+            meta.Version = new byte[] { 1, 0, 1 };
             meta.TableDataSize = 0;
             meta.TableDataAddr = 24;
             meta.NumberOfFiles = 0;
@@ -114,17 +113,18 @@ namespace Resource.Package.Assets
                 header.TableDataAddr = reader.ReadInt32();
                 header.TableDataSize = reader.ReadInt32();
                 this.ReadIndex(reader);
+                header.Version = new Byte[] { 1, 0, 1 };
             }
         }
 
 
 
-        public DataBlock Read(Int32 index)
+        public ReadDataBlock Read(Int32 index)
         {
             var info = this.Infomations[index];
             using (var reader = new BinaryReader(fileStream, Encoding.UTF8, true))
             {
-                var node = new DataBlock();
+                var node = new ReadDataBlock();
                 var data = new Byte[info.lpSize];
                 reader.BaseStream.Position = info.lpData;
                 reader.Read(data);
@@ -133,6 +133,10 @@ namespace Resource.Package.Assets
                     // 解密 data
                     data = ZLib.Decompress(data, info.lpRawSize);
                 }
+                node.lpType = info.lpType;
+                node.unknown1 = info.unknown1;
+                node.unknown2 = info.unknown2;
+                node.unknown3 = info.unknown3;
                 node.OffsetX = info.OffsetX;
                 node.OffsetY = info.OffsetY;
                 node.Data = data;
@@ -148,7 +152,9 @@ namespace Resource.Package.Assets
             {
                 info.OffsetX = task.infomation.OffsetX;
                 info.OffsetY = task.infomation.OffsetY;
+                info.lpType = task.infomation.lpType;
                 info.lpRawSize = task.infomation.lpRawSize;
+
                 if (info.lpSize >= task.infomation.lpSize)
                 {
                     info.lpSize = task.infomation.lpSize;
@@ -172,8 +178,8 @@ namespace Resource.Package.Assets
         public void UpdateOffset(Int32 index, Point data)
         {
             var info = this.Infomations[index];
-            info.OffsetX = data.X;
-            info.OffsetY = data.Y;
+            info.OffsetX = (Int16)data.X;
+            info.OffsetY = (Int16)data.Y;
             this.Save();
         }
 
@@ -183,8 +189,8 @@ namespace Resource.Package.Assets
             var info = this.Infomations[index];
             if (info != null)
             {
-                info.OffsetX = data.X;
-                info.OffsetY = data.Y;
+                info.OffsetX = (Int16)data.X;
+                info.OffsetY = (Int16)data.Y;
             }
 
         }
@@ -195,11 +201,24 @@ namespace Resource.Package.Assets
             foreach (var item in datas)
             {
                 var info = this.Infomations[item.Key];
-                info.OffsetX = item.Value.X;
-                info.OffsetY = item.Value.Y;
+                info.OffsetX = (Int16)item.Value.X;
+                info.OffsetY = (Int16)item.Value.Y;
             }
             this.Save();
         }
+
+        private ImageTypes ParseImageFormat(Byte[] data)
+        {
+            if (data[0] == 0x42 && data[1] == 0x4D) return ImageTypes.BMP;
+            if (data[0] == 0x89 && data[1] == 0x50 && data[2] == 0x4E && data[3] == 0x47) return ImageTypes.PNG;
+            if (data[0] == 0xFF && data[1] == 0xD8 && data[2] == 0xFF) return ImageTypes.JPG;
+            if (data[0] == 0x47 && data[1] == 0x49 && data[2] == 0x46 && data[3] == 0x38) return ImageTypes.GIF;
+            if (data[0] == 0x00 && data[1] == 0x00 && (data[2] == 0x02 || data[2] == 0x0A) ) return ImageTypes.TGA;
+            if (data[0] == 0x49 && data[1] == 0x49 && data[2] == 0x2A && data[3] == 0x00) return ImageTypes.TIFF;
+            return ImageTypes.Unknown;
+        }
+
+
 
 
         private async Task<FileAsyncCache> Preconditioning(DataBlock item)
@@ -208,6 +227,7 @@ namespace Resource.Package.Assets
             task.infomation.OffsetX = item.OffsetX;
             task.infomation.OffsetY = item.OffsetY;
             task.infomation.lpRawSize = item.Data.Length;
+            task.infomation.lpType = ParseImageFormat(item.Data);
             if (header.CompressOption == CompressionOption.MuchPossibleCompress || header.CompressOption == CompressionOption.MustCompressed)
             {
                 task.Data = await ZLib.Compress(item.Data);
@@ -255,21 +275,8 @@ namespace Resource.Package.Assets
 
         public Int32 Import(DataBlock data)
         {
-            var info = new FileInfomation();
-            Byte[] outData = data.Data;
-            if (header.CompressOption == CompressionOption.MuchPossibleCompress || header.CompressOption == CompressionOption.MustCompressed)
-            {
-                outData = ZLib.Compress(data.Data).Result;
-                if (outData.Length > data.Data.Length && header.CompressOption == CompressionOption.MuchPossibleCompress)
-                {
-                    outData = data.Data;
-                }
-            }
-            info.OffsetX = data.OffsetX;
-            info.OffsetY = data.OffsetY;
-            info.lpSize = outData.Length;
-            info.lpRawSize = data.Data.Length;
-            return this.Import(info, outData);
+            var task = Preconditioning(data).Result;
+            return this.Import(task.infomation, task.Data);
         }
 
 
@@ -331,6 +338,7 @@ namespace Resource.Package.Assets
             {
                 throw new Exception("无效的密码");
             }
+            var stream = InfomationStream.GetReader(this.header.Version);
             using (var ms = new MemoryStream(raw))
             {
                 this.Infomations = new List<FileInfomation>();
@@ -338,12 +346,7 @@ namespace Resource.Package.Assets
                 {
                     for (int i = 0; i < header.NumberOfFiles; i++)
                     {
-                        var info = new FileInfomation();
-                        info.OffsetX = msReader.ReadInt32();
-                        info.OffsetY = msReader.ReadInt32();
-                        info.lpSize = msReader.ReadInt32();
-                        info.lpRawSize = msReader.ReadInt32();
-                        info.lpData = msReader.ReadInt32();
+                        var info = stream.Read(msReader);
                         this.Infomations.Add(info);
                     }
                 }
@@ -357,21 +360,20 @@ namespace Resource.Package.Assets
 
         private void WriteIndex(BinaryWriter writer)
         {
+            var stream = InfomationStream.GetReader(this.header.Version);
             using (var ms = new MemoryStream())
             {
                 using (var msWriter = new BinaryWriter(ms, Encoding.UTF8, true))
                 {
                     for (int i = 0; i < header.NumberOfFiles; i++)
                     {
-                        msWriter.Write(Infomations[i].OffsetX);
-                        msWriter.Write(Infomations[i].OffsetY);
-                        msWriter.Write(Infomations[i].lpSize);
-                        msWriter.Write(Infomations[i].lpRawSize);
-                        msWriter.Write(Infomations[i].lpData);
+                        stream.Write(msWriter, Infomations[i]);
                     }
                 }
                 var tab = AES.Encrypt(ms.ToArray(), this.password);
                 header.TableDataSize = tab.Length;
+                //writer.Seek(8, SeekOrigin.Begin);
+                //writer.Write(this.header.Version);
                 writer.Seek(12, SeekOrigin.Begin);
                 writer.Write(header.NumberOfFiles);
                 writer.Write(header.TableDataAddr);
@@ -380,6 +382,15 @@ namespace Resource.Package.Assets
                 writer.Write(tab);
             }
         }
+
+
+
+
+
+
+
+
+
 
 
     }

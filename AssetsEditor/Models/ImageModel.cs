@@ -1,4 +1,5 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Resource.Package.Assets.Common;
 using System;
 using System.Windows.Media.Imaging;
 
@@ -25,6 +26,23 @@ namespace Assets.Editor.Models
         }
 
         private BitmapSource image;
+
+
+
+        public ImageTypes Type
+        {
+            get
+            {
+                return this.type;
+            }
+            set
+            {
+                base.SetProperty(ref this.type, value);
+            }
+        }
+
+        private ImageTypes type;
+
 
 
 

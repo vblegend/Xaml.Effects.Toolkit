@@ -125,7 +125,7 @@
         </xkit:WindowTheme>
     </xkit:WindowTheme.Theme>
 
-    <Grid>
+    <Grid Margin="0,-7,0,7">
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
             <RowDefinition Height="*"/>
@@ -305,24 +305,30 @@
                 </Grid>
 
                 <Grid Grid.Column="1" >
-                    <Border BorderThickness="1" ></Border>
-                    <Label  Content="X轴偏移量：" Margin="0,20,0,0" VerticalAlignment="Top" Width="139"/>
-                    <xkit:NumbericTextBox  Margin="9,47,9,0" TextWrapping="Wrap" Text="0" MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0" Value="{Binding OffsetX ,Mode=TwoWay}"    VerticalAlignment="Top" TextChanged="NumbericTextBox_TextChanged">
+                    <Border BorderThickness="1" >
+
+                    </Border>
+                    <Label  Content="图片类型：" Margin="6,10,5,0" VerticalAlignment="Top" Width="139"/>
+                    <TextBox Text="{Binding ImageType}" IsReadOnly="True" IsEnabled="False" VerticalAlignment="Top" Margin="9,36,9,0"/>
+
+                    <Label  Content="X轴偏移量：" Margin="6,62,5,0" VerticalAlignment="Top" Width="139"/>
+                    <xkit:NumbericTextBox  Margin="9,89,9,0" TextWrapping="Wrap" Text="0" MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0" Value="{Binding OffsetX ,Mode=TwoWay}"    VerticalAlignment="Top" TextChanged="NumbericTextBox_TextChanged">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="TextChanged">
                                 <xkit:EventBehavior Action="{Binding OffsetChangedCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </xkit:NumbericTextBox>
-                    <Label  Content="Y轴偏移量：" Margin="0,73,0,0" VerticalAlignment="Top" Width="139"/>
-                    <xkit:NumbericTextBox  Margin="9,100,9,0" TextWrapping="Wrap" Text="0"  MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0"  Value="{Binding OffsetY ,Mode=TwoWay}"    VerticalAlignment="Top">
+                    <Label  Content="Y轴偏移量：" Margin="6,0,5,0" VerticalAlignment="Center" Width="139"/>
+                    <xkit:NumbericTextBox  Margin="9,142,9,0" TextWrapping="Wrap" Text="0"  MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0"  Value="{Binding OffsetY ,Mode=TwoWay}"    VerticalAlignment="Top">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="TextChanged">
                                 <xkit:EventBehavior Action="{Binding OffsetChangedCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </xkit:NumbericTextBox>
-                    <Button Content="应用" HorizontalAlignment="Right" Margin="0,132,10,0" VerticalAlignment="Top" Width="65" Height="24" Command="{Binding OffsetCommitCommand}" />
+                    <Button Content="应用" HorizontalAlignment="Right" Margin="0,174,10,0" VerticalAlignment="Top" Width="65" Height="24" Command="{Binding OffsetCommitCommand}" />
+
                 </Grid>
 
             </Grid>

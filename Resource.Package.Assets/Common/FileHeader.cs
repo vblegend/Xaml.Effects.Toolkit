@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace Resource.Package.Assets.Common
 {
@@ -68,15 +63,62 @@ namespace Resource.Package.Assets.Common
     }
 
 
+
+    public enum ImageTypes : Byte
+    {
+        [Description("Unknown")]
+        Unknown = 0,
+        [Description("Bmp")]
+        BMP = 1,
+        [Description("Png")]
+        PNG = 2,
+        [Description("Jpg")]
+        JPG = 3,
+        [Description("Gif")]
+        GIF = 4,
+        [Description("Tga")]
+        TGA = 5,
+        [Description("Tiff")]
+        TIFF = 6
+    }
+
+
+
     public struct DataBlock
     {
-        public Int32 OffsetX { get; set; }
-        public Int32 OffsetY { get; set; }
+        public Int16 OffsetX { get; set; }
+        public Int16 OffsetY { get; set; }
         public Byte[] Data { get; set; }
     }
 
+
+    public struct ReadDataBlock
+    {
+        public Int16 OffsetX { get; set; }
+        public Int16 OffsetY { get; set; }
+        public Byte[] Data { get; set; }
+
+        public ImageTypes lpType { get; set; }
+        public Byte unknown1 { get; set; }
+        public Byte unknown2 { get; set; }
+        public Byte unknown3 { get; set; }
+    }
+
+
+
+
+
+
+
+
+
+
     internal class FileInfomation
     {
+        public ImageTypes lpType { get; set; }
+        public Byte unknown1 { get; set; }
+        public Byte unknown2 { get; set; }
+        public Byte unknown3 { get; set; }
 
         /// <summary>
         /// 数据地址
@@ -84,8 +126,8 @@ namespace Resource.Package.Assets.Common
         /// </summary>
         public Int32 lpData { get; set; }
 
-        public Int32 OffsetX { get; set; }
-        public Int32 OffsetY { get; set; }
+        public Int16 OffsetX { get; set; }
+        public Int16 OffsetY { get; set; }
 
 
         /// <summary>

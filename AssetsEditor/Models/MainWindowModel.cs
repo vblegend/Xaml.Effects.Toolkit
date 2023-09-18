@@ -12,6 +12,7 @@ using System.Windows;
 using Xaml.Effects.Toolkit.Converter;
 using Assets.Editor.Views;
 using Microsoft.Win32;
+using Resource.Package.Assets.Common;
 
 namespace Assets.Editor.Models
 {
@@ -21,7 +22,7 @@ namespace Assets.Editor.Models
     public class MainWindowModel : DialogModel
     {
 
-        public readonly String ImageFilter = "Image File|*.png;*.bmp;*.jpg";
+        public readonly String ImageFilter = "Image File|*.png;*.bmp;*.gif;*.jpg;*.tif";
 
         public ObservableCollection<String> ListItems { get; set; } = new ObservableCollection<String>();
 
@@ -84,7 +85,7 @@ namespace Assets.Editor.Models
             this.PageSize = 64;
             this.ZoomValue = 1;
             this.DrawingMode = DrawingMode.Raw;
-
+            this.ImageType = ImageTypes.BMP;
             resizePage();
             refreshPage();
         }
@@ -278,8 +279,6 @@ namespace Assets.Editor.Models
         private void refreshPage()
         {
             if (this.assetFile == null) return;
-
-
             var pagesize2 = this.assetFile.NumberOfFiles - (this.CurrentPage * this.PageSize);
             var pagesize = Math.Min(this.PageSize, pagesize2);
             if (this.PageElementCount != pagesize)
@@ -295,6 +294,7 @@ namespace Assets.Editor.Models
                     var source = loadImageSource(node.Data);
                     this.GridImages[i].Index = startAt + i;
                     this.GridImages[i].Source = source;
+                    this.GridImages[i].Type = node.lpType;
                     this.GridImages[i].OffsetX = node.OffsetX;
                     this.GridImages[i].OffsetY = node.OffsetY;
 
@@ -306,15 +306,22 @@ namespace Assets.Editor.Models
 
         private BitmapSource loadImageSource(Byte[] data)
         {
-            using (MemoryStream stream = new MemoryStream(data))
+            try
             {
-                BitmapImage result = new BitmapImage();
-                result.BeginInit();
-                result.CacheOption = BitmapCacheOption.OnLoad;
-                result.StreamSource = stream;
-                result.EndInit();
-                result.Freeze();
-                return result;
+                using (MemoryStream stream = new MemoryStream(data))
+                {
+                    BitmapImage result = new BitmapImage();
+                    result.BeginInit();
+                    result.CacheOption = BitmapCacheOption.OnLoad;
+                    result.StreamSource = stream;
+                    result.EndInit();
+                    result.Freeze();
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
             }
         }
 
@@ -354,6 +361,7 @@ namespace Assets.Editor.Models
                 this.SelectedImage = e.AddedItems[0] as ImageModel;
                 this.OffsetX = this.SelectedImage.OffsetX;
                 this.OffsetY = this.SelectedImage.OffsetY;
+                this.ImageType = this.SelectedImage.Type;
             }
             else
             {
@@ -556,5 +564,21 @@ namespace Assets.Editor.Models
         }
 
         private Int32 offsetY;
+
+
+        public ImageTypes ImageType
+        {
+            get
+            {
+                return this.imageType;
+            }
+            set
+            {
+                base.SetProperty(ref this.imageType, value);
+            }
+        }
+
+        private ImageTypes imageType;
+
     }
 }

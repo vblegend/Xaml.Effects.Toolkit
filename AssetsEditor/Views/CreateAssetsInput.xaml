@@ -22,17 +22,11 @@
         WindowStartupLocation="CenterOwner"
     >
     <Window.Resources>
-
-
         <ObjectDataProvider x:Key="CompressionOptions" MethodName="GetValues" ObjectType="{x:Type mscorlib:Enum}">
             <ObjectDataProvider.MethodParameters>
                 <x:Type TypeName="assets:CompressionOption"></x:Type>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
-
-
-
-
     </Window.Resources>
 
 

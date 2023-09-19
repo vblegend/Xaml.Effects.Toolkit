@@ -82,6 +82,19 @@ namespace Resource.Package.Assets.Common
         TIFF = 6
     }
 
+    public enum RenderTypes : Byte
+    {
+        [Description("正常渲染")]
+        Normal = 0,
+        [Description("去除底色")]
+        MaskColor = 1,
+        [Description("混合渲染")]
+        Blend = 2
+    }
+
+
+
+
 
 
     public struct DataBlock
@@ -99,9 +112,10 @@ namespace Resource.Package.Assets.Common
         public Byte[] Data { get; set; }
 
         public ImageTypes lpType { get; set; }
-        public Byte unknown1 { get; set; }
+        public RenderTypes lpRenderType { get; set; }
+
         public Byte unknown2 { get; set; }
-        public Byte unknown3 { get; set; }
+        public Byte unknown1 { get; set; }
     }
 
 
@@ -116,9 +130,10 @@ namespace Resource.Package.Assets.Common
     internal class FileInfomation
     {
         public ImageTypes lpType { get; set; }
-        public Byte unknown1 { get; set; }
+        public RenderTypes lpRenderType { get; set; }
+
         public Byte unknown2 { get; set; }
-        public Byte unknown3 { get; set; }
+        public Byte unknown1 { get; set; }
 
         /// <summary>
         /// 数据地址

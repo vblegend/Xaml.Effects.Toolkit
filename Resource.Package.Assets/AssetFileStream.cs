@@ -134,9 +134,9 @@ namespace Resource.Package.Assets
                     data = ZLib.Decompress(data, info.lpRawSize);
                 }
                 node.lpType = info.lpType;
+                node.lpRenderType = info.lpRenderType;
                 node.unknown1 = info.unknown1;
                 node.unknown2 = info.unknown2;
-                node.unknown3 = info.unknown3;
                 node.OffsetX = info.OffsetX;
                 node.OffsetY = info.OffsetY;
                 node.Data = data;

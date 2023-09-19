@@ -7,6 +7,8 @@
         xmlns:xkit="http://schemas.l2030.com/xkit" 
         xmlns:models="clr-namespace:Assets.Editor.Models"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+            xmlns:mscorlib="clr-namespace:System;assembly=mscorlib"
+        xmlns:common="clr-namespace:Resource.Package.Assets.Common;assembly=Resource.Package.Assets"
         x:Class="Assets.Editor.MainWindow"
         Title="{Binding Title}"
         Width="1024"
@@ -18,6 +20,14 @@
         WindowStyle="None"
         mc:Ignorable="d"
     >
+    <Window.Resources>
+        <ObjectDataProvider x:Key="RenderTypes" MethodName="GetValues" ObjectType="{x:Type mscorlib:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="common:RenderTypes"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Window.Resources>
+
     <xkit:WindowTheme.Theme>
         <xkit:WindowTheme
             BorderBrush="{DynamicResource WINDOW_BORDER_COLOR}"
@@ -125,7 +135,7 @@
         </xkit:WindowTheme>
     </xkit:WindowTheme.Theme>
 
-    <Grid Margin="0,-7,0,7">
+    <Grid Margin="0,0,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
             <RowDefinition Height="*"/>
@@ -230,7 +240,7 @@
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="170*"/>
-                <RowDefinition Height="100*" MinHeight="160"/>
+                <RowDefinition Height="100*" MinHeight="205"/>
             </Grid.RowDefinitions>
 
             <Grid >
@@ -309,18 +319,18 @@
 
                     </Border>
                     <Label  Content="图片类型：" Margin="6,10,5,0" VerticalAlignment="Top" Width="139"/>
-                    <TextBox Text="{Binding ImageType}" IsReadOnly="True" IsEnabled="False" VerticalAlignment="Top" Margin="9,36,9,0"/>
+                    <TextBox Text="{Binding Selected.ImageType}" IsReadOnly="True" IsEnabled="False" VerticalAlignment="Top" Margin="9,36,9,0"/>
 
                     <Label  Content="X轴偏移量：" Margin="6,62,5,0" VerticalAlignment="Top" Width="139"/>
-                    <xkit:NumbericTextBox  Margin="9,89,9,0" TextWrapping="Wrap" Text="0" MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0" Value="{Binding OffsetX ,Mode=TwoWay}"    VerticalAlignment="Top" TextChanged="NumbericTextBox_TextChanged">
+                    <xkit:NumbericTextBox  Margin="9,89,9,0" TextWrapping="Wrap" Text="0" MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0" Value="{Binding Selected.OffsetX ,Mode=TwoWay}"    VerticalAlignment="Top" TextChanged="NumbericTextBox_TextChanged">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="TextChanged">
                                 <xkit:EventBehavior Action="{Binding OffsetChangedCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </xkit:NumbericTextBox>
-                    <Label  Content="Y轴偏移量：" Margin="6,0,5,0" VerticalAlignment="Center" Width="139"/>
-                    <xkit:NumbericTextBox  Margin="9,142,9,0" TextWrapping="Wrap" Text="0"  MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0"  Value="{Binding OffsetY ,Mode=TwoWay}"    VerticalAlignment="Top">
+                    <Label  Content="Y轴偏移量：" Margin="6,115,5,0" VerticalAlignment="Top" Width="139"/>
+                    <xkit:NumbericTextBox  Margin="9,142,9,0" TextWrapping="Wrap" Text="0"  MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0"  Value="{Binding Selected.OffsetY ,Mode=TwoWay}"    VerticalAlignment="Top">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="TextChanged">
                                 <xkit:EventBehavior Action="{Binding OffsetChangedCommand}" />
@@ -329,6 +339,15 @@
                     </xkit:NumbericTextBox>
                     <Button Content="应用" HorizontalAlignment="Right" Margin="0,174,10,0" VerticalAlignment="Top" Width="65" Height="24" Command="{Binding OffsetCommitCommand}" />
 
+
+                    <ComboBox  VerticalAlignment="Top" Height="24"   SelectedItem="{Binding Selected.RenderType, Mode=TwoWay}" ItemsSource="{Binding Source={StaticResource RenderTypes}}" Margin="0,204,1,0">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={xkit:EnumDescriptionConverter}}"    >
+                                </TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                 </Grid>
 
             </Grid>
@@ -342,7 +361,7 @@
             Grid.Row="2"
             Background="{DynamicResource GLOBAL_STATUSBAR_BACKGROUND}"
             BorderBrush="{DynamicResource GLOBAL_STATUSBAR_BORDERROUND}"
-            Height="30" VerticalAlignment="Bottom">
+            Height="26" VerticalAlignment="Bottom">
 
             <StatusBarItem Width="124">
                 <Label

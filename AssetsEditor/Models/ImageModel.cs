@@ -11,7 +11,23 @@ namespace Assets.Editor.Models
         public ImageModel()
         {
 
+
         }
+
+        public void CopyFrom(ImageModel mode)
+        {
+            this.Source = mode.Source;
+            this.OffsetX = mode.OffsetX;
+            this.OffsetY = mode.OffsetY;
+            this.ImageType = mode.ImageType;
+            this.RenderType = mode.RenderType;
+            this.Index = mode.Index;
+        }
+
+
+
+
+
 
         public BitmapSource Source
         {
@@ -29,7 +45,7 @@ namespace Assets.Editor.Models
 
 
 
-        public ImageTypes Type
+        public ImageTypes ImageType
         {
             get
             {
@@ -44,6 +60,20 @@ namespace Assets.Editor.Models
         private ImageTypes type;
 
 
+
+        public RenderTypes RenderType
+        {
+            get
+            {
+                return this.render;
+            }
+            set
+            {
+                base.SetProperty(ref this.render, value);
+            }
+        }
+
+        private RenderTypes render;
 
 
 

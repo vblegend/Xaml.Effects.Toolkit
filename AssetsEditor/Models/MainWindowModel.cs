@@ -68,12 +68,9 @@ namespace Assets.Editor.Models
             this.OpenPackageCommand = new RelayCommand(OpenPackage_Click);
             this.ClosePackageCommand = new RelayCommand(ClosePackage_Click, ClosePackage_CanClick);
             this.SavePackageCommand = new RelayCommand(SavePackage_Click, SavePackage_CanClick);
-
             this.ReplaceImageCommand = new RelayCommand(ReplaceImage_Click, ReplaceImage_CanClick);
             this.ImportImageCommand = new RelayCommand(ImportImage_Click, ImportImage_CanClick);
             this.ExportImageCommand = new RelayCommand(ExportImage_Click, ExportImage_CanClick);
-
-
             this.PreviewMouseWheelCommand = new RelayCommand<MouseWheelEventArgs>(ListView_PreviewMouseWheel);
             this.PageChangedCommand = new RelayCommand<RoutedPropertyChangedEventArgs<double>>(ScrollBar_ValueChanged);
             this.SelectionChangedCommand = new RelayCommand<System.Windows.Controls.SelectionChangedEventArgs>(ListView_SelectionChanged);
@@ -85,7 +82,7 @@ namespace Assets.Editor.Models
             this.PageSize = 64;
             this.ZoomValue = 1;
             this.DrawingMode = DrawingMode.Raw;
-            this.ImageType = ImageTypes.BMP;
+            this.Selected = new ImageModel();
             resizePage();
             refreshPage();
         }
@@ -212,8 +209,12 @@ namespace Assets.Editor.Models
         private void ClosePackage_Click()
         {
             this.SelectedImage = null;
-            this.OffsetX = 0;
-            this.OffsetY = 0;
+            this.Selected.OffsetX = 0;
+            this.Selected.OffsetY = 0;
+            this.Selected.Index = 0;
+            this.Selected.RenderType = RenderTypes.Normal;
+            this.Selected.ImageType = ImageTypes.Unknown;
+            this.Selected.Source = null;
             if (this.assetFile != null)
             {
                 this.assetFile.Close();
@@ -294,7 +295,7 @@ namespace Assets.Editor.Models
                     var source = loadImageSource(node.Data);
                     this.GridImages[i].Index = startAt + i;
                     this.GridImages[i].Source = source;
-                    this.GridImages[i].Type = node.lpType;
+                    this.GridImages[i].ImageType = node.lpType;
                     this.GridImages[i].OffsetX = node.OffsetX;
                     this.GridImages[i].OffsetY = node.OffsetY;
 
@@ -359,9 +360,7 @@ namespace Assets.Editor.Models
             if (e.AddedItems.Count > 0)
             {
                 this.SelectedImage = e.AddedItems[0] as ImageModel;
-                this.OffsetX = this.SelectedImage.OffsetX;
-                this.OffsetY = this.SelectedImage.OffsetY;
-                this.ImageType = this.SelectedImage.Type;
+                this.Selected.CopyFrom(this.SelectedImage);
             }
             else
             {
@@ -375,7 +374,7 @@ namespace Assets.Editor.Models
 
         private void Offset_TextChanged(System.Windows.Controls.TextChangedEventArgs e)
         {
-            this.offsetChanged = this.SelectedImage != null && (this.OffsetX != this.SelectedImage.OffsetX || this.OffsetY != this.SelectedImage.OffsetY);
+            this.offsetChanged = this.SelectedImage != null && (this.Selected.OffsetX != this.SelectedImage.OffsetX || this.Selected.OffsetY != this.SelectedImage.OffsetY);
             this.OffsetCommitCommand.NotifyCanExecuteChanged();
         }
 
@@ -390,9 +389,9 @@ namespace Assets.Editor.Models
 
         private void OffsetCommit_Click()
         {
-            this.SelectedImage.OffsetX = this.OffsetX;
-            this.SelectedImage.OffsetY = this.OffsetY;
-            this.assetFile.UpdateOffsetNoWrite(this.SelectedImage.Index, new System.Drawing.Point(this.OffsetX, this.OffsetY));
+            this.SelectedImage.OffsetX = this.Selected.OffsetX;
+            this.SelectedImage.OffsetY = this.Selected.OffsetY;
+            this.assetFile.UpdateOffsetNoWrite(this.SelectedImage.Index, new System.Drawing.Point(this.Selected.OffsetX, this.Selected.OffsetY));
             this.offsetChanged = false;
             this.OffsetCommitCommand.NotifyCanExecuteChanged();
             this.needSave = true;
@@ -534,51 +533,27 @@ namespace Assets.Editor.Models
         private Int32 currentPage;
 
 
-        public Int32 OffsetX
+
+
+
+        
+
+
+
+
+        public ImageModel Selected
         {
             get
             {
-                return this.offsetX;
+                return this.selected;
             }
             set
             {
-                base.SetProperty(ref this.offsetX, value);
+                base.SetProperty(ref this.selected, value);
             }
         }
 
-        private Int32 offsetX;
-
-
-
-
-        public Int32 OffsetY
-        {
-            get
-            {
-                return this.offsetY;
-            }
-            set
-            {
-                base.SetProperty(ref this.offsetY, value);
-            }
-        }
-
-        private Int32 offsetY;
-
-
-        public ImageTypes ImageType
-        {
-            get
-            {
-                return this.imageType;
-            }
-            set
-            {
-                base.SetProperty(ref this.imageType, value);
-            }
-        }
-
-        private ImageTypes imageType;
+        private ImageModel selected;
 
     }
 }

@@ -119,12 +119,12 @@ namespace Resource.Package.Assets
 
 
 
-        public ReadDataBlock Read(Int32 index)
+        public IReadOnlyDataBlock Read(Int32 index)
         {
             var info = this.Infomations[index];
             using (var reader = new BinaryReader(fileStream, Encoding.UTF8, true))
             {
-                var node = new ReadDataBlock();
+                var node = new DataBlock();
                 var data = new Byte[info.lpSize];
                 reader.BaseStream.Position = info.lpData;
                 reader.Read(data);
@@ -153,6 +153,7 @@ namespace Resource.Package.Assets
                 info.OffsetX = task.infomation.OffsetX;
                 info.OffsetY = task.infomation.OffsetY;
                 info.lpType = task.infomation.lpType;
+                info.lpRenderType = task.infomation.lpRenderType;
                 info.lpRawSize = task.infomation.lpRawSize;
 
                 if (info.lpSize >= task.infomation.lpSize)
@@ -192,8 +193,25 @@ namespace Resource.Package.Assets
                 info.OffsetX = (Int16)data.X;
                 info.OffsetY = (Int16)data.Y;
             }
-
         }
+
+
+        public void UpdateInfoNoWrite(Int32 index, DataInfo datainfo)
+        {
+            var info = this.Infomations[index];
+            if (info != null)
+            {
+                info.OffsetX = datainfo.OffsetX;
+                info.OffsetY = datainfo.OffsetY;
+                info.lpRenderType = datainfo.lpRenderType;
+                info.unknown1 = datainfo.unknown1;
+                info.unknown2 = datainfo.unknown2;
+            }
+        }
+        
+
+
+
 
 
         public void UpdateOffsets(Dictionary<Int32, Point> datas)
@@ -227,6 +245,7 @@ namespace Resource.Package.Assets
             task.infomation.OffsetX = item.OffsetX;
             task.infomation.OffsetY = item.OffsetY;
             task.infomation.lpRawSize = item.Data.Length;
+            task.infomation.lpRenderType = item.lpRenderType;
             task.infomation.lpType = ParseImageFormat(item.Data);
             if (header.CompressOption == CompressionOption.MuchPossibleCompress || header.CompressOption == CompressionOption.MustCompressed)
             {

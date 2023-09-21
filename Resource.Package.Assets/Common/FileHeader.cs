@@ -97,23 +97,28 @@ namespace Resource.Package.Assets.Common
 
 
 
-    public struct DataBlock
+
+    public interface IReadOnlyDataBlock
     {
-        public Int16 OffsetX { get; set; }
-        public Int16 OffsetY { get; set; }
-        public Byte[] Data { get; set; }
+
+        public Int16 OffsetX { get;  }
+        public Int16 OffsetY { get;  }
+
+        public Byte[] Data { get;  }
+
+        public ImageTypes lpType { get;  }
+        public RenderTypes lpRenderType { get; }
+        public Byte unknown2 { get; }
+        public Byte unknown1 { get; }
     }
 
 
-    public struct ReadDataBlock
-    {
+    public class DataInfo {
+
         public Int16 OffsetX { get; set; }
         public Int16 OffsetY { get; set; }
-        public Byte[] Data { get; set; }
 
-        public ImageTypes lpType { get; set; }
         public RenderTypes lpRenderType { get; set; }
-
         public Byte unknown2 { get; set; }
         public Byte unknown1 { get; set; }
     }
@@ -127,23 +132,24 @@ namespace Resource.Package.Assets.Common
 
 
 
-    internal class FileInfomation
+    public class DataBlock : DataInfo, IReadOnlyDataBlock
     {
         public ImageTypes lpType { get; set; }
-        public RenderTypes lpRenderType { get; set; }
+        public Byte[] Data { get; set; }
+    }
 
-        public Byte unknown2 { get; set; }
-        public Byte unknown1 { get; set; }
 
+    internal class FileInfomation : DataInfo
+    {
+
+
+
+        public ImageTypes lpType { get; set; }
         /// <summary>
         /// 数据地址
         /// 4字节
         /// </summary>
         public Int32 lpData { get; set; }
-
-        public Int16 OffsetX { get; set; }
-        public Int16 OffsetY { get; set; }
-
 
         /// <summary>
         /// 原始数据大小

@@ -92,7 +92,7 @@ namespace Assets.Editor.Models
         private Int32 index;
 
 
-        public Int32 OffsetX
+        public Int16 OffsetX
         {
             get
             {
@@ -104,12 +104,12 @@ namespace Assets.Editor.Models
             }
         }
 
-        private Int32 offsetX;
+        private Int16 offsetX;
 
 
 
 
-        public Int32 OffsetY
+        public Int16 OffsetY
         {
             get
             {
@@ -121,7 +121,7 @@ namespace Assets.Editor.Models
             }
         }
 
-        private Int32 offsetY;
+        private Int16 offsetY;
 
     }
 

@@ -38,7 +38,7 @@ namespace Assets.Editor.Models
         public ICommand OffsetChangedCommand { get; protected set; }
         public IRelayCommand OffsetCommitCommand { get; protected set; }
 
-
+        public ICommand RenderTypeChangedCommand { get; protected set; }
         public ICommand NewPackageCommand { get; protected set; }
 
         public ICommand OpenPackageCommand { get; protected set; }
@@ -63,7 +63,7 @@ namespace Assets.Editor.Models
 
         public MainWindowModel()
         {
-
+            ThemeManager.LoadThemeFromResource("/Assets.Editor;component/Assets/Themes/Black.xaml");
             this.ThemesCommand = new RelayCommand(Themes_Click);
             this.OpenPackageCommand = new RelayCommand(OpenPackage_Click);
             this.ClosePackageCommand = new RelayCommand(ClosePackage_Click, ClosePackage_CanClick);
@@ -75,6 +75,7 @@ namespace Assets.Editor.Models
             this.PageChangedCommand = new RelayCommand<RoutedPropertyChangedEventArgs<double>>(ScrollBar_ValueChanged);
             this.SelectionChangedCommand = new RelayCommand<System.Windows.Controls.SelectionChangedEventArgs>(ListView_SelectionChanged);
             this.OffsetChangedCommand = new RelayCommand<System.Windows.Controls.TextChangedEventArgs>(Offset_TextChanged);
+            this.RenderTypeChangedCommand = new RelayCommand<System.Windows.Controls.SelectionChangedEventArgs>(RenderType_SelectionChanged);
             this.OffsetCommitCommand = new RelayCommand(OffsetCommit_Click, OffsetCommit_CanClick);
             this.NewPackageCommand = new RelayCommand(NewPackage_Click);
             this.currentPage = 0;
@@ -239,7 +240,10 @@ namespace Assets.Editor.Models
 
         private void OpenPackage_Click()
         {
-            OpenFileDialog ofd = new OpenFileDialog();
+            OpenFileDialog ofd = new OpenFileDialog()
+            {
+                DereferenceLinks = false,
+            };
             //ofd.InitialDirectory = @"D:\";
             ofd.Filter = "Assets Package|*.asset";
             if (ofd.ShowDialog() == true)
@@ -296,6 +300,7 @@ namespace Assets.Editor.Models
                     this.GridImages[i].Index = startAt + i;
                     this.GridImages[i].Source = source;
                     this.GridImages[i].ImageType = node.lpType;
+                    this.GridImages[i].RenderType = node.lpRenderType;
                     this.GridImages[i].OffsetX = node.OffsetX;
                     this.GridImages[i].OffsetY = node.OffsetY;
 
@@ -330,19 +335,11 @@ namespace Assets.Editor.Models
         private void Themes_Click()
         {
             // /Assets.Editor;component/Assets/Themes/background.png
-            if (ThemeManager.CurrentTheme == "Default")
-            {
-                ThemeManager.LoadThemeFromResource("/Assets.Editor;component/Assets/Themes/White.xaml");
-            }
-            else if (ThemeManager.CurrentTheme == "White")
+            if (ThemeManager.CurrentTheme == "White")
             {
                 ThemeManager.LoadThemeFromResource("/Assets.Editor;component/Assets/Themes/Black.xaml");
             }
             else if (ThemeManager.CurrentTheme == "Black")
-            {
-                ThemeManager.LoadThemeFromResource("/Assets.Editor;component/Assets/Themes/Image.xaml");
-            }
-            else
             {
                 ThemeManager.LoadThemeFromResource("/Assets.Editor;component/Assets/Themes/White.xaml");
             }
@@ -371,11 +368,22 @@ namespace Assets.Editor.Models
         }
 
 
+        private void RenderType_SelectionChanged(System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (this.SelectedImage != null && (this.Selected.RenderType != this.SelectedImage.RenderType))
+            {
+                this.offsetChanged = true;
+                this.OffsetCommitCommand.NotifyCanExecuteChanged();
+            }
+        }
 
         private void Offset_TextChanged(System.Windows.Controls.TextChangedEventArgs e)
         {
-            this.offsetChanged = this.SelectedImage != null && (this.Selected.OffsetX != this.SelectedImage.OffsetX || this.Selected.OffsetY != this.SelectedImage.OffsetY);
-            this.OffsetCommitCommand.NotifyCanExecuteChanged();
+            if (this.SelectedImage != null && (this.Selected.OffsetX != this.SelectedImage.OffsetX || this.Selected.OffsetY != this.SelectedImage.OffsetY))
+            {
+                this.offsetChanged = true;
+                this.OffsetCommitCommand.NotifyCanExecuteChanged();
+            }
         }
 
         private Boolean offsetChanged = false;
@@ -391,7 +399,15 @@ namespace Assets.Editor.Models
         {
             this.SelectedImage.OffsetX = this.Selected.OffsetX;
             this.SelectedImage.OffsetY = this.Selected.OffsetY;
-            this.assetFile.UpdateOffsetNoWrite(this.SelectedImage.Index, new System.Drawing.Point(this.Selected.OffsetX, this.Selected.OffsetY));
+            this.SelectedImage.RenderType = this.Selected.RenderType;
+            this.assetFile.UpdateInfoNoWrite(this.SelectedImage.Index, new DataInfo()
+            {
+                lpRenderType = this.Selected.RenderType,
+                OffsetX = this.Selected.OffsetX,
+                OffsetY = this.Selected.OffsetY,
+            });
+
+            // this.assetFile.UpdateOffsetNoWrite(this.SelectedImage.Index, new System.Drawing.Point(this.Selected.OffsetX, this.Selected.OffsetY));
             this.offsetChanged = false;
             this.OffsetCommitCommand.NotifyCanExecuteChanged();
             this.needSave = true;
@@ -536,7 +552,7 @@ namespace Assets.Editor.Models
 
 
 
-        
+
 
 
 

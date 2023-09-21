@@ -14,12 +14,10 @@
     <None Remove="Assets\Fonts\GraceIcon.ttf" />
     <None Remove="Assets\Icon.ico" />
     <None Remove="Assets\Icon.png" />
-    <None Remove="Assets\Images\background.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Page Remove="Assets\Themes\Black.xaml" />
-    <Page Remove="Assets\Themes\Image.xaml" />
     <Page Remove="Assets\Themes\White.xaml" />
   </ItemGroup>
 
@@ -29,17 +27,10 @@
 
   <ItemGroup>
     <Resource Include="Assets\Fonts\GraceIcon.ttf" />
-    <Resource Include="Assets\Images\background.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Assets\Themes\Black.xaml">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-      <Generator>MSBuild:Compile</Generator>
-    </Resource>
-    <Resource Include="Assets\Themes\Image.xaml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <Generator>MSBuild:Compile</Generator>
     </Resource>

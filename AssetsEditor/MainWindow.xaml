@@ -205,7 +205,12 @@
                 </Separator.LayoutTransform>
             </Separator>
 
-
+            <Button Content="&#xe62f;" FontSize="16"  
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Command="{Binding ClosePackageCommand}"
+                    ToolTip="修改资源包密码"
+                    FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
             <Button Content="&#xe656;" FontSize="16"  
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
@@ -261,7 +266,7 @@
             <Grid Grid.Row="1"  Margin="0,5,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="160"/>
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0">
                     <Grid.Resources>
@@ -315,39 +320,52 @@
                 </Grid>
 
                 <Grid Grid.Column="1" >
-                    <Border BorderThickness="1" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="70"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border BorderThickness="1" Grid.ColumnSpan="2" >
 
                     </Border>
-                    <Label  Content="图片类型：" Margin="6,10,5,0" VerticalAlignment="Top" Width="139"/>
-                    <TextBox Text="{Binding Selected.ImageType}" IsReadOnly="True" IsEnabled="False" VerticalAlignment="Top" Margin="9,36,9,0"/>
+                    <Label  Content="图片格式：" Margin="0,10,0,0" HorizontalContentAlignment="Right" VerticalAlignment="Top"/>
+                    <TextBox Text="{Binding Selected.ImageType}" IsReadOnly="True" IsEnabled="False" VerticalAlignment="Top" Margin="0,14,5,0" Grid.Column="1"/>
 
-                    <Label  Content="X轴偏移量：" Margin="6,62,5,0" VerticalAlignment="Top" Width="139"/>
-                    <xkit:NumbericTextBox  Margin="9,89,9,0" TextWrapping="Wrap" Text="0" MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0" Value="{Binding Selected.OffsetX ,Mode=TwoWay}"    VerticalAlignment="Top" TextChanged="NumbericTextBox_TextChanged">
+                    <Label  Content="X轴偏移：" Margin="0,85,0,0" VerticalAlignment="Top"  HorizontalContentAlignment="Right"/>
+                    <xkit:NumbericTextBox  Margin="0,88,5,0" TextWrapping="Wrap" Text="0" MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0" Value="{Binding Selected.OffsetX ,Mode=TwoWay}"   
+                                           VerticalAlignment="Top" TextChanged="NumbericTextBox_TextChanged" Grid.Column="1">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="TextChanged">
                                 <xkit:EventBehavior Action="{Binding OffsetChangedCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </xkit:NumbericTextBox>
-                    <Label  Content="Y轴偏移量：" Margin="6,115,5,0" VerticalAlignment="Top" Width="139"/>
-                    <xkit:NumbericTextBox  Margin="9,142,9,0" TextWrapping="Wrap" Text="0"  MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0"  Value="{Binding Selected.OffsetY ,Mode=TwoWay}"    VerticalAlignment="Top">
+                    <Label  Content="Y轴偏移：" VerticalAlignment="Top" Margin="0,120,0,0" HorizontalContentAlignment="Right" />
+                    <xkit:NumbericTextBox  Margin="0,124,5,0" TextWrapping="Wrap" Text="0"  MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0"  Value="{Binding Selected.OffsetY ,Mode=TwoWay}"  
+                                           VerticalAlignment="Top" Grid.Column="1">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="TextChanged">
                                 <xkit:EventBehavior Action="{Binding OffsetChangedCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </xkit:NumbericTextBox>
-                    <Button Content="应用" HorizontalAlignment="Right" Margin="0,174,10,0" VerticalAlignment="Top" Width="65" Height="24" Command="{Binding OffsetCommitCommand}" />
+                    <Button Content="应用" HorizontalAlignment="Center" Margin="0,170,0,0" VerticalAlignment="Top" Width="66" Height="24" Command="{Binding OffsetCommitCommand}" Grid.Column="1" />
 
 
-                    <ComboBox  VerticalAlignment="Top" Height="24"   SelectedItem="{Binding Selected.RenderType, Mode=TwoWay}" ItemsSource="{Binding Source={StaticResource RenderTypes}}" Margin="0,204,1,0">
+                    <ComboBox  VerticalAlignment="Top" Height="24"   SelectedItem="{Binding Selected.RenderType, Mode=TwoWay}" ItemsSource="{Binding Source={StaticResource RenderTypes}}" Grid.Column="1" Margin="1,47,4,0">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Converter={xkit:EnumDescriptionConverter}}"    >
                                 </TextBlock>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <xkit:EventBehavior Action="{Binding RenderTypeChangedCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+
                     </ComboBox>
+                    <Label  Content="渲染方式：" VerticalAlignment="Top" HorizontalContentAlignment="Right" Margin="0,45,0,0" />
                 </Grid>
 
             </Grid>

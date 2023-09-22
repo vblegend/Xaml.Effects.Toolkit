@@ -173,20 +173,20 @@
                 </Separator.LayoutTransform>
             </Separator>
 
-            <Button Content="&#xe846;" FontSize="16"  
+            <Button Content="&#xe850;" FontSize="16"  
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
                     Command="{Binding ImportImageCommand}"
-                    ToolTip="导入图片"
+                    ToolTip="导入资源"
                     FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
 
 
 
-            <Button Content="&#xe845;" FontSize="16"  
+            <Button Content="&#xe675;" FontSize="16"  
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
                     Command="{Binding ExportImageCommand}"
-                    ToolTip="导出图片"
+                    ToolTip="导出资源"
                     FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
 
 
@@ -324,34 +324,35 @@
                         <ColumnDefinition Width="70"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Border BorderThickness="1" Grid.ColumnSpan="2" >
+                    <Border BorderThickness="1" Grid.ColumnSpan="2" Margin="-1,0,1,0" >
 
                     </Border>
-                    <Label  Content="图片格式：" Margin="0,10,0,0" HorizontalContentAlignment="Right" VerticalAlignment="Top"/>
-                    <TextBox Text="{Binding Selected.ImageType}" IsReadOnly="True" IsEnabled="False" VerticalAlignment="Top" Margin="0,14,5,0" Grid.Column="1"/>
+                    <Label  Content="图片格式：" Margin="0,12,0,0" HorizontalContentAlignment="Right" VerticalAlignment="Top"/>
+                    <TextBox Text="{Binding Selected.ImageType}" IsReadOnly="True" IsEnabled="False"   VerticalContentAlignment="Center"    VerticalAlignment="Top" Margin="0,13,5,0" Grid.Column="1" Height="24"/>
 
-                    <Label  Content="X轴偏移：" Margin="0,85,0,0" VerticalAlignment="Top"  HorizontalContentAlignment="Right"/>
-                    <xkit:NumbericTextBox  Margin="0,88,5,0" TextWrapping="Wrap" Text="0" MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0" Value="{Binding Selected.OffsetX ,Mode=TwoWay}"   
-                                           VerticalAlignment="Top" TextChanged="NumbericTextBox_TextChanged" Grid.Column="1">
+                    <Label  Content="X轴偏移：" VerticalAlignment="Top"  HorizontalContentAlignment="Right" Margin="0,121,0,0"/>
+                    <xkit:NumbericTextBox  Margin="0,122,5,0" Text="0" MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0" Value="{Binding Selected.OffsetX ,Mode=TwoWay}"   
+                          VerticalContentAlignment="Center"                 VerticalAlignment="Top" TextChanged="NumbericTextBox_TextChanged" Grid.Column="1" Height="24">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="TextChanged">
                                 <xkit:EventBehavior Action="{Binding OffsetChangedCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </xkit:NumbericTextBox>
-                    <Label  Content="Y轴偏移：" VerticalAlignment="Top" Margin="0,120,0,0" HorizontalContentAlignment="Right" />
-                    <xkit:NumbericTextBox  Margin="0,124,5,0" TextWrapping="Wrap" Text="0"  MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0"  Value="{Binding Selected.OffsetY ,Mode=TwoWay}"  
-                                           VerticalAlignment="Top" Grid.Column="1">
+                    <Label  Content="Y轴偏移：" VerticalAlignment="Top" Margin="0,159,0,0" HorizontalContentAlignment="Right" />
+                    <xkit:NumbericTextBox  Margin="0,160,5,0" Text="0"  MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0"  Value="{Binding Selected.OffsetY ,Mode=TwoWay}"  
+                                        VerticalContentAlignment="Center"        VerticalAlignment="Top" Grid.Column="1" Height="24">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="TextChanged">
                                 <xkit:EventBehavior Action="{Binding OffsetChangedCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </xkit:NumbericTextBox>
-                    <Button Content="应用" HorizontalAlignment="Center" Margin="0,170,0,0" VerticalAlignment="Top" Width="66" Height="24" Command="{Binding OffsetCommitCommand}" Grid.Column="1" />
+                    <Button Content="应用" HorizontalAlignment="Center" Margin="0,201,0,0" VerticalAlignment="Top" Width="66" Height="24" Background="{DynamicResource GLOBAL_PRIMARY_COLOR}" Command="{Binding OffsetCommitCommand}" Grid.Column="1" />
 
 
-                    <ComboBox  VerticalAlignment="Top" Height="24"   SelectedItem="{Binding Selected.RenderType, Mode=TwoWay}" ItemsSource="{Binding Source={StaticResource RenderTypes}}" Grid.Column="1" Margin="1,47,4,0">
+                    <ComboBox  VerticalAlignment="Top" Height="24"  
+                                 VerticalContentAlignment="Center"   SelectedItem="{Binding Selected.RenderType, Mode=TwoWay}" ItemsSource="{Binding Source={StaticResource RenderTypes}}" Grid.Column="1" Margin="0,85,5,0">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Converter={xkit:EnumDescriptionConverter}}"    >
@@ -365,7 +366,11 @@
                         </i:Interaction.Triggers>
 
                     </ComboBox>
-                    <Label  Content="渲染方式：" VerticalAlignment="Top" HorizontalContentAlignment="Right" Margin="0,45,0,0" />
+                    <Label  Content="渲染方式：" VerticalAlignment="Top" HorizontalContentAlignment="Right" Margin="0,84,0,0" />
+                    <Label  Content="文件大小：" VerticalAlignment="Top" Margin="0,47,0,0" HorizontalContentAlignment="Right" />
+                    <TextBox  Margin="0,48,5,0" IsReadOnly="True" IsEnabled="False" Text="{Binding Selected.FileSize, Converter={xkit:FileSizeConverter}}"  
+                        VerticalContentAlignment="Center"     VerticalAlignment="Top" Grid.Column="1" Height="24">
+                    </TextBox>
                 </Grid>
 
             </Grid>

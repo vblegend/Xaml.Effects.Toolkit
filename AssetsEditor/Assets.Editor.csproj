@@ -5,7 +5,8 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>disable</Nullable>
     <UseWPF>true</UseWPF>
-    <StartupObject>Assets.Editor.App</StartupObject>
+	<UseWindowsForms>true</UseWindowsForms>
+	<StartupObject>Assets.Editor.App</StartupObject>
     <ApplicationIcon>Assets\Icon.ico</ApplicationIcon>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
@@ -26,10 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\Fonts\GraceIcon.ttf" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <Resource Include="Assets\Fonts\GraceIcon.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Themes\Black.xaml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <Generator>MSBuild:Compile</Generator>
@@ -53,9 +53,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="hum.asset">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <Compile Update="Views\ImportImage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
 </Project>

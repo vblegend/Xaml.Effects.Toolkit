@@ -50,7 +50,7 @@
                             BorderBrush="Transparent"
                             BorderThickness="0"
                             SnapsToDevicePixels="true">
-                            <Label  x:Name="arrow"   VerticalContentAlignment="Center" FontFamily="{StaticResource WIcon}">&#xe715;</Label>
+                            <Label  x:Name="arrow"  VerticalContentAlignment="Center" FontFamily="{StaticResource WIcon}">&#xe715;</Label>
                         </Border>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -84,7 +84,6 @@
                             <Setter TargetName="templateRoot" Property="BorderBrush" Value="{DynamicResource GLOBAL_TEXTBOX_OVER_BORDER_BACKGROUND}" />
                         </MultiDataTrigger>
 
-
                         <Trigger Property="IsPressed" Value="true">
                             <Setter TargetName="arrow" Property="Margin" Value="1,1,0,0" />
                         </Trigger>
@@ -107,15 +106,15 @@
                             <Setter TargetName="splitBorder" Property="BorderBrush" Value="{StaticResource ComboBox.Pressed.Editable.Button.Border}" />
                         </MultiDataTrigger>-->
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter TargetName="arrow" Property="Label.Foreground" Value="{StaticResource ComboBox.Disabled.Glyph}" />
+                            <Setter TargetName="arrow" Property="Label.Foreground" Value="{DynamicResource GLOBAL_TEXTBOX_DISABLED_FOREGROUND}" />
                         </Trigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="false" />
                                 <Condition Binding="{Binding IsEditable, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}" Value="false" />
                             </MultiDataTrigger.Conditions>
-                            <Setter TargetName="templateRoot" Property="Background" Value="{StaticResource ComboBox.Disabled.Background}" />
-                            <Setter TargetName="templateRoot" Property="BorderBrush" Value="{StaticResource ComboBox.Disabled.Border}" />
+                            <Setter TargetName="templateRoot" Property="Background" Value="{DynamicResource GLOBAL_TEXTBOX_DISABLED_BACKGROUND}" />
+                            <Setter TargetName="templateRoot" Property="BorderBrush" Value="{DynamicResource GLOBAL_TEXTBOX_DISABLED_BORDER_BACKGROUND}" />
                         </MultiDataTrigger>
 
 
@@ -222,6 +221,17 @@
                 </MultiTrigger.Conditions>
                 <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
             </MultiTrigger>
+
+
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="false" />
+                </MultiDataTrigger.Conditions>
+                <Setter  Property="Background" Value="{DynamicResource GLOBAL_TEXTBOX_DISABLED_BACKGROUND}" />
+                <Setter  Property="BorderBrush" Value="{DynamicResource GLOBAL_TEXTBOX_DISABLED_BORDER_BACKGROUND}" />
+                <Setter  Property="Foreground" Value="{DynamicResource GLOBAL_TEXTBOX_DISABLED_FOREGROUND}" />
+            </MultiDataTrigger>
+
             <Trigger SourceName="DropDownScrollViewer" Property="ScrollViewer.CanContentScroll" Value="false">
                 <Setter TargetName="opaqueRect" Property="Canvas.Top" Value="{Binding VerticalOffset, ElementName=DropDownScrollViewer}" />
                 <Setter TargetName="opaqueRect" Property="Canvas.Left" Value="{Binding HorizontalOffset, ElementName=DropDownScrollViewer}" />
@@ -358,6 +368,9 @@
             <Trigger Property="IsKeyboardFocusWithin" Value="true">
                 <Setter Property="BorderBrush" Value="{DynamicResource GLOBAL_TEXTBOX_FOCU_BORDER_FOREGROUND}" />
             </Trigger>
+            
+            
+            
         </Style.Triggers>
     </Style>
 

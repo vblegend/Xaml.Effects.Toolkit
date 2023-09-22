@@ -147,7 +147,7 @@
                     <Grid>
                         <Border
                             Name="Border"
-                            Height="22"
+                            Height="{TemplateBinding Height}"
                             Background="{DynamicResource GLOBAL_TABLE_BUTTON_BACKGROUND}">
                             <Grid>
                                 <ContentPresenter

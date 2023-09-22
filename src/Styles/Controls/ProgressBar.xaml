@@ -5,7 +5,7 @@
     <SolidColorBrush x:Key="ProgressBar.Progress" Color="#FF06B025" />
     <SolidColorBrush x:Key="ProgressBar.Background" Color="#FFE6E6E6" />
     <SolidColorBrush x:Key="ProgressBar.Border" Color="#FFBCBCBC" />
-    <Style x:Key="ProgressBarStyle" TargetType="{x:Type ProgressBar}">
+    <Style TargetType="{x:Type ProgressBar}">
         <Setter Property="Foreground" Value="{DynamicResource GLOBAL_PROGRESSBAR_FOREGROUND}" />
         <Setter Property="Background" Value="{DynamicResource GLOBAL_PROGRESSBAR_BACKGROUND}" />
         <Setter Property="BorderBrush" Value="{DynamicResource GLOBAL_PROGRESSBAR_BORDER_FOREGROUND}" />

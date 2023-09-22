@@ -76,7 +76,7 @@ namespace Resource.Package.Assets.Common
         JPG = 3,
         [Description("Gif")]
         GIF = 4,
-        [Description("Tga")]
+        [Description("Tga 不支持显示")]
         TGA = 5,
         [Description("Tiff")]
         TIFF = 6
@@ -121,6 +121,9 @@ namespace Resource.Package.Assets.Common
         public RenderTypes lpRenderType { get; set; }
         public Byte unknown2 { get; set; }
         public Byte unknown1 { get; set; }
+
+
+
     }
 
 

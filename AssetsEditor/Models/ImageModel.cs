@@ -1,10 +1,53 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Resource.Package.Assets.Common;
 using System;
+using System.ComponentModel;
 using System.Windows.Media.Imaging;
 
 namespace Assets.Editor.Models
 {
+
+
+    public enum ImageImportOption
+    {
+        [Description("Placements")]
+        Placements = 0,
+
+    }
+
+
+    public enum ImageFliterOption
+    {
+        [Description("所有图片")]
+        AllImage = 0,
+
+
+
+
+
+    }
+
+    [Flags]
+    public enum ImageFormat
+    {
+        [Description("Bmp 文件")]
+        BMP = 2,
+        [Description("Png 文件")]
+        PNG = 4,
+        [Description("Jpg 文件")]
+        JPG = 8,
+        [Description("Gif 文件")]
+        GIF = 16,
+        [Description("Tga 文件")]
+        TGA = 32,
+        [Description("Tiff 文件")]
+        TIFF = 64,
+        [Description("所有支持的图片")]
+        ALLIMAGE = BMP & PNG & JPG & TGA & GIF & TIFF
+
+    }
+
+
 
     public class ImageModel : ObservableObject
     {
@@ -22,6 +65,7 @@ namespace Assets.Editor.Models
             this.ImageType = mode.ImageType;
             this.RenderType = mode.RenderType;
             this.Index = mode.Index;
+            this.FileSize = mode.FileSize;
         }
 
 
@@ -122,6 +166,21 @@ namespace Assets.Editor.Models
         }
 
         private Int16 offsetY;
+
+
+        public Int32 FileSize
+        {
+            get
+            {
+                return this.fileSize;
+            }
+            set
+            {
+                base.SetProperty(ref this.fileSize, value);
+            }
+        }
+
+        private Int32 fileSize;
 
     }
 

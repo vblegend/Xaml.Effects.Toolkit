@@ -147,7 +147,7 @@ namespace Resource.Package.Assets
         public void Replace(Int32 index, DataBlock data)
         {
             var info = this.Infomations[index];
-            var task = Preconditioning(data).Result;
+            var task = Preconditioning(data, null).Result;
             using (var writer = new BinaryWriter(fileStream, Encoding.UTF8, true))
             {
                 info.OffsetX = task.infomation.OffsetX;
@@ -208,7 +208,7 @@ namespace Resource.Package.Assets
                 info.unknown2 = datainfo.unknown2;
             }
         }
-        
+
 
 
 
@@ -231,7 +231,7 @@ namespace Resource.Package.Assets
             if (data[0] == 0x89 && data[1] == 0x50 && data[2] == 0x4E && data[3] == 0x47) return ImageTypes.PNG;
             if (data[0] == 0xFF && data[1] == 0xD8 && data[2] == 0xFF) return ImageTypes.JPG;
             if (data[0] == 0x47 && data[1] == 0x49 && data[2] == 0x46 && data[3] == 0x38) return ImageTypes.GIF;
-            if (data[0] == 0x00 && data[1] == 0x00 && (data[2] == 0x02 || data[2] == 0x0A) ) return ImageTypes.TGA;
+            if (data[0] == 0x00 && data[1] == 0x00 && (data[2] == 0x02 || data[2] == 0x0A)) return ImageTypes.TGA;
             if (data[0] == 0x49 && data[1] == 0x49 && data[2] == 0x2A && data[3] == 0x00) return ImageTypes.TIFF;
             return ImageTypes.Unknown;
         }
@@ -239,7 +239,7 @@ namespace Resource.Package.Assets
 
 
 
-        private async Task<FileAsyncCache> Preconditioning(DataBlock item)
+        private async Task<FileAsyncCache> Preconditioning(DataBlock item, Action report=null)
         {
             var task = new FileAsyncCache();
             task.infomation.OffsetX = item.OffsetX;
@@ -260,18 +260,25 @@ namespace Resource.Package.Assets
                 task.Data = item.Data;
             }
             task.infomation.lpSize = task.Data.Length;
+            if(report != null) report();
             return task;
         }
 
 
-        public Int32 BatchImport(IEnumerable<DataBlock> items)
+        public Int32 BatchImport(IEnumerable<DataBlock> items, Action<Int32> process = null)
         {
             var tasks = new List<Task<FileAsyncCache>>();
+            var num = 0;
+            var report = () =>
+            {
+                if (process != null) process(++num);
+            };
             foreach (var item in items)
             {
-                tasks.Add(Preconditioning(item));
+                tasks.Add(Preconditioning(item, report));
             }
             Task.WaitAll(tasks.ToArray());
+            if (process != null) process(items.Count());
             using (var writer = new BinaryWriter(fileStream, Encoding.UTF8, true))
             {
                 foreach (var task in tasks)
@@ -287,6 +294,7 @@ namespace Resource.Package.Assets
                 this.WriteIndex(writer);
                 return header.NumberOfFiles;
             }
+      
         }
 
 
@@ -294,7 +302,7 @@ namespace Resource.Package.Assets
 
         public Int32 Import(DataBlock data)
         {
-            var task = Preconditioning(data).Result;
+            var task = Preconditioning(data, null).Result;
             return this.Import(task.infomation, task.Data);
         }
 

@@ -132,16 +132,15 @@ namespace Assets.Editor.Models
         }
         private void ImportImage_Click()
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            //ofd.InitialDirectory = @"D:\";
-            ofd.Filter = ImageFilter;
-            if (ofd.ShowDialog() == true)
-            {
-                var data = File.ReadAllBytes(ofd.FileName);
-                this.assetFile.Import(new Resource.Package.Assets.Common.DataBlock { Data = data, OffsetX = 0, OffsetY = 0 });
-                SavePackage_Click();
-                refreshPage();
-            }
+            ImportImage import = new ImportImage();
+            import.Model.stream = this.assetFile;
+            import.Owner = MainWindow.Instance;
+            import.ShowDialog();
+            resizePage();
+            refreshPage();
+
+
+
         }
 
 
@@ -151,14 +150,21 @@ namespace Assets.Editor.Models
         }
         private void ExportImage_Click()
         {
-            SaveFileDialog sfd = new SaveFileDialog();
-            //sfd.InitialDirectory = @"D:\";
-            sfd.Filter = ImageFilter;
-            if (sfd.ShowDialog() == true)
-            {
-                var node = this.assetFile.Read(this.SelectedImage.Index);
-                File.WriteAllBytes(sfd.FileName, node.Data);
-            }
+
+            ImportImage import = new ImportImage();
+            import.Owner = MainWindow.Instance;
+            import.ShowDialog();
+
+
+
+            //SaveFileDialog sfd = new SaveFileDialog();
+            ////sfd.InitialDirectory = @"D:\";
+            //sfd.Filter = ImageFilter;
+            //if (sfd.ShowDialog() == true)
+            //{
+            //    var node = this.assetFile.Read(this.SelectedImage.Index);
+            //    File.WriteAllBytes(sfd.FileName, node.Data);
+            //}
 
         }
 
@@ -303,7 +309,7 @@ namespace Assets.Editor.Models
                     this.GridImages[i].RenderType = node.lpRenderType;
                     this.GridImages[i].OffsetX = node.OffsetX;
                     this.GridImages[i].OffsetY = node.OffsetY;
-
+                    this.GridImages[i].FileSize = node.Data.Length;
                 }
             }
         }

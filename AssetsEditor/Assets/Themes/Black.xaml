@@ -5,6 +5,9 @@
     <!--  主题名称  -->
     <sys:String x:Key="ThemeName">Black</sys:String>
 
+    <!--主色调-->
+    <SolidColorBrush x:Key="GLOBAL_PRIMARY_COLOR" Color="#FF007ACC" />
+
 
     <!--  公用样式  -->
     <!--  全局按钮内容画刷  -->
@@ -29,6 +32,37 @@
 
     <SolidColorBrush x:Key="GLOBAL_CHECKBOX_BACKGROUND" Color="#FF333337" />
     <SolidColorBrush x:Key="GLOBAL_CHECKBOX_BORDER_BACKGROUND" Color="#33808080" />
+
+
+
+
+    <SolidColorBrush x:Key="GLOBAL_RADIO_BACKGROUND" Color="Transparent" />
+    <SolidColorBrush x:Key="GLOBAL_RADIO_FOREGROUND" Color="#FFE2E2E2" />
+    <SolidColorBrush x:Key="GLOBAL_RADIO_BORDER_COLOR" Color="#80007ACC" />
+
+    <SolidColorBrush x:Key="GLOBAL_RADIO_DISABLE_BACKGROUND" Color="Transparent" />
+    <SolidColorBrush x:Key="GLOBAL_RADIO_DISABLE_FOREGROUND" Color="#FFE2E2E2" />
+    <SolidColorBrush x:Key="GLOBAL_RADIO_DISABLE_BORDER_COLOR" Color="#FF007ACC" />
+
+    <SolidColorBrush x:Key="GLOBAL_RADIO_OVER_BACKGROUND" Color="Transparent" />
+    <SolidColorBrush x:Key="GLOBAL_RADIO_OVER_FOREGROUND" Color="#FFE2E2E2" />
+    <SolidColorBrush x:Key="GLOBAL_RADIO_OVER_BORDER_COLOR" Color="#FF007ACC" />
+
+    <SolidColorBrush x:Key="GLOBAL_RADIO_PRESSED_BACKGROUND" Color="#80007ACC" />
+    <SolidColorBrush x:Key="GLOBAL_RADIO_PRESSED_FOREGROUND" Color="#FFE2E2E2" />
+    <SolidColorBrush x:Key="GLOBAL_RADIO_PRESSED_BORDER_COLOR" Color="#FF007ACC" />
+
+    <SolidColorBrush x:Key="GLOBAL_RADIO_FOCU_BACKGROUND" Color="Transparent" />
+    <SolidColorBrush x:Key="GLOBAL_RADIO_FOCU_FOREGROUND" Color="#FFE2E2E2" />
+    <SolidColorBrush x:Key="GLOBAL_RADIO_FOCU_BORDER_COLOR" Color="#FF434347" />
+
+
+    <SolidColorBrush x:Key="GLOBAL_RADIO_CHECKED_BACKGROUND" Color="#FF007ACC" />
+    <SolidColorBrush x:Key="GLOBAL_RADIO_CHECKED_FOREGROUND" Color="#FFE2E2E2" />
+    <SolidColorBrush x:Key="GLOBAL_RADIO_CHECKED_BORDER_COLOR" Color="#FF007ACC" />
+
+
+
 
 
 
@@ -64,6 +98,12 @@
     <SolidColorBrush x:Key="GLOBAL_TEXTBOX_FOCU_BORDER_FOREGROUND" Color="#FF007ACC" />
 
 
+    <!--  TextBox鼠标移动上去边框颜色  -->
+    <SolidColorBrush x:Key="GLOBAL_TEXTBOX_DISABLED_BACKGROUND" Color="#FF333337" />
+    <!--  TextBox输入焦点的边框颜色  -->
+    <SolidColorBrush x:Key="GLOBAL_TEXTBOX_DISABLED_FOREGROUND" Color="#808080" />
+    <!--  TextBox边框颜色  -->
+    <SolidColorBrush x:Key="GLOBAL_TEXTBOX_DISABLED_BORDER_BACKGROUND" Color="#808080" />
 
 
 

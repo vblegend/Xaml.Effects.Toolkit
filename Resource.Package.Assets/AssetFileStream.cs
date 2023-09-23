@@ -135,8 +135,8 @@ namespace Resource.Package.Assets
                 }
                 node.lpType = info.lpType;
                 node.lpRenderType = info.lpRenderType;
-                node.unknown1 = info.unknown1;
-                node.unknown2 = info.unknown2;
+                node.Unknown1 = info.Unknown1;
+                node.Unknown2 = info.Unknown2;
                 node.OffsetX = info.OffsetX;
                 node.OffsetY = info.OffsetY;
                 node.Data = data;
@@ -204,8 +204,8 @@ namespace Resource.Package.Assets
                 info.OffsetX = datainfo.OffsetX;
                 info.OffsetY = datainfo.OffsetY;
                 info.lpRenderType = datainfo.lpRenderType;
-                info.unknown1 = datainfo.unknown1;
-                info.unknown2 = datainfo.unknown2;
+                info.Unknown1 = datainfo.Unknown1;
+                info.Unknown2 = datainfo.Unknown2;
             }
         }
 

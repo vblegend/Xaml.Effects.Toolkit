@@ -8,11 +8,27 @@ namespace Assets.Editor.Models
 {
 
 
-    public enum ImageImportOption
+    public enum ImportOption
     {
-        [Description("Placements")]
-        Placements = 0,
+        [Description("追加")]
+        Append = 0,
+        [Description("覆盖")]
+        Override = 1,
 
+    }
+
+
+
+
+    public enum ImageUserData
+    {
+
+        [Description("None")]
+        None = 0,
+        [Description("Placements")]
+        Placements = 1,
+        [Description("Schema-Json")]
+        SchemaJson = 2
     }
 
 

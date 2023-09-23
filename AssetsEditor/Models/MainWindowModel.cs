@@ -13,6 +13,11 @@ using Xaml.Effects.Toolkit.Converter;
 using Assets.Editor.Views;
 using Microsoft.Win32;
 using Resource.Package.Assets.Common;
+using System.Windows.Media.Animation;
+using Assets.Editor.Utils;
+using System.Diagnostics;
+using System.Linq;
+using System.Security.Cryptography;
 
 namespace Assets.Editor.Models
 {
@@ -47,13 +52,15 @@ namespace Assets.Editor.Models
 
         public IRelayCommand ClosePackageCommand { get; protected set; }
 
-
+        public IRelayCommand ChangePasswordCommand { get; protected set; }
         public IRelayCommand ReplaceImageCommand { get; protected set; }
 
         public IRelayCommand ImportImageCommand { get; protected set; }
 
         public IRelayCommand ExportImageCommand { get; protected set; }
 
+
+        public IRelayCommand RegFileTypeCommand { get; protected set; }
 
 
         public ICommand ThemesCommand { get; protected set; }
@@ -71,6 +78,7 @@ namespace Assets.Editor.Models
             this.ReplaceImageCommand = new RelayCommand(ReplaceImage_Click, ReplaceImage_CanClick);
             this.ImportImageCommand = new RelayCommand(ImportImage_Click, ImportImage_CanClick);
             this.ExportImageCommand = new RelayCommand(ExportImage_Click, ExportImage_CanClick);
+            this.ChangePasswordCommand = new RelayCommand(ChangePassword_Click, ChangePassword_CanClick);
             this.PreviewMouseWheelCommand = new RelayCommand<MouseWheelEventArgs>(ListView_PreviewMouseWheel);
             this.PageChangedCommand = new RelayCommand<RoutedPropertyChangedEventArgs<double>>(ScrollBar_ValueChanged);
             this.SelectionChangedCommand = new RelayCommand<System.Windows.Controls.SelectionChangedEventArgs>(ListView_SelectionChanged);
@@ -78,12 +86,16 @@ namespace Assets.Editor.Models
             this.RenderTypeChangedCommand = new RelayCommand<System.Windows.Controls.SelectionChangedEventArgs>(RenderType_SelectionChanged);
             this.OffsetCommitCommand = new RelayCommand(OffsetCommit_Click, OffsetCommit_CanClick);
             this.NewPackageCommand = new RelayCommand(NewPackage_Click);
+            this.RegFileTypeCommand = new RelayCommand(RegFileType_Click);
             this.currentPage = 0;
             this.Title = "Assets Editor - Power by Hanks";
             this.PageSize = 64;
             this.ZoomValue = 1;
             this.DrawingMode = DrawingMode.Raw;
+            this.IsRegFileType = FileTypeRegister.FileTypeRegistered(".asset");
             this.Selected = new ImageModel();
+
+
             resizePage();
             refreshPage();
         }
@@ -103,7 +115,24 @@ namespace Assets.Editor.Models
 
 
 
-
+        private void RegFileType_Click()
+        {
+            if (this.IsRegFileType)
+            {
+                FileTypeRegister.UnRegisterFileType(".asset");
+            }
+            else
+            {
+                FileTypeRegInfo fileTypeRegInfo = new FileTypeRegInfo(".osf");
+                fileTypeRegInfo.Description = "Images Assets Resource File";
+                fileTypeRegInfo.ExePath = Process.GetCurrentProcess().MainModule.FileName;
+                fileTypeRegInfo.ExtendName = ".asset";
+                fileTypeRegInfo.IconPath = fileTypeRegInfo.ExePath;
+                // 注册
+                FileTypeRegister.RegisterFileType(fileTypeRegInfo);
+            }
+            this.IsRegFileType = FileTypeRegister.FileTypeRegistered(".asset");
+        }
 
 
 
@@ -120,7 +149,7 @@ namespace Assets.Editor.Models
             if (ofd.ShowDialog() == true)
             {
                 var data = File.ReadAllBytes(ofd.FileName);
-                this.assetFile.Replace(this.SelectedImage.Index, new Resource.Package.Assets.Common.DataBlock { Data = data, OffsetX = 0, OffsetY = 0 });
+                this.assetFile.Replace(this.SelectedImage.Index, new DataBlock { Data = data, OffsetX = 0, OffsetY = 0 });
                 SavePackage_Click();
                 refreshPage();
             }
@@ -132,40 +161,47 @@ namespace Assets.Editor.Models
         }
         private void ImportImage_Click()
         {
-            ImportImage import = new ImportImage();
+            ImportDialog import = new ImportDialog();
             import.Model.stream = this.assetFile;
             import.Owner = MainWindow.Instance;
             import.ShowDialog();
             resizePage();
             refreshPage();
-
-
-
         }
 
+
+
+        private Boolean ChangePassword_CanClick()
+        {
+            return this.assetFile != null;
+        }
+        private void ChangePassword_Click()
+        {
+
+        }
 
         private Boolean ExportImage_CanClick()
         {
-            return this.assetFile != null && this.SelectedImage != null;
+            return this.assetFile != null;
         }
         private void ExportImage_Click()
         {
-
-            ImportImage import = new ImportImage();
-            import.Owner = MainWindow.Instance;
-            import.ShowDialog();
-
-
-
-            //SaveFileDialog sfd = new SaveFileDialog();
-            ////sfd.InitialDirectory = @"D:\";
-            //sfd.Filter = ImageFilter;
-            //if (sfd.ShowDialog() == true)
-            //{
-            //    var node = this.assetFile.Read(this.SelectedImage.Index);
-            //    File.WriteAllBytes(sfd.FileName, node.Data);
-            //}
-
+            ExportDialog export = new ExportDialog();
+            export.Model.stream = this.assetFile;
+            if (this.SelectedImage != null)
+            {
+                export.Model.StartIndex = this.SelectedImage.Index;
+                export.Model.Length = 1;
+                export.Model.IsBatch = false;
+            }
+            else
+            {
+                export.Model.StartIndex = 0;
+                export.Model.Length = this.assetFile.NumberOfFiles;
+                export.Model.IsBatch = true;
+            }
+            export.Owner = MainWindow.Instance;
+            export.ShowDialog();
         }
 
 
@@ -182,6 +218,7 @@ namespace Assets.Editor.Models
                 this.ReplaceImageCommand.NotifyCanExecuteChanged();
                 this.ImportImageCommand.NotifyCanExecuteChanged();
                 this.ExportImageCommand.NotifyCanExecuteChanged();
+                this.ChangePasswordCommand.NotifyCanExecuteChanged();
             }
             catch (Exception ex)
             {
@@ -237,7 +274,7 @@ namespace Assets.Editor.Models
                 this.ImportImageCommand.NotifyCanExecuteChanged();
                 this.ExportImageCommand.NotifyCanExecuteChanged();
                 this.ReplaceImageCommand.NotifyCanExecuteChanged();
-
+                this.ChangePasswordCommand.NotifyCanExecuteChanged();
             }
             resizePage();
             this.Title = "Assets Editor - Power by Hanks";
@@ -254,15 +291,22 @@ namespace Assets.Editor.Models
             ofd.Filter = "Assets Package|*.asset";
             if (ofd.ShowDialog() == true)
             {
-                var dialog = new PasswordInput();
-                dialog.Owner = MainWindow.Instance;
-                var result = dialog.ShowDialog();
-                if (result.HasValue && result.Value)
-                {
-                    this.OpenAssetPackage(ofd.FileName, dialog.Model.Password);
-                }
+                this.OpenFile(ofd.FileName);
             }
         }
+
+
+        public void OpenFile(String fileName)
+        {
+            var dialog = new PasswordInput();
+            dialog.Owner = MainWindow.Instance;
+            var result = dialog.ShowDialog();
+            if (result.HasValue && result.Value)
+            {
+                this.OpenAssetPackage(fileName, dialog.Model.Password);
+            }
+        }
+
 
 
 
@@ -338,6 +382,7 @@ namespace Assets.Editor.Models
         }
 
 
+
         private void Themes_Click()
         {
             // /Assets.Editor;component/Assets/Themes/background.png
@@ -351,6 +396,9 @@ namespace Assets.Editor.Models
             }
             //Console.WriteLine(ThemeManager.CurrentTheme);
         }
+
+
+
 
 
         private void ScrollBar_ValueChanged(RoutedPropertyChangedEventArgs<double> e)
@@ -423,6 +471,23 @@ namespace Assets.Editor.Models
 
 
 
+        /// <summary>
+        /// 当前页实际显示的元素数量
+        /// </summary>
+        public Boolean IsRegFileType
+        {
+            get
+            {
+                return this.isRegFileType;
+            }
+            set
+            {
+                base.SetProperty(ref this.isRegFileType, value);
+            }
+        }
+        private Boolean isRegFileType;
+
+
 
         private void ListView_PreviewMouseWheel(MouseWheelEventArgs e)
         {
@@ -438,9 +503,6 @@ namespace Assets.Editor.Models
 
 
 
-        /// <summary>
-        /// 当前页实际显示的元素数量
-        /// </summary>
         public DrawingMode DrawingMode
         {
             get
@@ -455,11 +517,6 @@ namespace Assets.Editor.Models
         private DrawingMode drawingMode;
 
 
-
-
-        /// <summary>
-        /// 当前页实际显示的元素数量
-        /// </summary>
         public Double ZoomValue
         {
             get
@@ -474,13 +531,6 @@ namespace Assets.Editor.Models
         private Double zoomValue;
 
 
-
-
-
-
-        /// <summary>
-        /// 当前页实际显示的元素数量
-        /// </summary>
         public ImageModel SelectedImage
         {
             get
@@ -494,9 +544,7 @@ namespace Assets.Editor.Models
         }
         private ImageModel selectedImage;
 
-        /// <summary>
-        /// 当前页实际显示的元素数量
-        /// </summary>
+
         public Int32 PageElementCount
         {
             get
@@ -510,9 +558,8 @@ namespace Assets.Editor.Models
         }
         private Int32 pageEleCount;
 
-        /// <summary>
-        /// 当前页最多可显示元素的空位
-        /// </summary>
+
+
         public Int32 PageSize
         {
             get
@@ -525,6 +572,9 @@ namespace Assets.Editor.Models
             }
         }
         private Int32 pageSize;
+
+
+
         public Int32 TotalPage
         {
             get

@@ -108,8 +108,8 @@ namespace Resource.Package.Assets.Common
 
         public ImageTypes lpType { get;  }
         public RenderTypes lpRenderType { get; }
-        public Byte unknown2 { get; }
-        public Byte unknown1 { get; }
+        public Byte Unknown2 { get; }
+        public Byte Unknown1 { get; }
     }
 
 
@@ -119,8 +119,8 @@ namespace Resource.Package.Assets.Common
         public Int16 OffsetY { get; set; }
 
         public RenderTypes lpRenderType { get; set; }
-        public Byte unknown2 { get; set; }
-        public Byte unknown1 { get; set; }
+        public Byte Unknown2 { get; set; }
+        public Byte Unknown1 { get; set; }
 
 
 

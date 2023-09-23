@@ -53,7 +53,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\ImportImage.xaml.cs">
+    <Compile Update="Views\ExportDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\ImportDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

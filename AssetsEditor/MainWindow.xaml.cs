@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using Assets.Editor.Models;
 
@@ -15,8 +16,6 @@ namespace Assets.Editor
 
         public MainWindowModel Model { get; set; } = new MainWindowModel();
 
-
-
         public MainWindow()
         {
             this.DataContext = Model;
@@ -25,25 +24,24 @@ namespace Assets.Editor
             Instance = this;
         }
 
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+
+            var filename = Environment.GetCommandLineArgs().Where(e => e.ToLower().EndsWith(".asset")).FirstOrDefault();
+            if (filename != null)
+            {
+                this.Model.OpenFile(filename);
+            }
+
+        }
+
+
+
         private void Model_OnClose(object sender, Xaml.Effects.Toolkit.Model.WindowDestroyArgs e)
         {
             Environment.Exit(0);
         }
 
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void NumbericTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-
-        }
-
-        private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-
-        }
     }
 }

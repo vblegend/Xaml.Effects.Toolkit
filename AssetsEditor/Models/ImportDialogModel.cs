@@ -1,23 +1,25 @@
 ﻿using Microsoft.Toolkit.Mvvm.Input;
-using Microsoft.Win32;
 using Resource.Package.Assets;
 using Resource.Package.Assets.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Xaml.Effects.Toolkit.Model;
-using static System.Net.WebRequestMethods;
+
 
 namespace Assets.Editor.Models
 {
 
-    public class ImportImageModel : DialogModel
+    public class ImportDialogModel : DialogModel
     {
         public readonly String ImageFilter = "Image File|*.png;*.bmp;*.gif;*.jpg;*.tif";
         public ICommand SelectSourceCommand { get; protected set; }
@@ -27,7 +29,7 @@ namespace Assets.Editor.Models
 
 
 
-        public ImportImageModel()
+        public ImportDialogModel()
         {
             this.Title = "导入资源";
             this.ImportSource = "";
@@ -35,7 +37,8 @@ namespace Assets.Editor.Models
             this.Progress = 0;
             this.RenderType = RenderTypes.Normal;
             this.FormatOptions = ImageFormat.ALLIMAGE;
-            this.ImportOptions = ImageImportOption.Placements;
+            this.ImportUserData = ImageUserData.None;
+            this.ImportOption = ImportOption.Append;
             this.ModeChangedCommand = new RelayCommand<RoutedEventArgs>(ImportMode_Changed);
             this.SelectSourceCommand = new RelayCommand(SelectSource_Click);
         }
@@ -90,27 +93,40 @@ namespace Assets.Editor.Models
         {
             this.Progress = 0;
             List<String> files = new List<string>();
-
+            var dir = "";
             if (this.IsBatch)
             {
                 var fs = from file in Directory.EnumerateFiles(this.ImportSource, "*.*", SearchOption.TopDirectoryOnly) where FilterFile(file) select file;
-
+                dir = this.ImportSource;
                 files.AddRange(fs);
             }
             else
             {
                 files.Add(this.ImportSource);
+                dir = Path.GetDirectoryName(this.ImportSource);
             }
-            this.ImportResources(files);
+            this.ImportResources(dir, files);
             Console.WriteLine(files);
         }
 
 
 
-        private async Task ImportResources(List<String> files)
+        private async Task ImportResources(String dirName, List<String> files)
         {
             List<DataBlock> blocks = new List<DataBlock>();
             var fileCount = files.Count;
+            Dictionary<String, DataInfo> schemas = new Dictionary<String, DataInfo>();
+            if (this.ImportUserData == ImageUserData.SchemaJson)
+            {
+                var pname = Path.Combine(dirName, $"schema.json");
+                if (System.IO.File.Exists(pname))
+                {
+                    var placements = System.IO.File.ReadAllText(pname);
+                    schemas = JsonSerializer.Deserialize<Dictionary<String, DataInfo>>(placements);
+                }
+            }
+
+
             for (int i = 0; i < files.Count; i++)
             {
                 var file = files[i];
@@ -125,7 +141,7 @@ namespace Assets.Editor.Models
                 }
                 block.Data = System.IO.File.ReadAllBytes(file);
                 var filename = Path.GetFileNameWithoutExtension(file);
-                if (this.ImportOptions == ImageImportOption.Placements)
+                if (this.ImportUserData == ImageUserData.Placements)
                 {
                     var dirname = Path.GetDirectoryName(file);
                     var pname = Path.Combine(dirname, $"Placements\\{filename}.txt");
@@ -134,6 +150,18 @@ namespace Assets.Editor.Models
                         var placements = System.IO.File.ReadAllLines(pname);
                         block.OffsetX = Int16.Parse(placements[0]);
                         block.OffsetY = Int16.Parse(placements[1]);
+                    }
+                }
+                else if (this.ImportUserData == ImageUserData.SchemaJson)
+                {
+                    var _filename = Path.GetFileName(file);
+                    if (schemas.TryGetValue(filename, out var schema))
+                    {
+                        block.OffsetX = schema.OffsetX;
+                        block.OffsetY = schema.OffsetY;
+                        block.lpRenderType = schema.lpRenderType;
+                        block.Unknown1 = schema.Unknown1;
+                        block.Unknown2 = schema.Unknown2;
                     }
                 }
                 blocks.Add(block);
@@ -218,18 +246,35 @@ namespace Assets.Editor.Models
 
 
 
-        public ImageImportOption ImportOptions
+
+
+
+        public ImportOption ImportOption
         {
             get
             {
-                return this.importOptions;
+                return this.importOption;
             }
             set
             {
-                base.SetProperty(ref this.importOptions, value);
+                base.SetProperty(ref this.importOption, value);
             }
         }
-        private ImageImportOption importOptions;
+        private ImportOption importOption;
+
+
+        public ImageUserData ImportUserData
+        {
+            get
+            {
+                return this.importUserData;
+            }
+            set
+            {
+                base.SetProperty(ref this.importUserData, value);
+            }
+        }
+        private ImageUserData importUserData;
 
 
 

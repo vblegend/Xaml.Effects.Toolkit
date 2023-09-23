@@ -6,12 +6,12 @@ namespace Assets.Editor.Views
     /// <summary>
     /// PasswordInput.xaml 的交互逻辑
     /// </summary>
-    public partial class ImportImage : Window
+    public partial class ImportDialog : Window
     {
 
-        public ImportImageModel Model { get; set; } = new ImportImageModel();
+        public ImportDialogModel Model { get; set; } = new ImportDialogModel();
 
-        public ImportImage()
+        public ImportDialog()
         {
             this.DataContext = Model;
             InitializeComponent();

@@ -12,8 +12,8 @@ namespace Resource.Package.Assets.Version
             info.OffsetY = msReader.ReadInt16();
             info.lpType = (ImageTypes)msReader.ReadByte();
             info.lpRenderType = (RenderTypes)msReader.ReadByte();
-            info.unknown2 = msReader.ReadByte();
-            info.unknown1 = msReader.ReadByte();
+            info.Unknown2 = msReader.ReadByte();
+            info.Unknown1 = msReader.ReadByte();
             info.lpSize = msReader.ReadInt32();
             info.lpRawSize = msReader.ReadInt32();
             info.lpData = msReader.ReadInt32();
@@ -26,8 +26,8 @@ namespace Resource.Package.Assets.Version
             msWriter.Write(info.OffsetY);
             msWriter.Write((Byte)info.lpType);
             msWriter.Write((Byte)info.lpRenderType);
-            msWriter.Write(info.unknown2);
-            msWriter.Write(info.unknown1);
+            msWriter.Write(info.Unknown2);
+            msWriter.Write(info.Unknown1);
             msWriter.Write(info.lpSize);
             msWriter.Write(info.lpRawSize);
             msWriter.Write(info.lpData);

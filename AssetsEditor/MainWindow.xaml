@@ -18,7 +18,7 @@
         Style="{DynamicResource xKit-WindowChrome VisualStudio}"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
-        mc:Ignorable="d"
+        mc:Ignorable="d" Loaded="Window_Loaded"
     >
     <Window.Resources>
         <ObjectDataProvider x:Key="RenderTypes" MethodName="GetValues" ObjectType="{x:Type mscorlib:Enum}">
@@ -113,7 +113,14 @@
                         Height="20"
                         Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
                         Header="帮助(H)"
-                        Style="{DynamicResource WindowMenuStyle}" />
+                        Style="{DynamicResource WindowMenuStyle}" >
+                        <MenuItem
+                        Height="20" IsChecked="{Binding IsRegFileType,Mode=TwoWay}" Command="{Binding RegFileTypeCommand}"
+                        Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
+                        Header="关联文件"/>
+
+
+                    </MenuItem>
                 </Menu>
             </xkit:WindowTheme.Menu>
             <xkit:WindowTheme.AttachedButtons>
@@ -208,7 +215,7 @@
             <Button Content="&#xe62f;" FontSize="16"  
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
-                    Command="{Binding ClosePackageCommand}"
+                    Command="{Binding ChangePasswordCommand}"
                     ToolTip="修改资源包密码"
                     FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
             <Button Content="&#xe656;" FontSize="16"  
@@ -332,7 +339,7 @@
 
                     <Label  Content="X轴偏移：" VerticalAlignment="Top"  HorizontalContentAlignment="Right" Margin="0,121,0,0"/>
                     <xkit:NumbericTextBox  Margin="0,122,5,0" Text="0" MaxLines="1" MaxValue="100000000" MinValue="-100000000" Precision="0" Value="{Binding Selected.OffsetX ,Mode=TwoWay}"   
-                          VerticalContentAlignment="Center"                 VerticalAlignment="Top" TextChanged="NumbericTextBox_TextChanged" Grid.Column="1" Height="24">
+                          VerticalContentAlignment="Center"                 VerticalAlignment="Top" Grid.Column="1" Height="24">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="TextChanged">
                                 <xkit:EventBehavior Action="{Binding OffsetChangedCommand}" />

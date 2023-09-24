@@ -42,24 +42,17 @@ namespace Resource.Package.Assets.Common
         /// <summary>
         /// 目录数量
         /// </summary>
-        public Int32 NumberOfFiles { get; set; }
-        public Int32 TableDataAddr { get; set; }
-        public Int32 TableDataSize { get; set; }
+        public UInt32 NumberOfFiles { get; set; }
+        public UInt32 TableDataAddr { get; set; }
+        public UInt32 TableDataSize { get; set; }
 
     }
 
 
 
     internal class FileAsyncCache
-    {
-        public FileAsyncCache()
-        {
-            infomation = new FileInfomation();
-        }
-        public FileInfomation infomation;
+    { 
         public Byte[] Data;
-
-
     }
 
 
@@ -95,25 +88,35 @@ namespace Resource.Package.Assets.Common
 
 
 
+    public enum ImportOption
+    {
+        [Description("追加")]
+        Append = 0,
+        [Description("覆盖")]
+        Override = 1,
+
+    }
+
 
 
 
     public interface IReadOnlyDataBlock
     {
 
-        public Int16 OffsetX { get;  }
-        public Int16 OffsetY { get;  }
+        public Int16 OffsetX { get; }
+        public Int16 OffsetY { get; }
 
-        public Byte[] Data { get;  }
+        public Byte[] Data { get; }
 
-        public ImageTypes lpType { get;  }
+        public ImageTypes lpType { get; }
         public RenderTypes lpRenderType { get; }
         public Byte Unknown2 { get; }
         public Byte Unknown1 { get; }
     }
 
 
-    public class DataInfo {
+    public class DataInfo
+    {
 
         public Int16 OffsetX { get; set; }
         public Int16 OffsetY { get; set; }
@@ -137,6 +140,14 @@ namespace Resource.Package.Assets.Common
 
     public class DataBlock : DataInfo, IReadOnlyDataBlock
     {
+        public DataBlock()
+        {
+                this.Data= new byte[0];
+        }
+        /// <summary>
+        /// 小于0 追加 大于0 覆盖替换
+        /// </summary>
+        public Int32 Index { get; set; }
         public ImageTypes lpType { get; set; }
         public Byte[] Data { get; set; }
     }
@@ -152,18 +163,37 @@ namespace Resource.Package.Assets.Common
         /// 数据地址
         /// 4字节
         /// </summary>
-        public Int32 lpData { get; set; }
+        public UInt32 lpData { get; set; }
 
         /// <summary>
         /// 原始数据大小
         /// </summary>
-        public Int32 lpRawSize { get; set; }
+        public UInt32 lpRawSize { get; set; }
 
         /// <summary>
         /// 数据大小
         /// 4字节
         /// </summary>
-        public Int32 lpSize { get; set; }
+        public UInt32 lpSize { get; set; }
+
+
+
+
+
+
+        public void CopyFrom(FileInfomation info)
+        {
+            this.OffsetY = info.OffsetY;
+            this.OffsetX = info.OffsetX;
+            this.Unknown1 = info.Unknown1;
+            this.Unknown2 = info.Unknown2;
+            this.lpData = info.lpData;
+            this.lpType = info.lpType;
+            this.lpRenderType = info.lpRenderType;
+            this.lpRawSize = info.lpRawSize;
+            this.lpSize = info.lpSize;
+        
+        }
 
     }
 

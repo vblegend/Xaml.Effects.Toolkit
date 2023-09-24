@@ -53,7 +53,6 @@ namespace Assets.Editor.Models
         public IRelayCommand ClosePackageCommand { get; protected set; }
 
         public IRelayCommand ChangePasswordCommand { get; protected set; }
-        public IRelayCommand ReplaceImageCommand { get; protected set; }
 
         public IRelayCommand ImportImageCommand { get; protected set; }
 
@@ -75,7 +74,7 @@ namespace Assets.Editor.Models
             this.OpenPackageCommand = new RelayCommand(OpenPackage_Click);
             this.ClosePackageCommand = new RelayCommand(ClosePackage_Click, ClosePackage_CanClick);
             this.SavePackageCommand = new RelayCommand(SavePackage_Click, SavePackage_CanClick);
-            this.ReplaceImageCommand = new RelayCommand(ReplaceImage_Click, ReplaceImage_CanClick);
+
             this.ImportImageCommand = new RelayCommand(ImportImage_Click, ImportImage_CanClick);
             this.ExportImageCommand = new RelayCommand(ExportImage_Click, ExportImage_CanClick);
             this.ChangePasswordCommand = new RelayCommand(ChangePassword_Click, ChangePassword_CanClick);
@@ -134,26 +133,6 @@ namespace Assets.Editor.Models
             this.IsRegFileType = FileTypeRegister.FileTypeRegistered(".asset");
         }
 
-
-
-        private Boolean ReplaceImage_CanClick()
-        {
-            return this.assetFile != null && this.SelectedImage != null;
-        }
-
-        private void ReplaceImage_Click()
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            //ofd.InitialDirectory = @"D:\";
-            ofd.Filter = ImageFilter;
-            if (ofd.ShowDialog() == true)
-            {
-                var data = File.ReadAllBytes(ofd.FileName);
-                this.assetFile.Replace(this.SelectedImage.Index, new DataBlock { Data = data, OffsetX = 0, OffsetY = 0 });
-                SavePackage_Click();
-                refreshPage();
-            }
-        }
 
         private Boolean ImportImage_CanClick()
         {
@@ -215,7 +194,6 @@ namespace Assets.Editor.Models
                 resizePage();
                 refreshPage();
                 this.ClosePackageCommand.NotifyCanExecuteChanged();
-                this.ReplaceImageCommand.NotifyCanExecuteChanged();
                 this.ImportImageCommand.NotifyCanExecuteChanged();
                 this.ExportImageCommand.NotifyCanExecuteChanged();
                 this.ChangePasswordCommand.NotifyCanExecuteChanged();
@@ -273,7 +251,6 @@ namespace Assets.Editor.Models
                 this.SavePackageCommand.NotifyCanExecuteChanged();
                 this.ImportImageCommand.NotifyCanExecuteChanged();
                 this.ExportImageCommand.NotifyCanExecuteChanged();
-                this.ReplaceImageCommand.NotifyCanExecuteChanged();
                 this.ChangePasswordCommand.NotifyCanExecuteChanged();
             }
             resizePage();
@@ -285,12 +262,15 @@ namespace Assets.Editor.Models
         {
             OpenFileDialog ofd = new OpenFileDialog()
             {
+                InitialDirectory = ConfigureUtil.GetValue("OpenAssetDirectory"),
                 DereferenceLinks = false,
             };
             //ofd.InitialDirectory = @"D:\";
             ofd.Filter = "Assets Package|*.asset";
             if (ofd.ShowDialog() == true)
             {
+                var dir = Path.GetDirectoryName(ofd.FileName);
+                ConfigureUtil.SetValue("OpenAssetDirectory", dir);
                 this.OpenFile(ofd.FileName);
             }
         }
@@ -314,17 +294,17 @@ namespace Assets.Editor.Models
 
         private void resizePage()
         {
-            var numberOfFiles = 0;
+            UInt32 numberOfFiles = 0;
             if (this.assetFile != null) numberOfFiles = this.assetFile.NumberOfFiles;
             var pagesize2 = numberOfFiles - (this.CurrentPage * this.PageSize);
-            var pagesize = Math.Min(this.PageSize, pagesize2);
+            var pagesize = (UInt32)Math.Min(this.PageSize, pagesize2);
             this.PageElementCount = pagesize;
             this.GridImages.Clear();
             for (int i = 0; i < pagesize; i++)
             {
                 this.GridImages.Add(new ImageModel());
             }
-            this.TotalPage = numberOfFiles / this.PageSize;
+            this.TotalPage = (UInt32)(numberOfFiles / this.PageSize);
             if (this.CurrentPage > this.totalPage)
             {
                 this.CurrentPage = this.totalPage;
@@ -345,15 +325,22 @@ namespace Assets.Editor.Models
             {
                 if (startAt + i < this.assetFile.NumberOfFiles)
                 {
-                    var node = this.assetFile.Read(startAt + i);
-                    var source = loadImageSource(node.Data);
-                    this.GridImages[i].Index = startAt + i;
-                    this.GridImages[i].Source = source;
+                    var node = this.assetFile.Read((UInt32)(startAt + i));
+                    this.GridImages[i].Index = (UInt32)(startAt + i);
                     this.GridImages[i].ImageType = node.lpType;
                     this.GridImages[i].RenderType = node.lpRenderType;
                     this.GridImages[i].OffsetX = node.OffsetX;
                     this.GridImages[i].OffsetY = node.OffsetY;
-                    this.GridImages[i].FileSize = node.Data.Length;
+
+
+                    if (node.Data.Length > 0)
+                    {
+                        this.GridImages[i].FileSize = node.Data.Length;
+                        var source = loadImageSource(node.Data);
+                        this.GridImages[i].Source = source;
+                    }
+
+
                 }
             }
         }
@@ -417,7 +404,6 @@ namespace Assets.Editor.Models
             {
                 this.SelectedImage = null;
             }
-            this.ReplaceImageCommand.NotifyCanExecuteChanged();
             this.ExportImageCommand.NotifyCanExecuteChanged();
         }
 
@@ -545,7 +531,7 @@ namespace Assets.Editor.Models
         private ImageModel selectedImage;
 
 
-        public Int32 PageElementCount
+        public UInt32 PageElementCount
         {
             get
             {
@@ -556,7 +542,7 @@ namespace Assets.Editor.Models
                 base.SetProperty(ref this.pageEleCount, value);
             }
         }
-        private Int32 pageEleCount;
+        private UInt32 pageEleCount;
 
 
 
@@ -575,7 +561,7 @@ namespace Assets.Editor.Models
 
 
 
-        public Int32 TotalPage
+        public UInt32 TotalPage
         {
             get
             {
@@ -588,9 +574,9 @@ namespace Assets.Editor.Models
 
 
         }
-        private Int32 totalPage;
+        private UInt32 totalPage;
 
-        public Int32 CurrentPage
+        public UInt32 CurrentPage
         {
             get
             {
@@ -602,7 +588,7 @@ namespace Assets.Editor.Models
             }
         }
 
-        private Int32 currentPage;
+        private UInt32 currentPage;
 
 
 

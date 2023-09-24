@@ -1,8 +1,11 @@
-﻿using Microsoft.Toolkit.Mvvm.Input;
+﻿using Assets.Editor.Utils;
+using Microsoft.Toolkit.Mvvm.Input;
 using Resource.Package.Assets;
 using Resource.Package.Assets.Common;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -13,8 +16,9 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Xaml.Effects.Toolkit.Model;
-
+using Xaml.Effects.Toolkit.Uitity;
 
 namespace Assets.Editor.Models
 {
@@ -49,11 +53,13 @@ namespace Assets.Editor.Models
             if (this.IsBatch)
             {
                 FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-                folderBrowserDialog.Description = "选择最终目录";                         //目录对话框的描述字符串
-                folderBrowserDialog.ShowNewFolderButton = true;                        //是否显示目录对话框左下角的“新建文件夹”按钮， true：显示， false：
+                folderBrowserDialog.Description = "选择最终目录";
+                folderBrowserDialog.ShowNewFolderButton = true;
+                folderBrowserDialog.InitialDirectory = ConfigureUtil.GetValue("ImportDirectory");
                 folderBrowserDialog.RootFolder = Environment.SpecialFolder.Desktop;
                 if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
+                    ConfigureUtil.SetValue("ImportDirectory", folderBrowserDialog.SelectedPath);
                     this.ImportSource = folderBrowserDialog.SelectedPath;
                 };
             }
@@ -61,9 +67,13 @@ namespace Assets.Editor.Models
             {
                 Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
                 ofd.Title = "选择图片文件";
+                ofd.InitialDirectory = ConfigureUtil.GetValue("ImportFile");
                 ofd.Filter = ImageFilter;
                 if (ofd.ShowDialog() == true)
                 {
+                    var dir = Path.GetDirectoryName(ofd.FileName);
+                    ConfigureUtil.SetValue("ImportFile", dir);
+
                     this.ImportSource = ofd.FileName;
                 }
             }
@@ -105,13 +115,23 @@ namespace Assets.Editor.Models
                 files.Add(this.ImportSource);
                 dir = Path.GetDirectoryName(this.ImportSource);
             }
-            this.ImportResources(dir, files);
-            Console.WriteLine(files);
+            var worker = new BackgroundWorker();
+            worker.DoWork += (s, e2) =>
+            {
+                this.ImportResources(dir, files);
+            };
+            worker.RunWorkerCompleted += (s, e2) =>
+            {
+                this.StatusText = "Import Complete...";
+                System.Windows.MessageBox.Show("导入完成");
+                this.DialogResult = true;
+            };
+            worker.RunWorkerAsync();
         }
 
 
 
-        private async Task ImportResources(String dirName, List<String> files)
+        private void ImportResources(String dirName, List<String> files)
         {
             List<DataBlock> blocks = new List<DataBlock>();
             var fileCount = files.Count;
@@ -125,8 +145,7 @@ namespace Assets.Editor.Models
                     schemas = JsonSerializer.Deserialize<Dictionary<String, DataInfo>>(placements);
                 }
             }
-
-
+            this.StatusText = "Loading Files Raw Data..";
             for (int i = 0; i < files.Count; i++)
             {
                 var file = files[i];
@@ -164,18 +183,22 @@ namespace Assets.Editor.Models
                         block.Unknown2 = schema.Unknown2;
                     }
                 }
+                if (this.ImportOption == ImportOption.Append)
+                {
+                    block.Index = -1;
+                }
+                else
+                {
+                    block.Index = (Int32)UInt32.Parse(filename);
+                }
                 blocks.Add(block);
-                this.Progress = (i + 1) / fileCount * 50;
-                if (i % 10 == 0) Thread.Sleep(1);
+                this.Progress = (Double)i / (Double)fileCount * 100.0f;
             }
-            this.stream.BatchImport(blocks, (value) =>
+            this.StatusText = "Compressed Writeing File..";
+            this.stream.Import(blocks, (value) =>
             {
-                if (value % 10 == 0) Thread.Sleep(1);
-                this.Progress = 50 + value / fileCount * 50;
+                this.Progress = value;
             });
-
-
-            this.DialogResult = true;
         }
 
 
@@ -215,19 +238,6 @@ namespace Assets.Editor.Models
 
 
 
-
-        public Double Progress
-        {
-            get
-            {
-                return this.progress;
-            }
-            set
-            {
-                base.SetProperty(ref this.progress, value);
-            }
-        }
-        private Double progress;
 
 
 
@@ -306,6 +316,41 @@ namespace Assets.Editor.Models
         }
 
         private String importSource;
+
+
+
+
+
+
+
+        public Double Progress
+        {
+            get
+            {
+                return this.progress;
+            }
+            set
+            {
+                base.SetPropertyAsync(ref this.progress, value);
+            }
+        }
+        private Double progress;
+
+
+        public String StatusText
+        {
+            get
+            {
+                return this.statusText;
+            }
+            set
+            {
+                base.SetPropertyAsync(ref this.statusText, value);
+            }
+        }
+
+        private String statusText;
+
 
     }
 }

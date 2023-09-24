@@ -14,9 +14,9 @@ namespace Resource.Package.Assets.Version
             var info = new FileInfomation();
             info.OffsetX = (Int16)msReader.ReadInt32();
             info.OffsetY = (Int16)msReader.ReadInt32();
-            info.lpSize = msReader.ReadInt32();
-            info.lpRawSize = msReader.ReadInt32();
-            info.lpData = msReader.ReadInt32();
+            info.lpSize = msReader.ReadUInt32();
+            info.lpRawSize = msReader.ReadUInt32();
+            info.lpData = msReader.ReadUInt32();
             return info;
         }
 

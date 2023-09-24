@@ -137,7 +137,7 @@ namespace Assets.Editor.Models
 
 
 
-        public Int32 Index
+        public UInt32 Index
         {
             get
             {
@@ -149,7 +149,7 @@ namespace Assets.Editor.Models
             }
         }
 
-        private Int32 index;
+        private UInt32 index;
 
 
         public Int16 OffsetX

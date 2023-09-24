@@ -6,6 +6,8 @@ using Resource.Package.Assets.Common;
 using Microsoft.Win32;
 using Resource.Package.Assets;
 using System.Windows;
+using Assets.Editor.Utils;
+using System.IO;
 
 namespace Assets.Editor.Models
 {
@@ -29,12 +31,14 @@ namespace Assets.Editor.Models
         {
             SaveFileDialog sfd = new SaveFileDialog();
             //设置这个对话框的起始保存路径
-            // sfd.InitialDirectory = @"D:\";
+            sfd.InitialDirectory = ConfigureUtil.GetValue("CreateAssetDirectory");
             //设置保存的文件的类型，注意过滤器的语法
             sfd.Filter = "Assets Package|*.asset";
             //调用ShowDialog()方法显示该对话框，该方法的返回值代表用户是否点击了确定按钮
             if (sfd.ShowDialog() == true)
             {
+                var dir = Path.GetDirectoryName(sfd.FileName);
+                ConfigureUtil.SetValue("CreateAssetDirectory", dir);
                 this.FileName = sfd.FileName;
             }
             this.SubmitCommand.NotifyCanExecuteChanged();

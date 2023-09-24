@@ -48,7 +48,7 @@ namespace Resource.Package.Assets
         }
 
 
-        public Int32 NumberOfFiles
+        public UInt32 NumberOfFiles
         {
             get
             {
@@ -109,9 +109,9 @@ namespace Resource.Package.Assets
                 }
                 reader.Read(header.Version);
                 header.CompressOption = (CompressionOption)reader.ReadByte();
-                header.NumberOfFiles = reader.ReadInt32();
-                header.TableDataAddr = reader.ReadInt32();
-                header.TableDataSize = reader.ReadInt32();
+                header.NumberOfFiles = reader.ReadUInt32();
+                header.TableDataAddr = reader.ReadUInt32();
+                header.TableDataSize = reader.ReadUInt32();
                 this.ReadIndex(reader);
                 header.Version = new Byte[] { 1, 0, 1 };
             }
@@ -119,75 +119,46 @@ namespace Resource.Package.Assets
 
 
 
-        public IReadOnlyDataBlock Read(Int32 index)
+        public IReadOnlyDataBlock Read(UInt32 index)
         {
-            var info = this.Infomations[index];
+            var info = this.Infomations[(Int32)index];
             using (var reader = new BinaryReader(fileStream, Encoding.UTF8, true))
             {
                 var node = new DataBlock();
-                var data = new Byte[info.lpSize];
-                reader.BaseStream.Position = info.lpData;
-                reader.Read(data);
-                if (info.lpRawSize != info.lpSize)
-                {
-                    // 解密 data
-                    data = ZLib.Decompress(data, info.lpRawSize);
-                }
                 node.lpType = info.lpType;
                 node.lpRenderType = info.lpRenderType;
                 node.Unknown1 = info.Unknown1;
                 node.Unknown2 = info.Unknown2;
                 node.OffsetX = info.OffsetX;
                 node.OffsetY = info.OffsetY;
-                node.Data = data;
+                if (info.lpSize > 0)
+                {
+                    var data = new Byte[info.lpSize];
+                    reader.BaseStream.Position = info.lpData;
+                    reader.Read(data);
+                    if (info.lpRawSize != info.lpSize)
+                    {
+                        // 解密 data
+                        data = ZLib.Decompress(data, info.lpRawSize);
+                    }
+                    node.Data = data;
+                }
                 return node;
             }
         }
 
-        public void Replace(Int32 index, DataBlock data)
+        public void UpdateOffset(UInt32 index, Point data)
         {
-            var info = this.Infomations[index];
-            var task = Preconditioning(data, null).Result;
-            using (var writer = new BinaryWriter(fileStream, Encoding.UTF8, true))
-            {
-                info.OffsetX = task.infomation.OffsetX;
-                info.OffsetY = task.infomation.OffsetY;
-                info.lpType = task.infomation.lpType;
-                info.lpRenderType = task.infomation.lpRenderType;
-                info.lpRawSize = task.infomation.lpRawSize;
-
-                if (info.lpSize >= task.infomation.lpSize)
-                {
-                    info.lpSize = task.infomation.lpSize;
-                    writer.Seek(info.lpData, SeekOrigin.Begin);
-                    writer.Write(task.Data);
-                }
-                else
-                {
-                    var addr = Apply(task.Data.Length);
-                    info.lpData = addr;
-                    info.lpSize = task.infomation.lpSize;
-                    writer.Seek(info.lpData, SeekOrigin.Begin);
-                    writer.Write(task.Data);
-                }
-                this.WriteIndex(writer);
-            }
-        }
-
-
-
-        public void UpdateOffset(Int32 index, Point data)
-        {
-            var info = this.Infomations[index];
+            var info = this.Infomations[(Int32)index];
             info.OffsetX = (Int16)data.X;
             info.OffsetY = (Int16)data.Y;
             this.Save();
         }
 
 
-        public void UpdateOffsetNoWrite(Int32 index, Point data)
+        public void UpdateOffsetNoWrite(UInt32 index, Point data)
         {
-            var info = this.Infomations[index];
+            var info = this.Infomations[(Int32)index];
             if (info != null)
             {
                 info.OffsetX = (Int16)data.X;
@@ -196,9 +167,9 @@ namespace Resource.Package.Assets
         }
 
 
-        public void UpdateInfoNoWrite(Int32 index, DataInfo datainfo)
+        public void UpdateInfoNoWrite(UInt32 index, DataInfo datainfo)
         {
-            var info = this.Infomations[index];
+            var info = this.Infomations[(Int32)index];
             if (info != null)
             {
                 info.OffsetX = datainfo.OffsetX;
@@ -214,11 +185,11 @@ namespace Resource.Package.Assets
 
 
 
-        public void UpdateOffsets(Dictionary<Int32, Point> datas)
+        public void UpdateOffsets(Dictionary<UInt32, Point> datas)
         {
             foreach (var item in datas)
             {
-                var info = this.Infomations[item.Key];
+                var info = this.Infomations[(Int32)item.Key];
                 info.OffsetX = (Int16)item.Value.X;
                 info.OffsetY = (Int16)item.Value.Y;
             }
@@ -239,100 +210,94 @@ namespace Resource.Package.Assets
 
 
 
-        private async Task<FileAsyncCache> Preconditioning(DataBlock item, Action report=null)
+        private async Task<Byte[]> Compressing(DataBlock item, Action report = null)
         {
-            var task = new FileAsyncCache();
-            task.infomation.OffsetX = item.OffsetX;
-            task.infomation.OffsetY = item.OffsetY;
-            task.infomation.lpRawSize = item.Data.Length;
-            task.infomation.lpRenderType = item.lpRenderType;
-            task.infomation.lpType = ParseImageFormat(item.Data);
+            Byte[] bytes = item.Data;
             if (header.CompressOption == CompressionOption.MuchPossibleCompress || header.CompressOption == CompressionOption.MustCompressed)
             {
-                task.Data = await ZLib.Compress(item.Data);
-                if (task.Data.Length > task.infomation.lpRawSize && header.CompressOption == CompressionOption.MuchPossibleCompress)
+                bytes = await ZLib.Compress(item.Data);
+                if (bytes.Length > item.Data.Length && header.CompressOption == CompressionOption.MuchPossibleCompress)
                 {
-                    task.Data = item.Data;
+                    bytes = item.Data;
                 }
             }
-            else
-            {
-                task.Data = item.Data;
-            }
-            task.infomation.lpSize = task.Data.Length;
-            if(report != null) report();
-            return task;
+            if (report != null) report();
+            return bytes;
         }
 
 
-        public Int32 BatchImport(IEnumerable<DataBlock> items, Action<Int32> process = null)
+        public UInt32 Import(IReadOnlyList<DataBlock> items, Action<Double> process = null)
         {
-            var tasks = new List<Task<FileAsyncCache>>();
+            var tasks = new List<Task<Byte[]>>();
             var num = 0;
+            var total = items.Count * 2 + 1;
             var report = () =>
             {
-                if (process != null) process(++num);
+                num++;
+                if (process != null) process((Double)num / (Double)total * 100.0f);
             };
             foreach (var item in items)
             {
-                tasks.Add(Preconditioning(item, report));
+                tasks.Add(Compressing(item, report));
             }
             Task.WaitAll(tasks.ToArray());
-            if (process != null) process(items.Count());
             using (var writer = new BinaryWriter(fileStream, Encoding.UTF8, true))
             {
-                foreach (var task in tasks)
+                for (var i = 0; i < tasks.Count; i++)
                 {
-                    var cache = task.Result;
-                    cache.infomation.lpData = header.TableDataAddr;
-                    header.TableDataAddr = cache.infomation.lpData + cache.infomation.lpSize;
-                    header.NumberOfFiles++;
-                    writer.Seek(cache.infomation.lpData, SeekOrigin.Begin);
-                    writer.Write(cache.Data);
-                    this.Infomations.Add(cache.infomation);
+                    var item = items[i];
+                    var bufData = tasks[i].Result;
+                    var info = this.Apply(item.Index);
+                    info.lpType = ParseImageFormat(item.Data);
+                    info.lpRawSize = (UInt32)item.Data.Length;
+                    info.OffsetX = item.OffsetX;
+                    info.OffsetY = item.OffsetY;
+                    info.lpRenderType = item.lpRenderType;
+                    info.lpSize = (UInt32)bufData.Length;
+                    info.lpData = header.TableDataAddr;
+                    header.TableDataAddr = info.lpData + info.lpSize;
+                    writer.Seek((Int32)info.lpData, SeekOrigin.Begin);
+                    writer.Write(bufData);
+                    report();
                 }
                 this.WriteIndex(writer);
+                report();
                 return header.NumberOfFiles;
             }
-      
+
         }
 
 
 
 
-        public Int32 Import(DataBlock data)
+        private FileInfomation Apply(Int32 index)
         {
-            var task = Preconditioning(data, null).Result;
-            return this.Import(task.infomation, task.Data);
-        }
-
-
-        private Int32 Apply(Int32 size)
-        {
-            var addr = header.TableDataAddr;
-            header.TableDataAddr = addr + size;
-            return addr;
-        }
-
-
-        private Int32 Import(FileInfomation info, Byte[] data)
-        {
-            this.Infomations.Add(info);
-            info.lpData = Apply(info.lpSize);
-            header.NumberOfFiles++;
-            using (var writer = new BinaryWriter(fileStream, Encoding.UTF8, true))
+            var info = new FileInfomation();
+            if (index >= 0)
             {
-                writer.Seek(info.lpData, SeekOrigin.Begin);
-                writer.Write(data);
-                this.WriteIndex(writer);
-                return header.NumberOfFiles - 1;
+                if (index < this.Infomations.Count)
+                {
+                    info = this.Infomations[index];
+                }
+                else
+                {
+                    while (this.Infomations.Count <= index)
+                    {
+                        this.Infomations.Add(new FileInfomation());
+                        header.NumberOfFiles++;
+                    }
+                    return this.Infomations.Last();
+                }
+                return info;
+            }
+            else
+            {
+                this.Infomations.Add(info);
+                header.NumberOfFiles++;
+                return info;
             }
         }
 
-        public Int32 Write(Byte[] data)
-        {
-            return this.Import(new DataBlock() { Data = data });
-        }
 
         public void Close()
         {
@@ -350,6 +315,7 @@ namespace Resource.Package.Assets
         {
             this.Close();
         }
+
         private void ReadIndex(BinaryReader reader)
         {
             Byte[] raw;
@@ -398,14 +364,14 @@ namespace Resource.Package.Assets
                     }
                 }
                 var tab = AES.Encrypt(ms.ToArray(), this.password);
-                header.TableDataSize = tab.Length;
+                header.TableDataSize = (UInt32)tab.Length;
                 //writer.Seek(8, SeekOrigin.Begin);
                 //writer.Write(this.header.Version);
                 writer.Seek(12, SeekOrigin.Begin);
                 writer.Write(header.NumberOfFiles);
                 writer.Write(header.TableDataAddr);
                 writer.Write(header.TableDataSize);
-                writer.Seek(header.TableDataAddr, SeekOrigin.Begin);
+                writer.Seek((Int32)header.TableDataAddr, SeekOrigin.Begin);
                 writer.Write(tab);
             }
         }

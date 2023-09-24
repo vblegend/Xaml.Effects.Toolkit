@@ -14,9 +14,9 @@ namespace Resource.Package.Assets.Version
             info.lpRenderType = (RenderTypes)msReader.ReadByte();
             info.Unknown2 = msReader.ReadByte();
             info.Unknown1 = msReader.ReadByte();
-            info.lpSize = msReader.ReadInt32();
-            info.lpRawSize = msReader.ReadInt32();
-            info.lpData = msReader.ReadInt32();
+            info.lpSize = msReader.ReadUInt32();
+            info.lpRawSize = msReader.ReadUInt32();
+            info.lpData = msReader.ReadUInt32();
             return info;
         }
 

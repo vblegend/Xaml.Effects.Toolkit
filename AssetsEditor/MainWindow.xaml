@@ -197,15 +197,6 @@
                     FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
 
 
-
-
-            <Button Content="&#xe87a;" FontSize="16"  
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    Command="{Binding ReplaceImageCommand}"
-                                ToolTip="替换当前图片"
-                    FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
-
             <Separator Height="20">
                 <Separator.LayoutTransform>
                     <RotateTransform Angle="90" />

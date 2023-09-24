@@ -1,9 +1,11 @@
-﻿using Microsoft.Toolkit.Mvvm.Input;
+﻿using Assets.Editor.Utils;
+using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Win32;
 using Resource.Package.Assets;
 using Resource.Package.Assets.Common;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -48,11 +50,13 @@ namespace Assets.Editor.Models
         private void SelectSource_Click()
         {
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-            folderBrowserDialog.Description = "选择最终目录";                         //目录对话框的描述字符串
-            folderBrowserDialog.ShowNewFolderButton = true;                        //是否显示目录对话框左下角的“新建文件夹”按钮， true：显示， false：
+            folderBrowserDialog.Description = "选择最终目录";
+            folderBrowserDialog.ShowNewFolderButton = true;
+            folderBrowserDialog.InitialDirectory = ConfigureUtil.GetValue("Export-Directory");
             folderBrowserDialog.RootFolder = Environment.SpecialFolder.Desktop;
             if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
+                ConfigureUtil.SetValue("Export-Directory", folderBrowserDialog.SelectedPath);
                 this.ExportDirectory = folderBrowserDialog.SelectedPath;
             };
             this.Progress = 0;
@@ -79,6 +83,19 @@ namespace Assets.Editor.Models
         /// </summary>
         protected override void Execute_Submit()
         {
+            var worker = new BackgroundWorker();
+            worker.DoWork += this.Export;
+            worker.RunWorkerCompleted += (s, e2) =>
+            {
+                System.Windows.MessageBox.Show("导出完成");
+                this.DialogResult = true;
+            };
+            worker.RunWorkerAsync();
+        }
+
+
+        private void Export(object? sender, DoWorkEventArgs e)
+        {
             this.Progress = 0;
             List<String> files = new List<string>();
             Dictionary<String, DataInfo> schemas = new Dictionary<String, DataInfo>();
@@ -86,9 +103,9 @@ namespace Assets.Editor.Models
             {
                 Directory.CreateDirectory(Path.Combine(this.ExportDirectory, "Placements"));
             }
-            for (int i = 10; i < 20; i++)
+            for (uint i = this.StartIndex; i < this.StartIndex + this.Length; i++)
             {
-                var block = this.stream.Read(i);
+                var block = this.stream.Read((UInt32)i);
                 var fileName = i.ToString().PadLeft(7, '0');
                 var extName = this.GetFileName(block.lpType);
                 var outFileName = Path.Join(this.ExportDirectory, fileName + extName);
@@ -110,6 +127,8 @@ namespace Assets.Editor.Models
                     File.WriteAllLines(f, new String[] { block.OffsetX.ToString(), block.OffsetY.ToString() });
                 }
                 System.IO.File.WriteAllBytes(outFileName, block.Data);
+                this.Progress = (Double)(i - this.StartIndex) / (Double)(this.StartIndex + this.Length) * 100.0f;
+
             }
 
             if (ImportOptions == ImageUserData.SchemaJson)
@@ -125,8 +144,6 @@ namespace Assets.Editor.Models
 
                 File.WriteAllText(Path.Combine(this.ExportDirectory, "schema.json"), json);
             }
-
-            Console.WriteLine(files);
         }
 
         private string GetFileName(ImageTypes types)
@@ -141,63 +158,8 @@ namespace Assets.Editor.Models
         }
 
 
-        private void SaveSchema()
-        {
 
-
-
-
-
-
-        }
-
-
-
-
-
-
-        private async Task ImportResources(List<String> files)
-        {
-            List<DataBlock> blocks = new List<DataBlock>();
-            var fileCount = files.Count;
-            for (int i = 0; i < files.Count; i++)
-            {
-                var file = files[i];
-                var block = new DataBlock();
-                block.Data = System.IO.File.ReadAllBytes(file);
-                var filename = Path.GetFileNameWithoutExtension(file);
-                if (this.ImportOptions == ImageUserData.Placements)
-                {
-                    var dirname = Path.GetDirectoryName(file);
-                    var pname = Path.Combine(dirname, $"Placements\\{filename}.txt");
-                    if (System.IO.File.Exists(pname))
-                    {
-                        var placements = System.IO.File.ReadAllLines(pname);
-                        block.OffsetX = Int16.Parse(placements[0]);
-                        block.OffsetY = Int16.Parse(placements[1]);
-                    }
-                }
-                blocks.Add(block);
-                this.Progress = (i + 1) / fileCount * 50;
-                if (i % 10 == 0) Thread.Sleep(1);
-            }
-            this.stream.BatchImport(blocks, (value) =>
-            {
-                if (value % 10 == 0) Thread.Sleep(1);
-                this.Progress = 50 + value / fileCount * 50;
-            });
-
-
-            this.DialogResult = true;
-        }
-
-
-
-
-
-
-
-        public Int32 StartIndex
+        public UInt32 StartIndex
         {
             get
             {
@@ -208,10 +170,10 @@ namespace Assets.Editor.Models
                 base.SetProperty(ref this.startIndex, value);
             }
         }
-        private Int32 startIndex;
+        private UInt32 startIndex;
 
 
-        public Int32 Length
+        public UInt32 Length
         {
             get
             {
@@ -222,7 +184,7 @@ namespace Assets.Editor.Models
                 base.SetProperty(ref this.length, value);
             }
         }
-        private Int32 length;
+        private UInt32 length;
 
         public Double Progress
         {
@@ -232,7 +194,7 @@ namespace Assets.Editor.Models
             }
             set
             {
-                base.SetProperty(ref this.progress, value);
+                base.SetPropertyAsync(ref this.progress, value);
             }
         }
         private Double progress;

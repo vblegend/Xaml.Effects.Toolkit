@@ -1,8 +1,13 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Xaml.Effects.Toolkit.Model
 {
@@ -36,7 +41,7 @@ namespace Xaml.Effects.Toolkit.Model
     }
 
 
-    public class DialogModel: ObservableObject
+    public class DialogModel : ObservableObject
     {
         public DialogModel()
         {
@@ -151,6 +156,41 @@ namespace Xaml.Effects.Toolkit.Model
                 }
             }
         }
+
+
+        /// <summary>
+        /// 异步更新属性方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected Boolean SetPropertyAsync<T>([NotNullIfNotNull("newValue")] ref T field, T newValue, [CallerMemberName] string? propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
+            {
+                return false;
+            }
+            Dispatcher.CurrentDispatcher.Invoke(() =>
+            {
+                OnPropertyChanging(propertyName);
+            });
+
+            field = newValue;
+            Dispatcher.CurrentDispatcher.Invoke(() =>
+            {
+                OnPropertyChanged(propertyName);
+            });
+            return true;
+        }
+
+
+
+
+
+
+
 
         /// <summary>
         /// 窗口关闭事件

@@ -26,7 +26,7 @@ namespace Resource.Package.Assets.Secure
 
 
 
-        public static Byte[] Decompress(Byte[] data,Int32 rawSize)
+        public static Byte[] Decompress(Byte[] data,UInt32 rawSize)
         {
             using (var ms = new MemoryStream(data))
             {

@@ -133,7 +133,7 @@ namespace Assets.Editor.Models
         {
             if (types == ImageTypes.BMP) return ".bmp";
             if (types == ImageTypes.TGA) return ".tga";
-            if (types == ImageTypes.TIFF) return ".tiff";
+            if (types == ImageTypes.TIFF) return ".tif";
             if (types == ImageTypes.PNG) return ".png";
             if (types == ImageTypes.GIF) return ".gif";
             if (types == ImageTypes.JPG) return ".jpg";

@@ -18,6 +18,7 @@ using Assets.Editor.Utils;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
+using Xaml.Effects.Toolkit.Uitity;
 
 namespace Assets.Editor.Models
 {
@@ -351,6 +352,10 @@ namespace Assets.Editor.Models
         {
             try
             {
+                TargaImage tgaImage = new TargaImage(@"c:\targaimage.tga");
+
+
+
                 using (MemoryStream stream = new MemoryStream(data))
                 {
                     BitmapImage result = new BitmapImage();

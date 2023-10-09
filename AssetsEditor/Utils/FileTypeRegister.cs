@@ -137,9 +137,18 @@ namespace Assets.Editor.Utils
             if(FileTypeRegistered(extendName))
             {
                 string relationName = extendName.Substring(1, extendName.Length - 1).ToUpper() + "_FileType";
-                Registry.ClassesRoot.DeleteSubKeyTree(relationName);
-                Registry.ClassesRoot.DeleteSubKeyTree(extendName);
-   
+                try
+                {
+                    Registry.ClassesRoot.DeleteSubKeyTree(extendName);
+                }
+                catch(Exception ex)
+                { }
+                try
+                {
+                    Registry.ClassesRoot.DeleteSubKeyTree(relationName);
+                }
+                catch (Exception ex)
+                { }
             }
         }
 

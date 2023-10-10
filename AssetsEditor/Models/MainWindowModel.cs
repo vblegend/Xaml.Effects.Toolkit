@@ -19,6 +19,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
 using Xaml.Effects.Toolkit.Uitity;
+using System.Drawing;
 
 namespace Assets.Editor.Models
 {
@@ -337,7 +338,7 @@ namespace Assets.Editor.Models
                     if (node.Data.Length > 0)
                     {
                         this.GridImages[i].FileSize = node.Data.Length;
-                        var source = loadImageSource(node.Data);
+                        var source = loadImageSource(node.Data, node.lpType);
                         this.GridImages[i].Source = source;
                     }
 
@@ -348,16 +349,22 @@ namespace Assets.Editor.Models
 
 
 
-        private BitmapSource loadImageSource(Byte[] data)
+        private BitmapSource loadImageSource(Byte[] data, ImageTypes type)
         {
             try
             {
-                TargaImage tgaImage = new TargaImage(@"c:\targaimage.tga");
-
-
-
                 using (MemoryStream stream = new MemoryStream(data))
                 {
+
+                    if (type == ImageTypes.TGA)
+                    {
+                        using (TargaImage tgaImage = new TargaImage(stream))
+                        {
+                            IntPtr ip = tgaImage.Image.GetHbitmap();
+                            BitmapSource bitmapSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(ip, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                            return bitmapSource;
+                        };
+                    }
                     BitmapImage result = new BitmapImage();
                     result.BeginInit();
                     result.CacheOption = BitmapCacheOption.OnLoad;

@@ -25,7 +25,7 @@ namespace Assets.Editor.Models
 
     public class ExportDialogModel : DialogModel
     {
-        public readonly String ImageFilter = "Image File|*.png;*.bmp;*.gif;*.jpg;*.tif";
+        public readonly String ImageFilter = "Image File|*.png;*.bmp;*.gif;*.jpg;*.tif;*.tga";
         public ICommand SelectSourceCommand { get; protected set; }
         public IRelayCommand ModeChangedCommand { get; protected set; }
 

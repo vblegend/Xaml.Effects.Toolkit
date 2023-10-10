@@ -69,7 +69,7 @@ namespace Resource.Package.Assets.Common
         JPG = 3,
         [Description("Gif")]
         GIF = 4,
-        [Description("Tga 不支持显示")]
+        [Description("Tga")]
         TGA = 5,
         [Description("Tiff")]
         TIFF = 6

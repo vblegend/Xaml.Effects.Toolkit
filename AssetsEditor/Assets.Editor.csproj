@@ -9,6 +9,7 @@
 	<StartupObject>Assets.Editor.App</StartupObject>
     <ApplicationIcon>Assets\Icon.ico</ApplicationIcon>
     <Platforms>AnyCPU;x64</Platforms>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -54,6 +55,9 @@
 
   <ItemGroup>
     <Compile Update="Views\ExportDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\BmpToPngDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\ImportDialog.xaml.cs">

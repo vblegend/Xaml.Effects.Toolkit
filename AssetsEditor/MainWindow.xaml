@@ -6,8 +6,9 @@
         xmlns:local="clr-namespace:Assets.Editor" 
         xmlns:xkit="http://schemas.l2030.com/xkit" 
         xmlns:models="clr-namespace:Assets.Editor.Models"
+        xmlns:convert="clr-namespace:Assets.Editor.Converter"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-            xmlns:mscorlib="clr-namespace:System;assembly=mscorlib"
+        xmlns:mscorlib="clr-namespace:System;assembly=mscorlib"
         xmlns:common="clr-namespace:Resource.Package.Assets.Common;assembly=Resource.Package.Assets"
         x:Class="Assets.Editor.MainWindow"
         Title="{Binding Title}"
@@ -108,7 +109,16 @@
                         Height="20"
                         Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
                         Header="工具(T)"
-                        Style="{DynamicResource WindowMenuStyle}" />
+                        Style="{DynamicResource WindowMenuStyle}" >
+
+                        <MenuItem
+                        Height="20"
+                        Command="{Binding Bmp2PngCommand}"
+                        Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
+                        Header="Bmp转Png工具">
+                        </MenuItem>
+                    </MenuItem>
+
                     <MenuItem
                         Height="20"
                         Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
@@ -250,7 +260,7 @@
                 <xkit:ZoomScrollViewer HorizontalScrollBarVisibility="Auto"  ZoomValue="{Binding ZoomValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
                     <Image HorizontalAlignment="Center" VerticalAlignment="Center" Width="{Binding SelectedImage.Source.Width}" Height="{Binding SelectedImage.Source.Height}" >
                         <Image.Source>
-                            <MultiBinding Converter="{xkit:BitmapSourceConverter}">
+                            <MultiBinding Converter="{convert:BitmapSourceConverter}">
                                 <Binding Path="SelectedImage.Source"/>
                                 <Binding Path="DrawingMode"/>
                             </MultiBinding>

@@ -1,30 +1,14 @@
 ﻿
+using Assets.Editor.Common;
 using System;
-using System.ComponentModel;
-using System.Drawing;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Xaml.Effects.Toolkit.Converter
+namespace Assets.Editor.Converter
 {
-
-
-    public enum DrawingMode
-    {
-        [Description("原始图像")]
-        Raw = 0,
-        [Description("去除底色")]
-        MaskColor = 1,
-        [Description("Alpha混合")]
-        AlphaBlend = 2
-    }
-
-
-
-
 
 
     /// <summary>

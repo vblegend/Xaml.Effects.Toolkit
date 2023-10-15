@@ -1,5 +1,4 @@
-﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
-using Microsoft.Toolkit.Mvvm.Input;
+﻿using Microsoft.Toolkit.Mvvm.Input;
 using Resource.Package.Assets;
 using System;
 using System.Collections.ObjectModel;
@@ -9,17 +8,13 @@ using System.Windows.Media.Imaging;
 using Xaml.Effects.Toolkit;
 using Xaml.Effects.Toolkit.Model;
 using System.Windows;
-using Xaml.Effects.Toolkit.Converter;
 using Assets.Editor.Views;
 using Microsoft.Win32;
 using Resource.Package.Assets.Common;
-using System.Windows.Media.Animation;
 using Assets.Editor.Utils;
 using System.Diagnostics;
-using System.Linq;
-using System.Security.Cryptography;
 using Xaml.Effects.Toolkit.Uitity;
-using System.Drawing;
+using Assets.Editor.Common;
 
 namespace Assets.Editor.Models
 {
@@ -64,6 +59,11 @@ namespace Assets.Editor.Models
         public IRelayCommand RegFileTypeCommand { get; protected set; }
 
 
+        public IRelayCommand Bmp2PngCommand { get; protected set; }
+
+
+
+
         public ICommand ThemesCommand { get; protected set; }
 
         public AssetFileStream assetFile { get; protected set; }
@@ -88,6 +88,7 @@ namespace Assets.Editor.Models
             this.OffsetCommitCommand = new RelayCommand(OffsetCommit_Click, OffsetCommit_CanClick);
             this.NewPackageCommand = new RelayCommand(NewPackage_Click);
             this.RegFileTypeCommand = new RelayCommand(RegFileType_Click);
+            this.Bmp2PngCommand = new RelayCommand(Bmp2Png_Click);
             this.currentPage = 0;
             this.Title = "Assets Editor - Power by Hanks";
             this.PageSize = 64;
@@ -114,7 +115,12 @@ namespace Assets.Editor.Models
         }
 
 
-
+        private void Bmp2Png_Click()
+        {
+            var dialog = new BmpToPngDialog();
+            dialog.Owner = MainWindow.Instance;
+            dialog.ShowDialog();
+        }
 
         private void RegFileType_Click()
         {

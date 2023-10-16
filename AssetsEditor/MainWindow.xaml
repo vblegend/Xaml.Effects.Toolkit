@@ -85,12 +85,6 @@
                         </MenuItem>
                         <MenuItem
                         Height="20"
-                        Command="{Binding ReplaceImageCommand}"
-                        Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
-                        Header="替换当前项(N)">
-                        </MenuItem>
-                        <MenuItem
-                        Height="20"
                         Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
                             Command="{Binding ExportImageCommand}"
                         Header="导出选中项(O)">

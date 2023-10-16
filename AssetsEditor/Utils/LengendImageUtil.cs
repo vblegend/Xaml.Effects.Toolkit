@@ -14,7 +14,7 @@ namespace Assets.Editor.Utils
 
         public static Bitmap Convert(Bitmap bitmap, DrawingMode mode)
         {
-            if (mode == DrawingMode.AlphaBlend) return AlphaBlendFilter(bitmap, 3);
+            if (mode == DrawingMode.AlphaBlend) return AlphaBlendFilter(bitmap, 2);
             if (mode == DrawingMode.MaskColor) return MaskColorFilter(bitmap, new System.Windows.Media.Color());
             return bitmap;
         }

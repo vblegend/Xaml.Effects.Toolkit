@@ -5,6 +5,7 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Xaml.Effects.Toolkit.Model;
@@ -61,7 +62,7 @@ namespace Assets.Editor.Models
                     output.Save(path, System.Drawing.Imaging.ImageFormat.Png);
                     output.Dispose();
                 }
-                this.Progress = i / files.Count * 100;
+                this.Progress = (Double)i / files.Count * 100.0f;
             }
             this.Progress = 100;
         }

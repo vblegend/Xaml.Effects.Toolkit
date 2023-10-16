@@ -94,7 +94,7 @@ namespace Assets.Editor.Models
             this.PageSize = 64;
             this.ZoomValue = 1;
             this.DrawingMode = DrawingMode.Raw;
-            this.IsRegFileType = FileTypeRegister.FileTypeRegistered(".asset");
+            this.IsRegFileType = FileTypeRegister.FileTypeRegistered(".Asset");
             this.Selected = new ImageModel();
 
 
@@ -126,19 +126,19 @@ namespace Assets.Editor.Models
         {
             if (this.IsRegFileType)
             {
-                FileTypeRegister.UnRegisterFileType(".asset");
+                FileTypeRegister.UnRegisterFileType(".Asset");
             }
             else
             {
                 FileTypeRegInfo fileTypeRegInfo = new FileTypeRegInfo(".osf");
                 fileTypeRegInfo.Description = "Images Assets Resource File";
                 fileTypeRegInfo.ExePath = Process.GetCurrentProcess().MainModule.FileName;
-                fileTypeRegInfo.ExtendName = ".asset";
+                fileTypeRegInfo.ExtendName = ".Asset";
                 fileTypeRegInfo.IconPath = fileTypeRegInfo.ExePath;
                 // 注册
                 FileTypeRegister.RegisterFileType(fileTypeRegInfo);
             }
-            this.IsRegFileType = FileTypeRegister.FileTypeRegistered(".asset");
+            this.IsRegFileType = FileTypeRegister.FileTypeRegistered(".Asset");
         }
 
 

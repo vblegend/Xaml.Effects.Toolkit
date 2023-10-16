@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Assets.Editor.Utils;
+using System.Windows;
 using Xaml.Effects.Toolkit;
 
 namespace Assets.Editor
@@ -10,7 +11,7 @@ namespace Assets.Editor
     {
         public App()
         {
-
+            ConfigureUtil.Init();
         }
 
     }

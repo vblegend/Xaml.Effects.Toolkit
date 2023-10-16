@@ -58,8 +58,8 @@ namespace Assets.Editor.Utils
             }
 
             //HKEY_CLASSES_ROOT/.osf
-            RegistryKey fileTypeKey = Registry.ClassesRoot.CreateSubKey(regInfo.ExtendName);
-            string relationName = regInfo.ExtendName.Substring(1, regInfo.ExtendName.Length - 1).ToUpper() + "_FileType";
+            RegistryKey fileTypeKey = Registry.ClassesRoot.CreateSubKey(regInfo.ExtendName.ToLower());
+            string relationName = regInfo.ExtendName.Substring(1, regInfo.ExtendName.Length - 1) + "File";
             fileTypeKey.SetValue("", relationName);
             fileTypeKey.Close();
 
@@ -94,7 +94,7 @@ namespace Assets.Editor.Utils
             }
 
             string extendName = regInfo.ExtendName;
-            string relationName = extendName.Substring(1, extendName.Length - 1).ToUpper() + "_FileType";
+            string relationName = extendName.Substring(1, extendName.Length - 1) + "File";
             RegistryKey relationKey = Registry.ClassesRoot.OpenSubKey(relationName, true);
             relationKey.SetValue("", regInfo.Description);
             RegistryKey iconKey = relationKey.OpenSubKey("DefaultIcon", true);
@@ -118,7 +118,7 @@ namespace Assets.Editor.Utils
             }
             FileTypeRegInfo regInfo = new FileTypeRegInfo(extendName);
 
-            string relationName = extendName.Substring(1, extendName.Length - 1).ToUpper() + "_FileType";
+            string relationName = extendName.Substring(1, extendName.Length - 1) + "File";
             RegistryKey relationKey = Registry.ClassesRoot.OpenSubKey(relationName);
             regInfo.Description = relationKey.GetValue("").ToString();
             RegistryKey iconKey = relationKey.OpenSubKey("DefaultIcon");
@@ -136,7 +136,7 @@ namespace Assets.Editor.Utils
         {
             if(FileTypeRegistered(extendName))
             {
-                string relationName = extendName.Substring(1, extendName.Length - 1).ToUpper() + "_FileType";
+                string relationName = extendName.Substring(1, extendName.Length - 1) + "File";
                 try
                 {
                     Registry.ClassesRoot.DeleteSubKeyTree(extendName);
@@ -159,7 +159,7 @@ namespace Assets.Editor.Utils
         public static bool FileTypeRegistered(string extendName)
         {
             RegistryKey softwareKey = Registry.ClassesRoot.OpenSubKey(extendName);
-            string relationName = extendName.Substring(1, extendName.Length - 1).ToUpper() + "_FileType";
+            string relationName = extendName.Substring(1, extendName.Length - 1) + "File";
             if (softwareKey != null)
             {
                 var val = softwareKey.GetValue("");

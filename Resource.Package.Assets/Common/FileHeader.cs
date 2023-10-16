@@ -51,7 +51,7 @@ namespace Resource.Package.Assets.Common
 
 
     internal class FileAsyncCache
-    { 
+    {
         public Byte[] Data;
     }
 
@@ -142,7 +142,7 @@ namespace Resource.Package.Assets.Common
     {
         public DataBlock()
         {
-                this.Data= new byte[0];
+            this.Data = new byte[0];
         }
         /// <summary>
         /// 小于0 追加 大于0 覆盖替换
@@ -192,7 +192,7 @@ namespace Resource.Package.Assets.Common
             this.lpRenderType = info.lpRenderType;
             this.lpRawSize = info.lpRawSize;
             this.lpSize = info.lpSize;
-        
+
         }
 
     }

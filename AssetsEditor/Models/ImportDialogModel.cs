@@ -61,6 +61,24 @@ namespace Assets.Editor.Models
                 {
                     ConfigureUtil.SetValue("ImportDirectory", folderBrowserDialog.SelectedPath);
                     this.ImportSource = folderBrowserDialog.SelectedPath;
+
+
+                    if (Directory.Exists(Path.Combine(this.ImportSource, "Placements")))
+                    {
+                        this.ImportUserData = ImageUserData.Placements;
+                    }
+                    else if (File.Exists(Path.Combine(this.ImportSource, "schema.json")))
+                    {
+                        this.ImportUserData = ImageUserData.SchemaJson;
+                    }
+                    else
+                    {
+                        this.ImportUserData = ImageUserData.None;
+                    }
+
+
+
+
                 };
             }
             else

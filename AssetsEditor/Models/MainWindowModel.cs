@@ -61,7 +61,7 @@ namespace Assets.Editor.Models
 
         public IRelayCommand Bmp2PngCommand { get; protected set; }
 
-
+        public IRelayCommand PngFormatCommand { get; protected set; }
 
 
         public ICommand ThemesCommand { get; protected set; }
@@ -89,6 +89,7 @@ namespace Assets.Editor.Models
             this.NewPackageCommand = new RelayCommand(NewPackage_Click);
             this.RegFileTypeCommand = new RelayCommand(RegFileType_Click);
             this.Bmp2PngCommand = new RelayCommand(Bmp2Png_Click);
+            this.PngFormatCommand = new RelayCommand(PngFormat_Click);
             this.currentPage = 0;
             this.Title = "Assets Editor - Power by Hanks";
             this.PageSize = 64;
@@ -113,6 +114,16 @@ namespace Assets.Editor.Models
                 this.OpenAssetPackage(dialog.Model.FileName, dialog.Model.Password);
             }
         }
+
+
+        
+        private void PngFormat_Click()
+        {
+            var dialog = new PngFormatDialog();
+            dialog.Owner = MainWindow.Instance;
+            dialog.ShowDialog();
+        }
+
 
 
         private void Bmp2Png_Click()

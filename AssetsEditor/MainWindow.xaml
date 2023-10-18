@@ -111,6 +111,15 @@
                         Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
                         Header="Bmp转Png工具">
                         </MenuItem>
+
+
+                        <MenuItem
+                        Height="20"
+                        Command="{Binding PngFormatCommand}"
+                        Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
+                        Header="Png标准化工具">
+                        </MenuItem>
+
                     </MenuItem>
 
                     <MenuItem

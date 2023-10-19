@@ -15,6 +15,9 @@ using Assets.Editor.Utils;
 using System.Diagnostics;
 using Xaml.Effects.Toolkit.Uitity;
 using Assets.Editor.Common;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Data;
 
 namespace Assets.Editor.Models
 {
@@ -97,10 +100,39 @@ namespace Assets.Editor.Models
             this.DrawingMode = DrawingMode.Raw;
             this.IsRegFileType = FileTypeRegister.FileTypeRegistered(".Asset");
             this.Selected = new ImageModel();
+            this.Canvas = new Canvas();
+            this.Canvas.Background = new SolidColorBrush(Colors.Blue);
+            this.Canvas.SizeChanged += Canvas_SizeChanged; ;
+            this.Canvas.Children.Add(this.image);
+
+            Canvas.SetLeft(this.image, 0);
+            Canvas.SetTop(this.image, 0);
+
+
+
+
+            Binding binding = new Binding("SelectedImage.Source");
+            binding.Source = this;
+            this.image.SetBinding(Image.SourceProperty, binding);
 
 
             resizePage();
             refreshPage();
+        }
+
+        private Image image = new Image();
+
+
+
+
+        private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Trace.WriteLine(e.NewSize);
+
+
+
+
+
         }
 
 
@@ -116,7 +148,7 @@ namespace Assets.Editor.Models
         }
 
 
-        
+
         private void PngFormat_Click()
         {
             var dialog = new PngFormatDialog();
@@ -210,6 +242,7 @@ namespace Assets.Editor.Models
             {
                 this.assetFile = AssetFileStream.Open(filename, password);
                 this.Title = $"Assets Editor - {filename}";
+                this.CurrentPage = 0;
                 resizePage();
                 refreshPage();
                 this.ClosePackageCommand.NotifyCanExecuteChanged();
@@ -256,6 +289,7 @@ namespace Assets.Editor.Models
             this.Selected.RenderType = RenderTypes.Normal;
             this.Selected.ImageType = ImageTypes.Unknown;
             this.Selected.Source = null;
+            this.CurrentPage = 0;
             if (this.assetFile != null)
             {
                 this.assetFile.Close();
@@ -314,6 +348,7 @@ namespace Assets.Editor.Models
         private void resizePage()
         {
             UInt32 numberOfFiles = 0;
+            if (this.assetFile == null) return;
             if (this.assetFile != null) numberOfFiles = this.assetFile.NumberOfFiles;
             var pagesize2 = numberOfFiles - (this.CurrentPage * this.PageSize);
             var pagesize = (UInt32)Math.Min(this.PageSize, pagesize2);
@@ -626,6 +661,19 @@ namespace Assets.Editor.Models
 
 
 
+        public Canvas Canvas
+        {
+            get
+            {
+                return this.canvas;
+            }
+            set
+            {
+                base.SetProperty(ref this.canvas, value);
+            }
+        }
+
+        private Canvas canvas;
 
 
         public ImageModel Selected

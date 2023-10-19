@@ -261,14 +261,18 @@
 
             <Grid >
                 <xkit:ZoomScrollViewer HorizontalScrollBarVisibility="Auto"  ZoomValue="{Binding ZoomValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
-                    <Image HorizontalAlignment="Center" VerticalAlignment="Center" Width="{Binding SelectedImage.Source.Width}" Height="{Binding SelectedImage.Source.Height}" >
-                        <Image.Source>
+                    <xkit:ImageCanvas 
+                                      OffsetX="{Binding SelectedImage.OffsetX}"  OffsetY="{Binding SelectedImage.OffsetY}"
+                                      >
+                        <xkit:ImageCanvas.Source>
                             <MultiBinding Converter="{convert:BitmapSourceConverter}">
                                 <Binding Path="SelectedImage.Source"/>
                                 <Binding Path="DrawingMode"/>
                             </MultiBinding>
-                        </Image.Source>
-                    </Image>
+                        </xkit:ImageCanvas.Source>
+                    </xkit:ImageCanvas>
+
+
                 </xkit:ZoomScrollViewer>
             </Grid>
 

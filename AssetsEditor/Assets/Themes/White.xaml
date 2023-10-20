@@ -34,6 +34,7 @@
     <SolidColorBrush x:Key="GLOBAL_CHECKBOX_BORDER_BACKGROUND" Color="#FFFF8000" />
 
 
+    <SolidColorBrush x:Key="GLOBAL_TOOLBAR_BACKGROUND" Color="#c8c8c8" />
 
     <SolidColorBrush x:Key="GLOBAL_RADIO_BACKGROUND" Color="Transparent" />
     <SolidColorBrush x:Key="GLOBAL_RADIO_FOREGROUND" Color="#FFE2E2E2" />
@@ -160,7 +161,7 @@
     <!--  全局按钮禁用状态画刷  -->
     <SolidColorBrush x:Key="GLOBAL_BUTTON_DISABLE_FOREGROUND" Color="#FF404040" />
     <!--  全局按钮禁用状态画刷  -->
-    <SolidColorBrush x:Key="GLOBAL_BUTTON_DISABLE_BACKGROUND" Color="#FF404040" />
+    <SolidColorBrush x:Key="GLOBAL_BUTTON_DISABLE_BACKGROUND" Color="Transparent" />
     <!--  全局禁用边框画刷  -->
     <SolidColorBrush x:Key="GLOBAL_DISABLE_BORDER_COLOR" Color="#FF646464" />
 

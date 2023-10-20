@@ -55,8 +55,8 @@
                             <Setter TargetName="border" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_PRESSED_BACKGROUND}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter TargetName="border" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_DISABLE_FOREGROUND}" />
-                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource GLOBAL_BUTTON_DISABLE_FOREGROUND}" />
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource GLOBAL_BUTTON_DISABLE_BACKGROUND}" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource GLOBAL_DISABLE_BORDER_COLOR}" />
                             <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="{StaticResource Button.Disabled.Foreground}" />
                         </Trigger>
                     </ControlTemplate.Triggers>

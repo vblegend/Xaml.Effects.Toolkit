@@ -92,10 +92,6 @@
                         <MenuItem
                         Height="20"
                         Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
-                        Header="批量导出(S)" />
-                        <MenuItem
-                        Height="20"
-                        Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
                         Header="跳转到..(C)"/>
                     </MenuItem>
 
@@ -162,7 +158,7 @@
             <RowDefinition Height="26"/>
         </Grid.RowDefinitions>
 
-        <WrapPanel  Grid.Column="0" Background="#333333">
+        <WrapPanel  Grid.Column="0" Background="{DynamicResource GLOBAL_TOOLBAR_BACKGROUND}">
             <Button Content="&#xe836;" FontSize="18"  
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
@@ -178,15 +174,6 @@
                     FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
 
 
-
-
-
-            <Button Content="&#xe85f;" FontSize="16"  
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    Command="{Binding SavePackageCommand}"
-                                ToolTip="保存当前资源包"
-                    FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
             <Separator Height="20">
                 <Separator.LayoutTransform>
                     <RotateTransform Angle="90" />
@@ -260,9 +247,14 @@
             </Grid.RowDefinitions>
 
             <Grid >
+
+                <Label HorizontalAlignment="Right" Padding="0" VerticalAlignment="Top" Margin="0,5,5,0">零点线</Label>
+                <Label HorizontalAlignment="Right" Padding="0" VerticalAlignment="Top" Margin="0,20,5,0" Foreground="Yellow" >人物线</Label>
+                
+                
                 <xkit:ZoomScrollViewer HorizontalScrollBarVisibility="Auto"  ZoomValue="{Binding ZoomValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
-                    <xkit:ImageCanvas 
-                                      OffsetX="{Binding SelectedImage.OffsetX}"  OffsetY="{Binding SelectedImage.OffsetY}"
+                    <xkit:ImageCanvas  Background="#01FFFFFF"  Focusable="True"
+                                      OffsetX="{Binding Selected.OffsetX, Mode=TwoWay}"  OffsetY="{Binding Selected.OffsetY, Mode=TwoWay}"
                                       >
                         <xkit:ImageCanvas.Source>
                             <MultiBinding Converter="{convert:BitmapSourceConverter}">
@@ -363,8 +355,7 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </xkit:NumbericTextBox>
-                    <Button Content="应用" HorizontalAlignment="Center" Margin="0,201,0,0" VerticalAlignment="Top" Width="66" Height="24" Background="{DynamicResource GLOBAL_PRIMARY_COLOR}" Command="{Binding OffsetCommitCommand}" Grid.Column="1" />
-
+ 
 
                     <ComboBox  VerticalAlignment="Top" Height="24"  
                                  VerticalContentAlignment="Center"   SelectedItem="{Binding Selected.RenderType, Mode=TwoWay}" ItemsSource="{Binding Source={StaticResource RenderTypes}}" Grid.Column="1" Margin="0,85,5,0">
@@ -386,6 +377,12 @@
                     <TextBox  Margin="0,48,5,0" IsReadOnly="True" IsEnabled="False" Text="{Binding Selected.FileSize, Converter={xkit:FileSizeConverter}}"  
                         VerticalContentAlignment="Center"     VerticalAlignment="Top" Grid.Column="1" Height="24">
                     </TextBox>
+
+                    <Button Content="应用" HorizontalAlignment="Center" Margin="0,201,0,0" VerticalAlignment="Top" Width="66" Height="24" 
+                            Background="{DynamicResource GLOBAL_PRIMARY_COLOR}" Command="{Binding OffsetCommitCommand}" Grid.Column="1" />
+
+                    <Button Content="批量应用" HorizontalAlignment="Left" Margin="9,201,0,0" VerticalAlignment="Top" Width="66" Height="24" 
+                            Background="{DynamicResource GLOBAL_PRIMARY_COLOR}" Command="{Binding BatchOffsetCommitCommand}" Grid.ColumnSpan="2" />
                 </Grid>
 
             </Grid>

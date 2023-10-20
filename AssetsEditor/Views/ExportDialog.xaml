@@ -95,8 +95,8 @@
         <xkit:NumbericTextBox Margin="103,100,0,0"  Text="0" Value="{Binding StartIndex,Mode=TwoWay}"  MaxValue="1000000"
                               VerticalAlignment="Top" VerticalContentAlignment="Center" Height="24" HorizontalAlignment="Left" Width="106">
         </xkit:NumbericTextBox>
-        <Label Content="导出数量：" Margin="208,101,196,0" VerticalAlignment="Top" Padding="0" Height="24" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" />
-        <xkit:NumbericTextBox Margin="310,101,0,0" Text="0" IsEnabled="{Binding IsBatch}" Value="{Binding Length,Mode=TwoWay}"
+        <Label Content="结束索引：" Margin="208,101,196,0" VerticalAlignment="Top" Padding="0" Height="24" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" />
+        <xkit:NumbericTextBox Margin="310,101,0,0" Text="0" IsEnabled="{Binding IsBatch}" Value="{Binding EndIndex,Mode=TwoWay}"
                                MaxValue="1000000" VerticalAlignment="Top" VerticalContentAlignment="Center" Height="24" HorizontalAlignment="Left" Width="116">
         </xkit:NumbericTextBox>
 

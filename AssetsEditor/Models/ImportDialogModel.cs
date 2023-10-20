@@ -8,8 +8,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Unicode;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -160,7 +162,14 @@ namespace Assets.Editor.Models
                 if (System.IO.File.Exists(pname))
                 {
                     var placements = System.IO.File.ReadAllText(pname);
-                    schemas = JsonSerializer.Deserialize<Dictionary<String, DataInfo>>(placements);
+                    JsonSerializerOptions options = new JsonSerializerOptions();
+                    //设置支持中文的unicode编码
+                    options.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+                    //启用驼峰格式
+                    options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                    //启用缩进设置
+                    options.WriteIndented = true;
+                    schemas = JsonSerializer.Deserialize<Dictionary<String, DataInfo>>(placements, options);
                 }
             }
             this.StatusText = "Loading Files Raw Data..";
@@ -192,7 +201,7 @@ namespace Assets.Editor.Models
                 else if (this.ImportUserData == ImageUserData.SchemaJson)
                 {
                     var _filename = Path.GetFileName(file);
-                    if (schemas.TryGetValue(filename, out var schema))
+                    if (schemas.TryGetValue(_filename, out var schema))
                     {
                         block.OffsetX = schema.OffsetX;
                         block.OffsetY = schema.OffsetY;

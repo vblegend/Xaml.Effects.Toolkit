@@ -78,6 +78,9 @@
 
 
 
+    <SolidColorBrush x:Key="GLOBAL_TOOLBAR_BACKGROUND" Color="#414141" />
+
+
     <SolidColorBrush x:Key="GLOBAL_CHECKBOX_BACKGROUND" Color="#10007ACC" />
     <SolidColorBrush x:Key="GLOBAL_CHECKBOX_BORDER_BACKGROUND" Color="#33808080" />
 

@@ -118,6 +118,19 @@ namespace Resource.Package.Assets
         }
 
 
+        public IReadOnlyDataBlock GetInfomation(UInt32 index)
+        {
+            var info = this.Infomations[(Int32)index];
+            var node = new DataBlock();
+            node.lpType = info.lpType;
+            node.lpRenderType = info.lpRenderType;
+            node.Unknown1 = info.Unknown1;
+            node.Unknown2 = info.Unknown2;
+            node.OffsetX = info.OffsetX;
+            node.OffsetY = info.OffsetY;
+            return node;
+        }
+
 
         public IReadOnlyDataBlock Read(UInt32 index)
         {
@@ -167,7 +180,7 @@ namespace Resource.Package.Assets
         }
 
 
-        public void UpdateInfoNoWrite(UInt32 index, DataInfo datainfo)
+        public void UpdateInfo(UInt32 index, DataInfo datainfo)
         {
             var info = this.Infomations[(Int32)index];
             if (info != null)
@@ -178,6 +191,7 @@ namespace Resource.Package.Assets
                 info.Unknown1 = datainfo.Unknown1;
                 info.Unknown2 = datainfo.Unknown2;
             }
+            this.Save();
         }
 
 

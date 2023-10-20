@@ -43,12 +43,12 @@ namespace Assets.Editor.Models
         public ICommand OffsetChangedCommand { get; protected set; }
         public IRelayCommand OffsetCommitCommand { get; protected set; }
 
+        public IRelayCommand BatchOffsetCommitCommand { get; protected set; }
+
         public ICommand RenderTypeChangedCommand { get; protected set; }
         public ICommand NewPackageCommand { get; protected set; }
 
         public ICommand OpenPackageCommand { get; protected set; }
-
-        public IRelayCommand SavePackageCommand { get; protected set; }
 
         public IRelayCommand ClosePackageCommand { get; protected set; }
 
@@ -78,8 +78,6 @@ namespace Assets.Editor.Models
             this.ThemesCommand = new RelayCommand(Themes_Click);
             this.OpenPackageCommand = new RelayCommand(OpenPackage_Click);
             this.ClosePackageCommand = new RelayCommand(ClosePackage_Click, ClosePackage_CanClick);
-            this.SavePackageCommand = new RelayCommand(SavePackage_Click, SavePackage_CanClick);
-
             this.ImportImageCommand = new RelayCommand(ImportImage_Click, ImportImage_CanClick);
             this.ExportImageCommand = new RelayCommand(ExportImage_Click, ExportImage_CanClick);
             this.ChangePasswordCommand = new RelayCommand(ChangePassword_Click, ChangePassword_CanClick);
@@ -89,6 +87,7 @@ namespace Assets.Editor.Models
             this.OffsetChangedCommand = new RelayCommand<System.Windows.Controls.TextChangedEventArgs>(Offset_TextChanged);
             this.RenderTypeChangedCommand = new RelayCommand<System.Windows.Controls.SelectionChangedEventArgs>(RenderType_SelectionChanged);
             this.OffsetCommitCommand = new RelayCommand(OffsetCommit_Click, OffsetCommit_CanClick);
+            this.BatchOffsetCommitCommand = new RelayCommand(BatchOffsetCommit_Click, OffsetCommit_CanClick);
             this.NewPackageCommand = new RelayCommand(NewPackage_Click);
             this.RegFileTypeCommand = new RelayCommand(RegFileType_Click);
             this.Bmp2PngCommand = new RelayCommand(Bmp2Png_Click);
@@ -221,13 +220,13 @@ namespace Assets.Editor.Models
             if (this.SelectedImage != null)
             {
                 export.Model.StartIndex = this.SelectedImage.Index;
-                export.Model.Length = 1;
+                export.Model.EndIndex = this.SelectedImage.Index;
                 export.Model.IsBatch = false;
             }
             else
             {
                 export.Model.StartIndex = 0;
-                export.Model.Length = this.assetFile.NumberOfFiles;
+                export.Model.EndIndex = this.assetFile.NumberOfFiles;
                 export.Model.IsBatch = true;
             }
             export.Owner = MainWindow.Instance;
@@ -259,20 +258,6 @@ namespace Assets.Editor.Models
 
 
 
-        private Boolean needSave { get; set; } = false;
-        private Boolean SavePackage_CanClick()
-        {
-            return this.assetFile != null && this.needSave;
-        }
-        private void SavePackage_Click()
-        {
-            this.assetFile.Save();
-            this.needSave = false;
-            this.SavePackageCommand.NotifyCanExecuteChanged();
-        }
-
-
-
         private Boolean ClosePackage_CanClick()
         {
             return this.assetFile != null;
@@ -299,9 +284,7 @@ namespace Assets.Editor.Models
 
                 this.offsetChanged = false;
                 this.OffsetCommitCommand.NotifyCanExecuteChanged();
-
-                this.needSave = false;
-                this.SavePackageCommand.NotifyCanExecuteChanged();
+                this.BatchOffsetCommitCommand.NotifyCanExecuteChanged();
                 this.ImportImageCommand.NotifyCanExecuteChanged();
                 this.ExportImageCommand.NotifyCanExecuteChanged();
                 this.ChangePasswordCommand.NotifyCanExecuteChanged();
@@ -478,6 +461,7 @@ namespace Assets.Editor.Models
             {
                 this.offsetChanged = true;
                 this.OffsetCommitCommand.NotifyCanExecuteChanged();
+                this.BatchOffsetCommitCommand.NotifyCanExecuteChanged();
             }
         }
 
@@ -487,24 +471,48 @@ namespace Assets.Editor.Models
             {
                 this.offsetChanged = true;
                 this.OffsetCommitCommand.NotifyCanExecuteChanged();
+                this.BatchOffsetCommitCommand.NotifyCanExecuteChanged();
             }
         }
 
         private Boolean offsetChanged = false;
 
+        
+
+        private void BatchOffsetCommit_Click()
+        {
+            var dialog = new BatchOffsetDialog();
+            dialog.Owner = MainWindow.Instance;
+            dialog.Model.stream = this.assetFile;
+            dialog.Model.OffsetX = this.selected.OffsetX;
+            dialog.Model.OffsetY = this.selected.OffsetY;
+            dialog.Model.EndIndex = this.Selected.Index;
+            dialog.Model.StartIndex = this.Selected.Index;
+
+            var result = dialog.ShowDialog();
+            if (result.HasValue && result.Value)
+            {
+                //for (UInt32 i = dialog.Model.StartIndex;  i < dialog.Model.EndIndex; i++)
+                //{
+                //}
+                this.refreshPage();
+                this.offsetChanged = false;
+                this.OffsetCommitCommand.NotifyCanExecuteChanged();
+                this.BatchOffsetCommitCommand.NotifyCanExecuteChanged();
+            }
+        }
 
         private Boolean OffsetCommit_CanClick()
         {
             return this.offsetChanged;
         }
 
-
         private void OffsetCommit_Click()
         {
             this.SelectedImage.OffsetX = this.Selected.OffsetX;
             this.SelectedImage.OffsetY = this.Selected.OffsetY;
             this.SelectedImage.RenderType = this.Selected.RenderType;
-            this.assetFile.UpdateInfoNoWrite(this.SelectedImage.Index, new DataInfo()
+            this.assetFile.UpdateInfo(this.SelectedImage.Index, new DataInfo()
             {
                 lpRenderType = this.Selected.RenderType,
                 OffsetX = this.Selected.OffsetX,
@@ -514,8 +522,7 @@ namespace Assets.Editor.Models
             // this.assetFile.UpdateOffsetNoWrite(this.SelectedImage.Index, new System.Drawing.Point(this.Selected.OffsetX, this.Selected.OffsetY));
             this.offsetChanged = false;
             this.OffsetCommitCommand.NotifyCanExecuteChanged();
-            this.needSave = true;
-            this.SavePackageCommand.NotifyCanExecuteChanged();
+            this.BatchOffsetCommitCommand.NotifyCanExecuteChanged();
         }
 
 

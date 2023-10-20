@@ -40,7 +40,7 @@ namespace Assets.Editor.Models
             this.IsBatch = false;
             this.Progress = 0;
             this.StartIndex = 0;
-            this.Length = 0;
+            this.EndIndex = 0;
             this.ImportOptions = ImageUserData.SchemaJson;
             this.ModeChangedCommand = new RelayCommand<RoutedEventArgs>(ImportMode_Changed);
             this.SelectSourceCommand = new RelayCommand(SelectSource_Click);
@@ -68,7 +68,7 @@ namespace Assets.Editor.Models
 
         private void ImportMode_Changed(RoutedEventArgs e)
         {
-            this.Length = 1;
+            this.EndIndex = 1;
             this.SubmitCommand.NotifyCanExecuteChanged();
         }
 
@@ -103,7 +103,23 @@ namespace Assets.Editor.Models
             {
                 Directory.CreateDirectory(Path.Combine(this.ExportDirectory, "Placements"));
             }
-            for (uint i = this.StartIndex; i < this.StartIndex + this.Length; i++)
+            else if (ImportOptions == ImageUserData.SchemaJson)
+            {
+                var pname = Path.Combine(this.ExportDirectory, $"schema.json");
+                if (System.IO.File.Exists(pname))
+                {
+                    var placements = System.IO.File.ReadAllText(pname);
+                    JsonSerializerOptions options = new JsonSerializerOptions();
+                    //设置支持中文的unicode编码
+                    options.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+                    //启用驼峰格式
+                    options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                    //启用缩进设置
+                    options.WriteIndented = true;
+                    schemas = JsonSerializer.Deserialize<Dictionary<String, DataInfo>>(placements, options);
+                }
+            }
+            for (uint i = this.StartIndex; i <= this.EndIndex; i++)
             {
                 var block = this.stream.Read((UInt32)i);
                 var fileName = i.ToString().PadLeft(7, '0');
@@ -127,7 +143,7 @@ namespace Assets.Editor.Models
                     File.WriteAllLines(f, new String[] { block.OffsetX.ToString(), block.OffsetY.ToString() });
                 }
                 System.IO.File.WriteAllBytes(outFileName, block.Data);
-                this.Progress = (Double)(i - this.StartIndex) / (Double)(this.StartIndex + this.Length) * 100.0f;
+                this.Progress = (Double)(i - this.StartIndex) / (Double)(this.EndIndex - this.StartIndex) * 100.0f;
 
             }
 
@@ -140,11 +156,25 @@ namespace Assets.Editor.Models
                 options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                 //启用缩进设置
                 options.WriteIndented = true;
+                schemas = this.SortDictionary(schemas);
                 string json = JsonSerializer.Serialize(schemas, options);
-
                 File.WriteAllText(Path.Combine(this.ExportDirectory, "schema.json"), json);
             }
         }
+
+        private  Dictionary<String, DataInfo> SortDictionary(Dictionary<String, DataInfo> pairs)
+        {
+            var keys = pairs.Keys.ToArray();
+            Array.Sort(keys);
+            var newScheamas = new Dictionary<String, DataInfo>();
+            foreach (var key in keys)
+            {
+                newScheamas[key] = pairs[key];
+            }
+            return newScheamas;
+        }
+
+
 
         private string GetFileName(ImageTypes types)
         {
@@ -173,18 +203,19 @@ namespace Assets.Editor.Models
         private UInt32 startIndex;
 
 
-        public UInt32 Length
+        public UInt32 EndIndex
+
         {
             get
             {
-                return this.length;
+                return this.endIndex;
             }
             set
             {
-                base.SetProperty(ref this.length, value);
+                base.SetProperty(ref this.endIndex, value);
             }
         }
-        private UInt32 length;
+        private UInt32 endIndex;
 
         public Double Progress
         {

@@ -34,7 +34,7 @@
     <SolidColorBrush x:Key="GLOBAL_CHECKBOX_BORDER_BACKGROUND" Color="#33808080" />
 
 
-
+    <SolidColorBrush x:Key="GLOBAL_TOOLBAR_BACKGROUND" Color="#414141" />
 
     <SolidColorBrush x:Key="GLOBAL_RADIO_BACKGROUND" Color="Transparent" />
     <SolidColorBrush x:Key="GLOBAL_RADIO_FOREGROUND" Color="#FFE2E2E2" />

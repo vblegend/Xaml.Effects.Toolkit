@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:Assets.Editor" 
         xmlns:xkit="http://schemas.l2030.com/xkit" 
         xmlns:models="clr-namespace:Assets.Editor.Models"
+            xmlns:controls="clr-namespace:Assets.Editor.Controls"
         xmlns:convert="clr-namespace:Assets.Editor.Converter"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:mscorlib="clr-namespace:System;assembly=mscorlib"
@@ -27,6 +28,15 @@
                 <x:Type TypeName="common:RenderTypes"></x:Type>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
+
+        <ObjectDataProvider x:Key="ViewGrids" MethodName="GetValues" ObjectType="{x:Type mscorlib:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="models:ViewGrids"></x:Type>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+
+
     </Window.Resources>
 
     <xkit:WindowTheme.Theme>
@@ -222,6 +232,26 @@
                 </Separator.LayoutTransform>
             </Separator>
 
+
+
+
+            <Label VerticalContentAlignment="Center">列表显示：</Label>
+            <ComboBox  SelectedItem="{Binding ListGrid}" ItemsSource="{Binding Source={StaticResource ViewGrids}}"
+                     VerticalContentAlignment="Center" Height="24" Width="150" >
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={xkit:EnumDescriptionConverter}}"    >
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+                <!--<i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <xkit:EventBehavior Action="{Binding ListGridChangedCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>-->
+            </ComboBox>
+
+
             <Label VerticalContentAlignment="Center">渲染模式：</Label>
             <ComboBox Height="24" Width="100" 
                           SelectedItem="{Binding DrawingMode, Mode=TwoWay}"
@@ -236,6 +266,8 @@
 
             </ComboBox>
 
+
+
         </WrapPanel>
 
 
@@ -247,25 +279,33 @@
             </Grid.RowDefinitions>
 
             <Grid >
-
-                <Label HorizontalAlignment="Right" Padding="0" VerticalAlignment="Top" Margin="0,5,5,0">零点线</Label>
-                <Label HorizontalAlignment="Right" Padding="0" VerticalAlignment="Top" Margin="0,20,5,0" Foreground="Yellow" >人物线</Label>
-                
-                
-                <xkit:ZoomScrollViewer HorizontalScrollBarVisibility="Auto"  ZoomValue="{Binding ZoomValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
-                    <xkit:ImageCanvas  Background="#01FFFFFF"  Focusable="True"
-                                      OffsetX="{Binding Selected.OffsetX, Mode=TwoWay}"  OffsetY="{Binding Selected.OffsetY, Mode=TwoWay}"
-                                      >
-                        <xkit:ImageCanvas.Source>
+                <xkit:ZoomScrollViewer x:Name="zoom" HorizontalScrollBarVisibility="Auto"  ZoomValue="{Binding ZoomValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
+                    <xkit:ZoomScrollViewer.Background>
+                        <ImageBrush ImageSource="/Assets/Images/background.png"/>
+                    </xkit:ZoomScrollViewer.Background>
+                    <controls:ImageCanvas  Background="#01FFFFFF"  Focusable="True"
+                                      OffsetX="{Binding Selected.OffsetX, Mode=TwoWay}"  OffsetY="{Binding Selected.OffsetY, Mode=TwoWay}">
+                        <controls:ImageCanvas.Source>
                             <MultiBinding Converter="{convert:BitmapSourceConverter}">
                                 <Binding Path="SelectedImage.Source"/>
                                 <Binding Path="DrawingMode"/>
                             </MultiBinding>
-                        </xkit:ImageCanvas.Source>
-                    </xkit:ImageCanvas>
+                        </controls:ImageCanvas.Source>
+                    </controls:ImageCanvas>
 
 
                 </xkit:ZoomScrollViewer>
+
+                <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,15,0" Orientation="Horizontal">
+
+                    <Label  Padding="5,0" >零点线</Label>
+                    
+                    <Label  Padding="5,0" Foreground="Yellow" >人物线</Label>
+                    <Label  Padding="5,0,0,0" Foreground="#FFFF0101" >缩放:x</Label>
+                    <Label  Padding="0" Foreground="#FFFF0101" Content="{Binding ElementName=zoom,Path=ZoomValue}"></Label>
+                </StackPanel>
+
+
             </Grid>
 
             <GridSplitter Height="5" Grid.Row="1"  VerticalAlignment="Top"  ResizeDirection="Rows" HorizontalAlignment="Stretch" Background="{DynamicResource GLOBAL_LISTBOX_BORDER_BACKGROUND}" />
@@ -302,7 +342,7 @@
 
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <UniformGrid Columns="16" Rows="4" />
+                                <UniformGrid Columns="{Binding GridColumns}" Rows="{Binding GridRows}" />
                             </ItemsPanelTemplate>
                         </ListView.ItemsPanel>
                     </ListView>
@@ -355,7 +395,7 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </xkit:NumbericTextBox>
- 
+
 
                     <ComboBox  VerticalAlignment="Top" Height="24"  
                                  VerticalContentAlignment="Center"   SelectedItem="{Binding Selected.RenderType, Mode=TwoWay}" ItemsSource="{Binding Source={StaticResource RenderTypes}}" Grid.Column="1" Margin="0,85,5,0">
@@ -398,7 +438,7 @@
             BorderBrush="{DynamicResource GLOBAL_STATUSBAR_BORDERROUND}"
             Height="26" VerticalAlignment="Bottom">
 
-            <StatusBarItem Width="124">
+            <StatusBarItem Width="124" Padding="0">
                 <Label
                     Padding="10,0,10,0"
                     HorizontalContentAlignment="Center"
@@ -407,21 +447,10 @@
                     Content="https://github.com/vblegend"
                     Style="{DynamicResource xKit-Label Rolling}" Width="118" />
             </StatusBarItem>
-
-            <StatusBarItem>
-                <ProgressBar
-                    x:Name="Progress"
-                    Width="100"
-                    Height="16"
-                    Maximum="100"
-                    Style="{DynamicResource ProgressBarStyle}"
-                    Value="50" />
+            <StatusBarItem Padding="0">
             </StatusBarItem>
-            <StatusBarItem>
-
+            <StatusBarItem Padding="0">
             </StatusBarItem>
-
-            <StatusBarItem/>
 
 
             <StatusBarItem Width="24" HorizontalAlignment="Right">

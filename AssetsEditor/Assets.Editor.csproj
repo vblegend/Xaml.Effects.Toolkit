@@ -16,6 +16,7 @@
     <None Remove="Assets\Fonts\GraceIcon.ttf" />
     <None Remove="Assets\Icon.ico" />
     <None Remove="Assets\Icon.png" />
+    <None Remove="Assets\Images\background.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +32,7 @@
     <Resource Include="Assets\Fonts\GraceIcon.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Images\background.png" />
     <Resource Include="Assets\Themes\Black.xaml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <Generator>MSBuild:Compile</Generator>

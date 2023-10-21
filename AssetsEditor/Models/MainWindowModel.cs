@@ -18,9 +18,23 @@ using Assets.Editor.Common;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Data;
+using System.ComponentModel;
 
 namespace Assets.Editor.Models
 {
+
+    public enum ViewGrids
+    {
+        [Description("人物阵列(8*4)")]
+        GRID_8X4,
+        [Description("怪物阵列(10*4)")]
+        GRID_10X4,
+        [Description("密集阵列(16*4)")]
+        GRID_16X4
+
+
+    }
+
 
 
 
@@ -46,6 +60,9 @@ namespace Assets.Editor.Models
         public IRelayCommand BatchOffsetCommitCommand { get; protected set; }
 
         public ICommand RenderTypeChangedCommand { get; protected set; }
+
+        public ICommand ListGridChangedCommand { get; protected set; }
+
         public ICommand NewPackageCommand { get; protected set; }
 
         public ICommand OpenPackageCommand { get; protected set; }
@@ -83,9 +100,10 @@ namespace Assets.Editor.Models
             this.ChangePasswordCommand = new RelayCommand(ChangePassword_Click, ChangePassword_CanClick);
             this.PreviewMouseWheelCommand = new RelayCommand<MouseWheelEventArgs>(ListView_PreviewMouseWheel);
             this.PageChangedCommand = new RelayCommand<RoutedPropertyChangedEventArgs<double>>(ScrollBar_ValueChanged);
-            this.SelectionChangedCommand = new RelayCommand<System.Windows.Controls.SelectionChangedEventArgs>(ListView_SelectionChanged);
-            this.OffsetChangedCommand = new RelayCommand<System.Windows.Controls.TextChangedEventArgs>(Offset_TextChanged);
-            this.RenderTypeChangedCommand = new RelayCommand<System.Windows.Controls.SelectionChangedEventArgs>(RenderType_SelectionChanged);
+            this.SelectionChangedCommand = new RelayCommand<SelectionChangedEventArgs>(ListView_SelectionChanged);
+            this.OffsetChangedCommand = new RelayCommand<TextChangedEventArgs>(Offset_TextChanged);
+            this.RenderTypeChangedCommand = new RelayCommand<SelectionChangedEventArgs>(RenderType_SelectionChanged);
+            this.ListGridChangedCommand = new RelayCommand<SelectionChangedEventArgs>(ListGrid_SelectionChanged);
             this.OffsetCommitCommand = new RelayCommand(OffsetCommit_Click, OffsetCommit_CanClick);
             this.BatchOffsetCommitCommand = new RelayCommand(BatchOffsetCommit_Click, OffsetCommit_CanClick);
             this.NewPackageCommand = new RelayCommand(NewPackage_Click);
@@ -99,40 +117,13 @@ namespace Assets.Editor.Models
             this.DrawingMode = DrawingMode.Raw;
             this.IsRegFileType = FileTypeRegister.FileTypeRegistered(".Asset");
             this.Selected = new ImageModel();
-            this.Canvas = new Canvas();
-            this.Canvas.Background = new SolidColorBrush(Colors.Blue);
-            this.Canvas.SizeChanged += Canvas_SizeChanged; ;
-            this.Canvas.Children.Add(this.image);
-
-            Canvas.SetLeft(this.image, 0);
-            Canvas.SetTop(this.image, 0);
-
-
-
-
-            Binding binding = new Binding("SelectedImage.Source");
-            binding.Source = this;
-            this.image.SetBinding(Image.SourceProperty, binding);
-
+            this.ListGrid = ViewGrids.GRID_16X4;
 
             resizePage();
             refreshPage();
         }
 
-        private Image image = new Image();
 
-
-
-
-        private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            Trace.WriteLine(e.NewSize);
-
-
-
-
-
-        }
 
 
         private void NewPackage_Click()
@@ -206,7 +197,15 @@ namespace Assets.Editor.Models
         }
         private void ChangePassword_Click()
         {
-
+            var dialog = new PasswordInput();
+            dialog.Owner = MainWindow.Instance;
+            dialog.Model.Title = "修改资源包密码";
+            var result = dialog.ShowDialog();
+            if (result.HasValue && result.Value)
+            {
+                this.assetFile.ChangePassword(dialog.Model.Password);
+                MessageBox.Show("密码已修改","修改密码");
+            }
         }
 
         private Boolean ExportImage_CanClick()
@@ -438,6 +437,10 @@ namespace Assets.Editor.Models
         private void ScrollBar_ValueChanged(RoutedPropertyChangedEventArgs<double> e)
         {
             refreshPage();
+            if (this.SelectedImage != null)
+            {
+                this.Selected.CopyFrom(this.SelectedImage);
+            }
         }
 
         private void ListView_SelectionChanged(System.Windows.Controls.SelectionChangedEventArgs e)
@@ -453,6 +456,27 @@ namespace Assets.Editor.Models
             }
             this.ExportImageCommand.NotifyCanExecuteChanged();
         }
+
+
+        private void ListGrid_SelectionChanged(SelectionChangedEventArgs e)
+        {
+            //if (this.ListGrid == ViewGrids.GRID_8X4)
+            //{
+            //    this.GridColumns = 8;
+            //    this.GridRows = 4;
+            //}
+            //else if (this.ListGrid == ViewGrids.GRID_10X4)
+            //{
+            //    this.GridColumns = 10;
+            //    this.GridRows = 4;
+            //}
+            //else if (this.ListGrid == ViewGrids.GRID_16X4)
+            //{
+            //    this.GridColumns = 16;
+            //    this.GridRows = 4;
+            //}
+        }
+
 
 
         private void RenderType_SelectionChanged(System.Windows.Controls.SelectionChangedEventArgs e)
@@ -477,7 +501,7 @@ namespace Assets.Editor.Models
 
         private Boolean offsetChanged = false;
 
-        
+
 
         private void BatchOffsetCommit_Click()
         {
@@ -667,22 +691,6 @@ namespace Assets.Editor.Models
 
 
 
-
-        public Canvas Canvas
-        {
-            get
-            {
-                return this.canvas;
-            }
-            set
-            {
-                base.SetProperty(ref this.canvas, value);
-            }
-        }
-
-        private Canvas canvas;
-
-
         public ImageModel Selected
         {
             get
@@ -697,5 +705,78 @@ namespace Assets.Editor.Models
 
         private ImageModel selected;
 
+
+
+        public ViewGrids ListGrid
+        {
+            get
+            {
+                return this.listGrid;
+            }
+            set
+            {
+                base.SetProperty(ref this.listGrid, value);
+
+                if (this.ListGrid == ViewGrids.GRID_8X4)
+                {
+                    this.GridColumns = 8;
+                    this.GridRows = 4;
+                }
+                else if (this.ListGrid == ViewGrids.GRID_10X4)
+                {
+                    this.GridColumns = 10;
+                    this.GridRows = 4;
+                }
+                else if (this.ListGrid == ViewGrids.GRID_16X4)
+                {
+                    this.GridColumns = 16;
+                    this.GridRows = 4;
+                }
+
+                var firstIndex = this.PageSize * this.CurrentPage;
+                this.PageSize = this.GridColumns  * this.GridRows;
+
+                this.CurrentPage = (UInt32)(firstIndex / this.PageSize);
+
+
+                refreshPage();
+            }
+        }
+
+        private ViewGrids listGrid;
+
+
+
+
+
+
+        public Int32 GridColumns
+        {
+            get
+            {
+                return this.gridColumns;
+            }
+            set
+            {
+                base.SetProperty(ref this.gridColumns, value);
+            }
+        }
+
+        private Int32 gridColumns;
+
+
+        public Int32 GridRows
+        {
+            get
+            {
+                return this.gridRows;
+            }
+            set
+            {
+                base.SetProperty(ref this.gridRows, value);
+            }
+        }
+
+        private Int32 gridRows;
     }
 }

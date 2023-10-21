@@ -14,11 +14,35 @@ namespace Assets.Editor.Utils
 
         public static Bitmap Convert(Bitmap bitmap, DrawingMode mode)
         {
+            if (bitmap.Width == 1 && bitmap.Height == 1) return ClearColorFilter(bitmap);
             if (mode == DrawingMode.AlphaBlend) return AlphaBlendFilter(bitmap, 2);
             if (mode == DrawingMode.MaskColor) return MaskColorFilter(bitmap, new System.Windows.Media.Color());
             return bitmap;
         }
 
+
+        public static unsafe Bitmap ClearColorFilter(Bitmap mybm)
+        {
+            var lpdata = mybm.LockBits(new Rectangle(new System.Drawing.Point(0, 0), mybm.Size), ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            var Pixels = new byte[(mybm.Width * mybm.Height) * 4];
+            Marshal.Copy(lpdata.Scan0, Pixels, 0, Pixels.Length);
+            fixed (Byte* p = &Pixels[0])
+            {
+                for (int i = 0; i < Pixels.Length; i += 4)
+                {
+                    p[i + 3] = 0;
+                    p[i + 2] = 0;
+                    p[i + 1] = 0;
+                    p[i] = 0;
+                }
+            }
+            mybm.UnlockBits(lpdata);
+            Bitmap bm = new Bitmap(mybm.Width, mybm.Height);
+            lpdata = bm.LockBits(new Rectangle(new System.Drawing.Point(0, 0), mybm.Size), ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            Marshal.Copy(Pixels, 0, lpdata.Scan0, Pixels.Length);
+            bm.UnlockBits(lpdata);
+            return bm;
+        }
 
 
         public static unsafe Bitmap MaskColorFilter(Bitmap mybm, System.Windows.Media.Color color)
@@ -41,6 +65,7 @@ namespace Assets.Editor.Utils
             bm.UnlockBits(lpdata);
             return bm;
         }
+
 
 
         public static BitmapSource MaskColorFilter(BitmapSource bitmap, System.Windows.Media.Color color)

@@ -99,21 +99,29 @@ namespace Resource.Package.Assets
         {
             header.Version = new byte[3];
             this.password = BuildPassword(password);
-            this.fileStream = File.Open(filename, FileMode.Open);
-            using (var reader = new BinaryReader(fileStream, Encoding.UTF8, true))
+            this.fileStream = File.Open(filename, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+            try
             {
-                header.Magic = reader.ReadUInt64();
-                if (header.Magic != MAGIC)
+                using (var reader = new BinaryReader(fileStream, Encoding.UTF8, true))
                 {
-                    throw new Exception("无效的文件格式");
+                    header.Magic = reader.ReadUInt64();
+                    if (header.Magic != MAGIC)
+                    {
+                        throw new Exception("无效的文件格式");
+                    }
+                    reader.Read(header.Version);
+                    header.CompressOption = (CompressionOption)reader.ReadByte();
+                    header.NumberOfFiles = reader.ReadUInt32();
+                    header.TableDataAddr = reader.ReadUInt32();
+                    header.TableDataSize = reader.ReadUInt32();
+                    this.ReadIndex(reader);
+                    header.Version = new Byte[] { 1, 0, 1 };
                 }
-                reader.Read(header.Version);
-                header.CompressOption = (CompressionOption)reader.ReadByte();
-                header.NumberOfFiles = reader.ReadUInt32();
-                header.TableDataAddr = reader.ReadUInt32();
-                header.TableDataSize = reader.ReadUInt32();
-                this.ReadIndex(reader);
-                header.Version = new Byte[] { 1, 0, 1 };
+            }
+            catch (Exception ex)
+            {
+                this.fileStream.Close();
+                throw ex;
             }
         }
 

@@ -68,7 +68,14 @@ namespace Assets.Editor.Models
 
         private void ImportMode_Changed(RoutedEventArgs e)
         {
-            this.EndIndex = 1;
+            if (this.IsBatch)
+            {
+                this.EndIndex = this.stream.NumberOfFiles;
+            }
+            else
+            {
+                this.EndIndex = 1;
+            }
             this.SubmitCommand.NotifyCanExecuteChanged();
         }
 

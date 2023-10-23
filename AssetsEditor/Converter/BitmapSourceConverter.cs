@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 
 namespace Assets.Editor.Converter
 {
@@ -16,16 +17,22 @@ namespace Assets.Editor.Converter
     /// </summary>
     public class BitmapSourceConverter : System.Windows.Markup.MarkupExtension, IMultiValueConverter
     {
+        private BitmapSource Empty { get; set; }
+
         public BitmapSourceConverter()
         {
-
+            this.Empty = BitmapSource.Create(1, 1, 96, 96, PixelFormats.Bgra32, null, new byte[4] { 0, 0, 0, 0 }, 4);
         }
 
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (values == null || values.Length == 0) return null;
+            if (values == null || values.Length == 0) return Empty;
             if (values[0] is BitmapSource source)
             {
+                if (source.Width ==1 && source.Height == 1)
+                {
+                    return Empty;
+                }
                 var mode = DrawingMode.Raw;
                 if (values.Length > 1 && values[1] is DrawingMode _mode) mode = _mode;
                 if (mode == DrawingMode.Raw) return source;

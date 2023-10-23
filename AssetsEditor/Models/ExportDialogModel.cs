@@ -70,7 +70,7 @@ namespace Assets.Editor.Models
         {
             if (this.IsBatch)
             {
-                this.EndIndex = this.stream.NumberOfFiles;
+                this.EndIndex = this.stream.NumberOfFiles - 1;
             }
             else
             {
@@ -149,7 +149,8 @@ namespace Assets.Editor.Models
                     var f = Path.Combine(this.ExportDirectory, $"Placements\\{fileName}.txt");
                     File.WriteAllLines(f, new String[] { block.OffsetX.ToString(), block.OffsetY.ToString() });
                 }
-                System.IO.File.WriteAllBytes(outFileName, block.Data);
+
+                System.IO.File.WriteAllBytes(outFileName, block.Data.Length == 0 ? BitmapUtil.EmptyBitmapData : block.Data);
                 this.Progress = (Double)(i - this.StartIndex) / (Double)(this.EndIndex - this.StartIndex) * 100.0f;
 
             }
@@ -169,7 +170,7 @@ namespace Assets.Editor.Models
             }
         }
 
-        private  Dictionary<String, DataInfo> SortDictionary(Dictionary<String, DataInfo> pairs)
+        private Dictionary<String, DataInfo> SortDictionary(Dictionary<String, DataInfo> pairs)
         {
             var keys = pairs.Keys.ToArray();
             Array.Sort(keys);

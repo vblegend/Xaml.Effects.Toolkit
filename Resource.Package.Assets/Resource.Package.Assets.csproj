@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Optimize>true</Optimize>
+    <Optimize>False</Optimize>
     <PlatformTarget>x64</PlatformTarget>
     <SignAssembly>False</SignAssembly>
     <Platforms>AnyCPU;x64</Platforms>

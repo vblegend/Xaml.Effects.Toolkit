@@ -1,13 +1,33 @@
 ﻿using System;
 using System.IO;
+using System.IO.Pipes;
 using System.Security.Cryptography;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Assets.Editor
 {
     public static class BitmapUtil
     {
+        public static readonly BitmapSource EmptyBitmapSource;
 
+        public static readonly Byte[] EmptyBitmapData;
+
+
+        static BitmapUtil()
+        {
+            EmptyBitmapSource = BitmapSource.Create(1, 1, 96, 96, PixelFormats.Bgra32, null, new byte[4] { 255, 255, 255, 20 }, 4);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(EmptyBitmapSource));
+                encoder.Save(ms);
+                EmptyBitmapData = ms.ToArray();
+            }
+
+
+
+        }
 
 
 

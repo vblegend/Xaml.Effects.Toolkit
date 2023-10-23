@@ -14,6 +14,8 @@ namespace Assets.Editor.Models
         Append = 0,
         [Description("覆盖")]
         Override = 1,
+        [Description("替换")]
+        Replace = 2,
 
     }
 
@@ -69,7 +71,7 @@ namespace Assets.Editor.Models
     {
         public ImageModel()
         {
-
+ 
 
         }
 

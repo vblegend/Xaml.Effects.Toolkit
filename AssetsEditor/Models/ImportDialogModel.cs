@@ -22,6 +22,7 @@ using System.Windows.Threading;
 using Xaml.Effects.Toolkit.Model;
 using Xaml.Effects.Toolkit.Uitity;
 
+
 namespace Assets.Editor.Models
 {
 
@@ -33,7 +34,7 @@ namespace Assets.Editor.Models
 
         public AssetFileStream stream { get; set; }
 
-
+        public UInt32 SelectedIndex { get; set; }
 
         public ImportDialogModel()
         {
@@ -63,8 +64,6 @@ namespace Assets.Editor.Models
                 {
                     ConfigureUtil.SetValue("ImportDirectory", folderBrowserDialog.SelectedPath);
                     this.ImportSource = folderBrowserDialog.SelectedPath;
-
-
                     if (Directory.Exists(Path.Combine(this.ImportSource, "Placements")))
                     {
                         this.ImportUserData = ImageUserData.Placements;
@@ -77,10 +76,6 @@ namespace Assets.Editor.Models
                     {
                         this.ImportUserData = ImageUserData.None;
                     }
-
-
-
-
                 };
             }
             else
@@ -89,19 +84,30 @@ namespace Assets.Editor.Models
                 ofd.Title = "选择图片文件";
                 ofd.InitialDirectory = ConfigureUtil.GetValue("ImportFile");
                 ofd.Filter = ImageFilter;
+                ofd.Multiselect = true;
                 if (ofd.ShowDialog() == true)
                 {
                     var dir = Path.GetDirectoryName(ofd.FileName);
                     ConfigureUtil.SetValue("ImportFile", dir);
+                    this.ImportSource = String.Join("\n", ofd.FileNames);
 
-                    this.ImportSource = ofd.FileName;
+                    if (Directory.Exists(Path.Combine(dir, "Placements")))
+                    {
+                        this.ImportUserData = ImageUserData.Placements;
+                    }
+                    else if (File.Exists(Path.Combine(dir, "schema.json")))
+                    {
+                        this.ImportUserData = ImageUserData.SchemaJson;
+                    }
+                    else
+                    {
+                        this.ImportUserData = ImageUserData.None;
+                    }
                 }
             }
             this.Progress = 0;
             this.SubmitCommand.NotifyCanExecuteChanged();
         }
-
-
 
 
         private void ImportMode_Changed(RoutedEventArgs e)
@@ -132,8 +138,8 @@ namespace Assets.Editor.Models
             }
             else
             {
-                files.Add(this.ImportSource);
-                dir = Path.GetDirectoryName(this.ImportSource);
+                files.AddRange(this.ImportSource.Split("\n", StringSplitOptions.RemoveEmptyEntries));
+                dir = Path.GetDirectoryName(files[0]);
             }
             var worker = new BackgroundWorker();
             worker.DoWork += (s, e2) =>
@@ -185,7 +191,22 @@ namespace Assets.Editor.Models
                 {
                     block.lpRenderType = RenderTypes.Normal;
                 }
-                block.Data = System.IO.File.ReadAllBytes(file);
+                block.Data = File.ReadAllBytes(file);
+                if (block.Data.Length < 1024)
+                {
+                    using (var ms = new MemoryStream(block.Data))
+                    {
+                        using (var image = System.Drawing.Bitmap.FromStream(ms))
+                        {
+                            if (image.Width == 1 && image.Height == 1)
+                            {
+                                block.Data = new Byte[0];
+                            }
+                        }
+                    }
+                }
+
+
                 var filename = Path.GetFileNameWithoutExtension(file);
                 if (this.ImportUserData == ImageUserData.Placements)
                 {
@@ -210,13 +231,17 @@ namespace Assets.Editor.Models
                         block.Unknown2 = schema.Unknown2;
                     }
                 }
-                if (this.ImportOption == ImportOption.Append)
+                if (this.ImportOption == ImportOption.Override)
+                {
+                    block.Index = (Int32)UInt32.Parse(filename);
+                }
+                else if (this.ImportOption == ImportOption.Append)
                 {
                     block.Index = -1;
                 }
-                else
+                else if (this.ImportOption == ImportOption.Replace)
                 {
-                    block.Index = (Int32)UInt32.Parse(filename);
+                    block.Index = (Int32)this.SelectedIndex + i;
                 }
                 blocks.Add(block);
                 this.Progress = (Double)i / (Double)fileCount * 100.0f;

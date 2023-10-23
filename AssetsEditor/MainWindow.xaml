@@ -213,6 +213,23 @@
                 </Separator.LayoutTransform>
             </Separator>
 
+
+            <Button Content="&#xe6de;" FontSize="16"  
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Command="{Binding ExpandCommand}"
+                    ToolTip="扩容资源包"
+                    FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
+
+            <Button Content="&#xe812;" FontSize="16"  
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Command="{Binding RecycleCommand}"
+                    ToolTip="回收扩容"
+                    FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
+
+           
+
             <Button Content="&#xe62f;" FontSize="16"  
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"

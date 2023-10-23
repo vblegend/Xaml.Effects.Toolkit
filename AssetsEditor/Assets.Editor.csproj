@@ -59,6 +59,9 @@
     <Compile Update="Views\BatchOffsetDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\ExpandDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\PngFormatDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -139,6 +139,26 @@ namespace Resource.Package.Assets
             return node;
         }
 
+        public Boolean Recycle()
+        {
+            var IsChanged = false;
+            while (this.NumberOfFiles > 0)
+            {
+                var Index = this.NumberOfFiles - 1;
+                var info = this.Infomations[(Int32)Index];
+                if (info.lpData > 0) break;
+                this.Infomations.Remove(info);
+                this.header.NumberOfFiles--;
+                IsChanged = true;
+            }
+            if (IsChanged)
+            {
+                this.Save();
+            }
+            return IsChanged;
+        }
+
+
 
         public IReadOnlyDataBlock Read(UInt32 index)
         {
@@ -152,7 +172,7 @@ namespace Resource.Package.Assets
                 node.Unknown2 = info.Unknown2;
                 node.OffsetX = info.OffsetX;
                 node.OffsetY = info.OffsetY;
-                if (info.lpSize > 0)
+                if (info.lpData > 0 && info.lpSize > 0)
                 {
                     var data = new Byte[info.lpSize];
                     reader.BaseStream.Position = info.lpData;
@@ -220,6 +240,7 @@ namespace Resource.Package.Assets
 
         private ImageTypes ParseImageFormat(Byte[] data)
         {
+            if (data.Length == 0) return ImageTypes.Unknown;
             if (data[0] == 0x42 && data[1] == 0x4D) return ImageTypes.BMP;
             if (data[0] == 0x89 && data[1] == 0x50 && data[2] == 0x4E && data[3] == 0x47) return ImageTypes.PNG;
             if (data[0] == 0xFF && data[1] == 0xD8 && data[2] == 0xFF) return ImageTypes.JPG;
@@ -235,10 +256,10 @@ namespace Resource.Package.Assets
         private async Task<Byte[]> Compressing(DataBlock item, Action report = null)
         {
             Byte[] bytes = item.Data;
-            if (header.CompressOption == CompressionOption.MuchPossibleCompress || header.CompressOption == CompressionOption.MustCompressed)
+            if (item.Data.Length > 0 && header.CompressOption == CompressionOption.MuchPossibleCompress || header.CompressOption == CompressionOption.MustCompressed)
             {
                 bytes = await ZLib.Compress(item.Data);
-                if (bytes.Length > item.Data.Length && header.CompressOption == CompressionOption.MuchPossibleCompress)
+                if (bytes.Length >= item.Data.Length && header.CompressOption == CompressionOption.MuchPossibleCompress)
                 {
                     bytes = item.Data;
                 }
@@ -276,10 +297,13 @@ namespace Resource.Package.Assets
                     info.OffsetY = item.OffsetY;
                     info.lpRenderType = item.lpRenderType;
                     info.lpSize = (UInt32)bufData.Length;
-                    info.lpData = header.TableDataAddr;
-                    header.TableDataAddr = info.lpData + info.lpSize;
-                    writer.Seek((Int32)info.lpData, SeekOrigin.Begin);
-                    writer.Write(bufData);
+                    if (info.lpSize > 0)
+                    {
+                        info.lpData = header.TableDataAddr;
+                        header.TableDataAddr = info.lpData + info.lpSize;
+                        writer.Seek((Int32)info.lpData, SeekOrigin.Begin);
+                        writer.Write(bufData);
+                    }
                     report();
                 }
                 this.WriteIndex(writer);

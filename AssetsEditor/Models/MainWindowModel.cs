@@ -29,8 +29,12 @@ namespace Assets.Editor.Models
         GRID_8X4,
         [Description("怪物阵列(10*4)")]
         GRID_10X4,
+        [Description("其他阵列(12*4)")]
+        GRID_12X4,
         [Description("密集阵列(16*4)")]
-        GRID_16X4
+        GRID_16X4,
+        [Description("密集阵列(20*4)")]
+        GRID_20X4
 
 
     }
@@ -40,7 +44,6 @@ namespace Assets.Editor.Models
 
     public class MainWindowModel : DialogModel
     {
-
         public readonly String ImageFilter = "Image File|*.png;*.bmp;*.gif;*.jpg;*.tif";
 
         public ObservableCollection<String> ListItems { get; set; } = new ObservableCollection<String>();
@@ -74,6 +77,11 @@ namespace Assets.Editor.Models
         public IRelayCommand ImportImageCommand { get; protected set; }
 
         public IRelayCommand ExportImageCommand { get; protected set; }
+        public IRelayCommand ExpandCommand { get; protected set; }
+        public IRelayCommand RecycleCommand { get; protected set; }
+
+
+
 
 
         public IRelayCommand RegFileTypeCommand { get; protected set; }
@@ -97,6 +105,8 @@ namespace Assets.Editor.Models
             this.ClosePackageCommand = new RelayCommand(ClosePackage_Click, ClosePackage_CanClick);
             this.ImportImageCommand = new RelayCommand(ImportImage_Click, ImportImage_CanClick);
             this.ExportImageCommand = new RelayCommand(ExportImage_Click, ExportImage_CanClick);
+            this.ExpandCommand = new RelayCommand(Expand_Click, Expand_CanClick);
+            this.RecycleCommand = new RelayCommand(Recycle_Click, Recycle_CanClick);
             this.ChangePasswordCommand = new RelayCommand(ChangePassword_Click, ChangePassword_CanClick);
             this.PreviewMouseWheelCommand = new RelayCommand<MouseWheelEventArgs>(ListView_PreviewMouseWheel);
             this.PageChangedCommand = new RelayCommand<RoutedPropertyChangedEventArgs<double>>(ScrollBar_ValueChanged);
@@ -182,6 +192,7 @@ namespace Assets.Editor.Models
         private void ImportImage_Click()
         {
             ImportDialog import = new ImportDialog();
+            import.Model.SelectedIndex = this.Selected.Index;
             import.Model.stream = this.assetFile;
             import.Owner = MainWindow.Instance;
             import.ShowDialog();
@@ -204,9 +215,53 @@ namespace Assets.Editor.Models
             if (result.HasValue && result.Value)
             {
                 this.assetFile.ChangePassword(dialog.Model.Password);
-                MessageBox.Show("密码已修改","修改密码");
+                MessageBox.Show("密码已修改", "修改密码");
             }
         }
+
+
+
+
+        private Boolean Expand_CanClick()
+        {
+            return this.assetFile != null;
+        }
+        private void Expand_Click()
+        {
+            ExpandDialog expand = new ExpandDialog();
+            expand.Model.stream = this.assetFile;
+            expand.Owner = MainWindow.Instance;
+            var result = expand.ShowDialog();
+            if (result.HasValue && result.Value)
+            {
+                resizePage();
+                refreshPage();
+            }
+
+        }
+
+
+
+        private Boolean Recycle_CanClick()
+        {
+            return this.assetFile != null;
+        }
+        private void Recycle_Click()
+        {
+            if (this.assetFile.Recycle())
+            {
+                var page = (UInt32)(this.assetFile.NumberOfFiles / this.PageSize);
+                if (page < this.CurrentPage)
+                {
+                    this.CurrentPage = page;
+                }
+                resizePage();
+                refreshPage();
+            }
+        }
+
+
+
 
         private Boolean ExportImage_CanClick()
         {
@@ -225,7 +280,7 @@ namespace Assets.Editor.Models
             else
             {
                 export.Model.StartIndex = 0;
-                export.Model.EndIndex = this.assetFile.NumberOfFiles;
+                export.Model.EndIndex = this.assetFile.NumberOfFiles - 1;
                 export.Model.IsBatch = true;
             }
             export.Owner = MainWindow.Instance;
@@ -246,6 +301,8 @@ namespace Assets.Editor.Models
                 this.ClosePackageCommand.NotifyCanExecuteChanged();
                 this.ImportImageCommand.NotifyCanExecuteChanged();
                 this.ExportImageCommand.NotifyCanExecuteChanged();
+                this.ExpandCommand.NotifyCanExecuteChanged();
+                this.RecycleCommand.NotifyCanExecuteChanged();
                 this.ChangePasswordCommand.NotifyCanExecuteChanged();
             }
             catch (Exception ex)
@@ -285,6 +342,8 @@ namespace Assets.Editor.Models
                 this.OffsetCommitCommand.NotifyCanExecuteChanged();
                 this.BatchOffsetCommitCommand.NotifyCanExecuteChanged();
                 this.ImportImageCommand.NotifyCanExecuteChanged();
+                this.RecycleCommand.NotifyCanExecuteChanged();
+                this.ExpandCommand.NotifyCanExecuteChanged();
                 this.ExportImageCommand.NotifyCanExecuteChanged();
                 this.ChangePasswordCommand.NotifyCanExecuteChanged();
             }
@@ -367,16 +426,9 @@ namespace Assets.Editor.Models
                     this.GridImages[i].RenderType = node.lpRenderType;
                     this.GridImages[i].OffsetX = node.OffsetX;
                     this.GridImages[i].OffsetY = node.OffsetY;
-
-
-                    if (node.Data.Length > 0)
-                    {
-                        this.GridImages[i].FileSize = node.Data.Length;
-                        var source = loadImageSource(node.Data, node.lpType);
-                        this.GridImages[i].Source = source;
-                    }
-
-
+                    this.GridImages[i].FileSize = node.Data.Length;
+                    var source = loadImageSource(node.Data, node.lpType);
+                    this.GridImages[i].Source = source;
                 }
             }
         }
@@ -387,9 +439,9 @@ namespace Assets.Editor.Models
         {
             try
             {
+                if (data.Length < 1024) return BitmapUtil.EmptyBitmapSource;
                 using (MemoryStream stream = new MemoryStream(data))
                 {
-
                     if (type == ImageTypes.TGA)
                     {
                         using (TargaImage tgaImage = new TargaImage(stream))
@@ -727,14 +779,23 @@ namespace Assets.Editor.Models
                     this.GridColumns = 10;
                     this.GridRows = 4;
                 }
+                else if (this.ListGrid == ViewGrids.GRID_12X4)
+                {
+                    this.GridColumns = 12;
+                    this.GridRows = 4;
+                }
                 else if (this.ListGrid == ViewGrids.GRID_16X4)
                 {
                     this.GridColumns = 16;
                     this.GridRows = 4;
                 }
-
+                else if (this.ListGrid == ViewGrids.GRID_20X4)
+                {
+                    this.GridColumns = 20;
+                    this.GridRows = 4;
+                }
                 var firstIndex = this.PageSize * this.CurrentPage;
-                this.PageSize = this.GridColumns  * this.GridRows;
+                this.PageSize = this.GridColumns * this.GridRows;
 
                 this.CurrentPage = (UInt32)(firstIndex / this.PageSize);
 

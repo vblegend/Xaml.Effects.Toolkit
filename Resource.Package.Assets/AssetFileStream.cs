@@ -291,6 +291,7 @@ namespace Resource.Package.Assets
                     var item = items[i];
                     var bufData = tasks[i].Result;
                     var info = this.Apply(item.Index);
+              
                     info.lpType = ParseImageFormat(item.Data);
                     info.lpRawSize = (UInt32)item.Data.Length;
                     info.OffsetX = item.OffsetX;
@@ -303,6 +304,10 @@ namespace Resource.Package.Assets
                         header.TableDataAddr = info.lpData + info.lpSize;
                         writer.Seek((Int32)info.lpData, SeekOrigin.Begin);
                         writer.Write(bufData);
+                    }
+                    else
+                    {
+                        info.lpData = 0;
                     }
                     report();
                 }

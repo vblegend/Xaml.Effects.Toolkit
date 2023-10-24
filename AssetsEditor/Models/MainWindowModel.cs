@@ -19,6 +19,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Data;
 using System.ComponentModel;
+using System.Collections.Generic;
 
 namespace Assets.Editor.Models
 {
@@ -76,6 +77,7 @@ namespace Assets.Editor.Models
 
         public IRelayCommand ImportImageCommand { get; protected set; }
 
+        public IRelayCommand CleanImageCommand { get; protected set; }
         public IRelayCommand ExportImageCommand { get; protected set; }
         public IRelayCommand ExpandCommand { get; protected set; }
         public IRelayCommand RecycleCommand { get; protected set; }
@@ -105,6 +107,8 @@ namespace Assets.Editor.Models
             this.ClosePackageCommand = new RelayCommand(ClosePackage_Click, ClosePackage_CanClick);
             this.ImportImageCommand = new RelayCommand(ImportImage_Click, ImportImage_CanClick);
             this.ExportImageCommand = new RelayCommand(ExportImage_Click, ExportImage_CanClick);
+            this.CleanImageCommand = new RelayCommand(CleanImage_Click, CleanImage_CanClick);
+
             this.ExpandCommand = new RelayCommand(Expand_Click, Expand_CanClick);
             this.RecycleCommand = new RelayCommand(Recycle_Click, Recycle_CanClick);
             this.ChangePasswordCommand = new RelayCommand(ChangePassword_Click, ChangePassword_CanClick);
@@ -261,7 +265,21 @@ namespace Assets.Editor.Models
         }
 
 
-
+        private Boolean CleanImage_CanClick()
+        {
+            return this.assetFile != null && this.Selected != null;
+        }
+        private void CleanImage_Click()
+        {
+            var result = MessageBox.Show("是否清除图片数据？", "删除确认", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                var block = new DataBlock();
+                block.Index = (Int32)this.Selected.Index;
+                this.assetFile.Import(new List<DataBlock>() { block });
+                refreshPage();
+            }
+        }
 
         private Boolean ExportImage_CanClick()
         {
@@ -300,6 +318,7 @@ namespace Assets.Editor.Models
                 refreshPage();
                 this.ClosePackageCommand.NotifyCanExecuteChanged();
                 this.ImportImageCommand.NotifyCanExecuteChanged();
+                this.CleanImageCommand.NotifyCanExecuteChanged();
                 this.ExportImageCommand.NotifyCanExecuteChanged();
                 this.ExpandCommand.NotifyCanExecuteChanged();
                 this.RecycleCommand.NotifyCanExecuteChanged();
@@ -342,6 +361,7 @@ namespace Assets.Editor.Models
                 this.OffsetCommitCommand.NotifyCanExecuteChanged();
                 this.BatchOffsetCommitCommand.NotifyCanExecuteChanged();
                 this.ImportImageCommand.NotifyCanExecuteChanged();
+                this.CleanImageCommand.NotifyCanExecuteChanged();
                 this.RecycleCommand.NotifyCanExecuteChanged();
                 this.ExpandCommand.NotifyCanExecuteChanged();
                 this.ExportImageCommand.NotifyCanExecuteChanged();
@@ -507,6 +527,7 @@ namespace Assets.Editor.Models
                 this.SelectedImage = null;
             }
             this.ExportImageCommand.NotifyCanExecuteChanged();
+            this.CleanImageCommand.NotifyCanExecuteChanged();
         }
 
 

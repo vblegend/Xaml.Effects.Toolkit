@@ -190,6 +190,13 @@
                 </Separator.LayoutTransform>
             </Separator>
 
+            <Button Content="&#xe66f;" FontSize="16"  
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Command="{Binding CleanImageCommand}"
+                    ToolTip="清除选中图片"
+                    FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
+            
             <Button Content="&#xe850;" FontSize="16"  
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
@@ -221,14 +228,21 @@
                     ToolTip="扩容资源包"
                     FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
 
-            <Button Content="&#xe812;" FontSize="16"  
+            <Button Content="&#xe66d;" FontSize="16"  
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
                     Command="{Binding RecycleCommand}"
                     ToolTip="回收扩容"
                     FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
 
-           
+
+
+            <Separator Height="20">
+                <Separator.LayoutTransform>
+                    <RotateTransform Angle="90" />
+                </Separator.LayoutTransform>
+            </Separator>
+
 
             <Button Content="&#xe62f;" FontSize="16"  
                     HorizontalContentAlignment="Center"

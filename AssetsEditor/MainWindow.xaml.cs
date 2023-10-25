@@ -42,6 +42,5 @@ namespace Assets.Editor
         {
             Environment.Exit(0);
         }
-
     }
 }

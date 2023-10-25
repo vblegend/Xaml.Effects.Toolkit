@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -104,6 +105,27 @@ namespace Assets.Editor.Models
                         this.ImportUserData = ImageUserData.None;
                     }
                 }
+            }
+            this.Progress = 0;
+            this.SubmitCommand.NotifyCanExecuteChanged();
+        }
+
+
+        public void SetSourceFiles(String[] files)
+        {
+            this.ImportSource = String.Join("\n", files);
+            var dir = Path.GetDirectoryName(files[0]);
+            if (Directory.Exists(Path.Combine(dir, "Placements")))
+            {
+                this.ImportUserData = ImageUserData.Placements;
+            }
+            else if (File.Exists(Path.Combine(dir, "schema.json")))
+            {
+                this.ImportUserData = ImageUserData.SchemaJson;
+            }
+            else
+            {
+                this.ImportUserData = ImageUserData.None;
             }
             this.Progress = 0;
             this.SubmitCommand.NotifyCanExecuteChanged();

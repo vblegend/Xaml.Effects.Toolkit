@@ -20,6 +20,8 @@ using System.Windows.Media;
 using System.Windows.Data;
 using System.ComponentModel;
 using System.Collections.Generic;
+using Xaml.Effects.Toolkit.Behaviors;
+using System.Linq;
 
 namespace Assets.Editor.Models
 {
@@ -99,6 +101,11 @@ namespace Assets.Editor.Models
         public AssetFileStream assetFile { get; protected set; }
 
 
+
+        public IEventCommand ImageDropEventCommand { get; protected set; }
+        public IEventCommand ImageDragEnterEventCommand { get; protected set; }
+
+
         public MainWindowModel()
         {
             ThemeManager.LoadThemeFromResource("/Assets.Editor;component/Assets/Themes/Black.xaml");
@@ -124,6 +131,8 @@ namespace Assets.Editor.Models
             this.RegFileTypeCommand = new RelayCommand(RegFileType_Click);
             this.Bmp2PngCommand = new RelayCommand(Bmp2Png_Click);
             this.PngFormatCommand = new RelayCommand(PngFormat_Click);
+            this.ImageDragEnterEventCommand = new EventCommand<DragEventArgs>(Image_DragEnter);
+            this.ImageDropEventCommand = new EventCommand<DragEventArgs>(Image_Drop);
             this.currentPage = 0;
             this.Title = "Assets Editor - Power by Hanks";
             this.PageSize = 64;
@@ -135,6 +144,61 @@ namespace Assets.Editor.Models
 
             resizePage();
             refreshPage();
+        }
+
+
+        private void Image_DragEnter(FrameworkElement sender, DragEventArgs e)
+        {
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var files = e.Data.GetData(DataFormats.FileDrop) as String[];
+                if (VerificationFiles(files))
+                {
+                    e.Effects = DragDropEffects.Link;
+                    return;
+                }
+            }
+            e.Effects = DragDropEffects.None;
+        }
+
+        public void Image_Drop(FrameworkElement sender, DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
+            var files = e.Data.GetData(DataFormats.FileDrop) as String[];
+            if (!VerificationFiles(files)) return;
+
+            var model = sender.DataContext as ImageModel;
+
+
+            ImportDialog import = new ImportDialog();
+            import.Model.SelectedIndex = model.Index;
+            import.Model.FormatOptions = ImageFormat.ALLIMAGE;
+            import.Model.ImportOption = ImportOption.Replace;
+            import.Model.stream = this.assetFile;
+            import.Owner = MainWindow.Instance;
+            import.Model.SetSourceFiles(files);
+
+            var result = import.ShowDialog();
+            if (result.HasValue && result.Value)
+            {
+                resizePage();
+                refreshPage();
+            }
+        }
+
+        private Boolean VerificationFiles(String[] files)
+        {
+            var exts = new String[] { ".png", ".jpg", ".bmp" };
+            return files.Select(e =>
+            {
+                if (File.Exists(e))
+                {
+                    var ext = "*" + Path.GetExtension(e).ToLower();
+                    return ImageFilter.IndexOf(ext) > -1;
+                }
+                return false;
+            }).All(e => e == true);
         }
 
 
@@ -199,9 +263,12 @@ namespace Assets.Editor.Models
             import.Model.SelectedIndex = this.Selected.Index;
             import.Model.stream = this.assetFile;
             import.Owner = MainWindow.Instance;
-            import.ShowDialog();
-            resizePage();
-            refreshPage();
+            var result = import.ShowDialog();
+            if (result.HasValue && result.Value)
+            {
+                resizePage();
+                refreshPage();
+            }
         }
 
 

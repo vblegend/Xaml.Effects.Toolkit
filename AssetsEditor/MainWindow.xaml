@@ -196,7 +196,7 @@
                     Command="{Binding CleanImageCommand}"
                     ToolTip="清除选中图片"
                     FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
-            
+
             <Button Content="&#xe850;" FontSize="16"  
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
@@ -277,7 +277,7 @@
                 </ComboBox.ItemTemplate>
                 <!--<i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
-                        <xkit:EventBehavior Action="{Binding ListGridChangedCommand}" />
+                        <xkit:EventBehavior Command="{Binding ListGridChangedCommand}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>-->
             </ComboBox>
@@ -330,7 +330,7 @@
                 <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,15,0" Orientation="Horizontal">
 
                     <Label  Padding="5,0" >零点线</Label>
-                    
+
                     <Label  Padding="5,0" Foreground="Yellow" >人物线</Label>
                     <Label  Padding="5,0,0,0" Foreground="#FFFF0101" >缩放:x</Label>
                     <Label  Padding="0" Foreground="#FFFF0101" Content="{Binding ElementName=zoom,Path=ZoomValue}"></Label>
@@ -349,9 +349,25 @@
                 <Grid Grid.Column="0">
                     <Grid.Resources>
                         <DataTemplate x:Key="ItemTemplate">
-                            <Grid>
-                                <Image Stretch="Fill"  Source="{Binding Source}"/>
+                            <Grid >
+                                <Image Stretch="Fill" AllowDrop="True" Source="{Binding Source}">
+
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Drop">
+                                            <xkit:EventBehavior Handler ="{Binding Path=DataContext.ImageDropEventCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}" />
+                                        </i:EventTrigger>
+                                        <i:EventTrigger EventName="DragEnter">
+                                            <xkit:EventBehavior Handler="{Binding Path=DataContext.ImageDragEnterEventCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+
+                                </Image>
+
+
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="{Binding Index}" ></TextBlock>
+
+
+
                             </Grid>
                         </DataTemplate>
                     </Grid.Resources>
@@ -364,10 +380,10 @@
 
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="PreviewMouseWheel">
-                                <xkit:EventBehavior Action="{Binding PreviewMouseWheelCommand}" />
+                                <xkit:EventBehavior Command="{Binding PreviewMouseWheelCommand}" />
                             </i:EventTrigger>
                             <i:EventTrigger EventName="SelectionChanged">
-                                <xkit:EventBehavior Action="{Binding SelectionChangedCommand}" />
+                                <xkit:EventBehavior Command="{Binding SelectionChangedCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
 
@@ -382,11 +398,11 @@
                     <ScrollBar HorizontalAlignment="Right" Maximum="{Binding TotalPage}" Value="{Binding CurrentPage,Mode=TwoWay}"  Minimum="0"  Width="17" Margin="0,1,1,1">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="PreviewMouseWheel">
-                                <xkit:EventBehavior Action="{Binding PreviewMouseWheelCommand}" />
+                                <xkit:EventBehavior Command="{Binding PreviewMouseWheelCommand}" />
                             </i:EventTrigger>
 
                             <i:EventTrigger EventName="ValueChanged">
-                                <xkit:EventBehavior Action="{Binding PageChangedCommand}" />
+                                <xkit:EventBehavior Command="{Binding PageChangedCommand}" />
                             </i:EventTrigger>
 
 
@@ -413,7 +429,7 @@
                           VerticalContentAlignment="Center"                 VerticalAlignment="Top" Grid.Column="1" Height="24">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="TextChanged">
-                                <xkit:EventBehavior Action="{Binding OffsetChangedCommand}" />
+                                <xkit:EventBehavior Command="{Binding OffsetChangedCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </xkit:NumbericTextBox>
@@ -422,7 +438,7 @@
                                         VerticalContentAlignment="Center"        VerticalAlignment="Top" Grid.Column="1" Height="24">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="TextChanged">
-                                <xkit:EventBehavior Action="{Binding OffsetChangedCommand}" />
+                                <xkit:EventBehavior Command="{Binding OffsetChangedCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </xkit:NumbericTextBox>
@@ -438,7 +454,7 @@
                         </ComboBox.ItemTemplate>
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
-                                <xkit:EventBehavior Action="{Binding RenderTypeChangedCommand}" />
+                                <xkit:EventBehavior Command="{Binding RenderTypeChangedCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
 

@@ -57,7 +57,7 @@
                                         VerticalContentAlignment="Center"     VerticalAlignment="Center" Height="27">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="TextChanged">
-                    <xkit:EventBehavior Action="{Binding InputChangedCommand}" />
+                    <xkit:EventBehavior Command="{Binding InputChangedCommand}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </xkit:NumbericTextBox>

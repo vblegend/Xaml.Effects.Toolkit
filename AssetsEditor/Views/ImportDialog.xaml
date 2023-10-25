@@ -65,14 +65,14 @@
         <RadioButton Content="文件导入"  HorizontalAlignment="Left" Margin="105,19,0,0" VerticalAlignment="Top" Height="24" Width="185" IsChecked="True">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Checked">
-                    <xkit:EventBehavior Action="{Binding ModeChangedCommand}" />
+                    <xkit:EventBehavior Command="{Binding ModeChangedCommand}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </RadioButton>
         <RadioButton Content="目录导入" IsChecked="{Binding IsBatch,Mode=TwoWay}"  HorizontalAlignment="Left" Margin="290,19,0,0" VerticalAlignment="Top" Height="24" Width="185" >
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Checked">
-                    <xkit:EventBehavior Action="{Binding ModeChangedCommand}" />
+                    <xkit:EventBehavior Command="{Binding ModeChangedCommand}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </RadioButton>

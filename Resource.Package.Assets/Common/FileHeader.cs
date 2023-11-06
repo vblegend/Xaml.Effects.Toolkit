@@ -103,6 +103,9 @@ namespace Resource.Package.Assets.Common
     public interface IReadOnlyDataBlock
     {
 
+        public Int32 Width { get; set; }
+        public Int32 Height { get; set; }
+
         public Int16 OffsetX { get; }
         public Int16 OffsetY { get; }
 
@@ -118,12 +121,17 @@ namespace Resource.Package.Assets.Common
     public class DataInfo
     {
 
+        public Int32 Width { get; set; }
+        public Int32 Height { get; set; }
+
+
         public Int16 OffsetX { get; set; }
         public Int16 OffsetY { get; set; }
 
         public RenderTypes lpRenderType { get; set; }
         public Byte Unknown2 { get; set; }
         public Byte Unknown1 { get; set; }
+
 
 
 

@@ -1,7 +1,9 @@
 ﻿using Resource.Package.Assets.Common;
 using Resource.Package.Assets.Secure;
 using Resource.Package.Assets.Version;
+using StbImageSharp;
 using System.Drawing;
+using System.IO;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +26,7 @@ namespace Resource.Package.Assets
             var meta = new FileHeader();
             meta.CompressOption = compressionOption;
             meta.Magic = MAGIC;
-            meta.Version = new byte[] { 1, 0, 1 };
+            meta.Version = new byte[] { 1, 0, 2 };
             meta.TableDataSize = 0;
             meta.TableDataAddr = 24;
             meta.NumberOfFiles = 0;
@@ -115,7 +117,7 @@ namespace Resource.Package.Assets
                     header.TableDataAddr = reader.ReadUInt32();
                     header.TableDataSize = reader.ReadUInt32();
                     this.ReadIndex(reader);
-                    header.Version = new Byte[] { 1, 0, 1 };
+                    header.Version = new Byte[] { 1, 0, 2 };
                 }
             }
             catch (Exception ex)
@@ -172,6 +174,8 @@ namespace Resource.Package.Assets
                 node.Unknown2 = info.Unknown2;
                 node.OffsetX = info.OffsetX;
                 node.OffsetY = info.OffsetY;
+                node.Width = info.Width;
+                node.Height = info.Height;
                 if (info.lpData > 0 && info.lpSize > 0)
                 {
                     var data = new Byte[info.lpSize];
@@ -250,18 +254,25 @@ namespace Resource.Package.Assets
             return ImageTypes.Unknown;
         }
 
-
-
+       
 
         private async Task<Byte[]> Compressing(DataBlock item, Action report = null)
         {
             Byte[] bytes = item.Data;
-            if (item.Data.Length > 0 && header.CompressOption == CompressionOption.MuchPossibleCompress || header.CompressOption == CompressionOption.MustCompressed)
+            if (item.lpType == ImageTypes.PNG && bytes.Length > 0)
             {
-                bytes = await ZLib.Compress(item.Data);
-                if (bytes.Length >= item.Data.Length && header.CompressOption == CompressionOption.MuchPossibleCompress)
+                ImageResult imageResult = ImageResult.FromMemory(bytes, ColorComponents.RedGreenBlueAlpha);
+                AlphaUtil.PremultiplyAlpha(imageResult.Data);
+                item.Width = imageResult.Width;
+                item.Height = imageResult.Height;
+                item.Data = imageResult.Data;
+                if (header.CompressOption == CompressionOption.MuchPossibleCompress || header.CompressOption == CompressionOption.MustCompressed)
                 {
-                    bytes = item.Data;
+                    bytes = await ZLib.Compress(imageResult.Data);
+                    if (bytes.Length >= item.Data.Length && header.CompressOption == CompressionOption.MuchPossibleCompress)
+                    {
+                        bytes = item.Data;
+                    }
                 }
             }
             if (report != null) report();
@@ -281,9 +292,11 @@ namespace Resource.Package.Assets
             };
             foreach (var item in items)
             {
+                item.lpType = ParseImageFormat(item.Data);
                 tasks.Add(Compressing(item, report));
             }
             Task.WaitAll(tasks.ToArray());
+            GC.Collect();
             using (var writer = new BinaryWriter(fileStream, Encoding.UTF8, true))
             {
                 for (var i = 0; i < tasks.Count; i++)
@@ -291,8 +304,9 @@ namespace Resource.Package.Assets
                     var item = items[i];
                     var bufData = tasks[i].Result;
                     var info = this.Apply(item.Index);
-              
-                    info.lpType = ParseImageFormat(item.Data);
+                    info.Width = item.Width;
+                    info.Height = item.Height;
+                    info.lpType = item.lpType;
                     info.lpRawSize = (UInt32)item.Data.Length;
                     info.OffsetX = item.OffsetX;
                     info.OffsetY = item.OffsetY;
@@ -301,9 +315,9 @@ namespace Resource.Package.Assets
                     if (info.lpSize > 0)
                     {
                         info.lpData = header.TableDataAddr;
-                        header.TableDataAddr = info.lpData + info.lpSize;
-                        writer.Seek((Int32)info.lpData, SeekOrigin.Begin);
-                        writer.Write(bufData);
+                    header.TableDataAddr = info.lpData + info.lpSize;
+                    writer.Seek((Int32)info.lpData, SeekOrigin.Begin);
+                    writer.Write(bufData);
                     }
                     else
                     {

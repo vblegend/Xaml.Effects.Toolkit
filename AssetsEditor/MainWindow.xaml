@@ -125,6 +125,15 @@
                         Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
                         Header="Png标准化工具">
                         </MenuItem>
+                        
+                        <MenuItem
+                        Height="20"
+                        Command="{Binding MaskToolCommand}"
+                        Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
+                        Header="遮罩层格式化工具">
+                        </MenuItem>
+
+                        
 
                     </MenuItem>
 
@@ -364,7 +373,8 @@
                                 </Image>
 
 
-                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="{Binding Index}" ></TextBlock>
+                                <Label HorizontalAlignment="Stretch" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                       VerticalAlignment="Bottom" Content="{Binding Index}" Background="#64020202" ></Label>
 
 
 

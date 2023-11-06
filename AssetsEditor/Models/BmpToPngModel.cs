@@ -41,7 +41,7 @@ namespace Assets.Editor.Models
             worker.DoWork += Convert_DoWork;
             worker.RunWorkerCompleted += (s, e2) =>
             {
-                System.Windows.MessageBox.Show("导出完成");
+                System.Windows.MessageBox.Show("转换完成");
                 this.DialogResult = true;
             };
             worker.RunWorkerAsync();

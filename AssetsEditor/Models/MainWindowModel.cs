@@ -22,6 +22,10 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using Xaml.Effects.Toolkit.Behaviors;
 using System.Linq;
+using System.Drawing;
+using System.Windows.Markup;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace Assets.Editor.Models
 {
@@ -85,7 +89,7 @@ namespace Assets.Editor.Models
         public IRelayCommand RecycleCommand { get; protected set; }
 
 
-
+        public IRelayCommand MaskToolCommand { get; protected set; }
 
 
         public IRelayCommand RegFileTypeCommand { get; protected set; }
@@ -131,6 +135,7 @@ namespace Assets.Editor.Models
             this.RegFileTypeCommand = new RelayCommand(RegFileType_Click);
             this.Bmp2PngCommand = new RelayCommand(Bmp2Png_Click);
             this.PngFormatCommand = new RelayCommand(PngFormat_Click);
+            this.MaskToolCommand = new RelayCommand(MaskTool_Click);
             this.ImageDragEnterEventCommand = new EventCommand<DragEventArgs>(Image_DragEnter);
             this.ImageDropEventCommand = new EventCommand<DragEventArgs>(Image_Drop);
             this.currentPage = 0;
@@ -167,7 +172,7 @@ namespace Assets.Editor.Models
             if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
             var files = e.Data.GetData(DataFormats.FileDrop) as String[];
             if (!VerificationFiles(files)) return;
-
+            Array.Sort(files);
             var model = sender.DataContext as ImageModel;
 
 
@@ -215,6 +220,52 @@ namespace Assets.Editor.Models
             }
         }
 
+        private unsafe void MaskTool_Click()
+        {
+            OpenFileDialog ofd = new OpenFileDialog()
+            {
+                InitialDirectory = ConfigureUtil.GetValue("OpenAssetDirectory"),
+                DereferenceLinks = false,
+            };
+            //ofd.InitialDirectory = @"D:\";
+            ofd.Filter = "图片文件|*.png";
+            if (ofd.ShowDialog() == true)
+            {
+                using (var fs = File.Open(ofd.FileName, FileMode.Open, FileAccess.ReadWrite))
+                {
+                    using (Bitmap bitmap = new Bitmap(fs))
+                    {
+
+                        var lpdata = bitmap.LockBits(new Rectangle(new System.Drawing.Point(0, 0), bitmap.Size), ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                        var Pixels = new byte[(bitmap.Width * bitmap.Height) * 4];
+                        Marshal.Copy(lpdata.Scan0, Pixels, 0, Pixels.Length);
+                        fixed (Byte* p = &Pixels[0])
+                        {
+                            for (int i = 0; i < Pixels.Length; i += 4)
+                            {
+                                if (p[i + 3] != 255)
+                                {
+                                    p[i + 0] = 0;
+                                    p[i + 1] = 0;
+                                    p[i + 2] = 0;
+                                    p[i + 3] = 0;
+                                }
+                            }
+                        }
+                        Marshal.Copy(Pixels, 0, lpdata.Scan0, Pixels.Length);
+                        bitmap.UnlockBits(lpdata);
+                        bitmap.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
+                    }
+                };
+
+
+
+
+
+
+
+            }
+        }
 
 
         private void PngFormat_Click()
@@ -514,38 +565,28 @@ namespace Assets.Editor.Models
                     this.GridImages[i].OffsetX = node.OffsetX;
                     this.GridImages[i].OffsetY = node.OffsetY;
                     this.GridImages[i].FileSize = node.Data.Length;
-                    var source = loadImageSource(node.Data, node.lpType);
+                    var source = loadImageSource(node);
                     this.GridImages[i].Source = source;
                 }
             }
         }
 
+        public BitmapSource LoadBitmap(byte[] pixelData, int width, int height)
+        {
+            System.Windows.Media.PixelFormat format = PixelFormats.Bgra32; // 32-bit BGR format
+            int stride = width * format.BitsPerPixel / 8;
+            BitmapSource bitmap = BitmapSource.Create(width, height, 96, 96, format, null, pixelData, stride);
+            return bitmap;
+        }
 
-
-        private BitmapSource loadImageSource(Byte[] data, ImageTypes type)
+        private BitmapSource loadImageSource(IReadOnlyDataBlock node)
         {
             try
             {
-                if (data.Length < 1024) return BitmapUtil.EmptyBitmapSource;
-                using (MemoryStream stream = new MemoryStream(data))
-                {
-                    if (type == ImageTypes.TGA)
-                    {
-                        using (TargaImage tgaImage = new TargaImage(stream))
-                        {
-                            IntPtr ip = tgaImage.Image.GetHbitmap();
-                            BitmapSource bitmapSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(ip, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-                            return bitmapSource;
-                        };
-                    }
-                    BitmapImage result = new BitmapImage();
-                    result.BeginInit();
-                    result.CacheOption = BitmapCacheOption.OnLoad;
-                    result.StreamSource = stream;
-                    result.EndInit();
-                    result.Freeze();
-                    return result;
-                }
+                if (node.Data.Length == 0) return BitmapUtil.EmptyBitmapSource;
+                AlphaUtil.UnpremultiplyAlpha(node.Data);
+                AlphaUtil.SwitchRedBlue(node.Data);
+                return LoadBitmap(node.Data, node.Width, node.Height);
             }
             catch (Exception ex)
             {

@@ -3,6 +3,7 @@ using Assets.Editor.Utils;
 using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -41,7 +42,7 @@ namespace Assets.Editor.Models
             worker.DoWork += Convert_DoWork;
             worker.RunWorkerCompleted += (s, e2) =>
             {
-                System.Windows.MessageBox.Show("导出完成");
+                System.Windows.MessageBox.Show("格式化完成");
                 this.DialogResult = true;
             };
             worker.RunWorkerAsync();
@@ -54,17 +55,22 @@ namespace Assets.Editor.Models
             for (int i = 0; i < files.Count; i++)
             {
                 var file = files[i];
-
-                var bytes = File.ReadAllBytes(file);
-
-                using (var stream = new MemoryStream(bytes))
+                try
                 {
-                    using (var bitmap = new System.Drawing.Bitmap(stream))
+                    var bytes = File.ReadAllBytes(file);
+                    using (var stream = new MemoryStream(bytes))
                     {
-                        bitmap.Save(file);
+                        using (var bitmap = new System.Drawing.Bitmap(stream))
+                        {
+                            bitmap.Save(file);
+                        }
                     }
+                    this.Progress = (Double)i / files.Count * 100.0f;
                 }
-                this.Progress = (Double)i / files.Count * 100.0f;
+                catch (Exception ex)
+                {
+                    Trace.WriteLine($"{file} 格式化失败：{ex.Message}");
+                }
             }
             this.Progress = 100;
         }

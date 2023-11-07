@@ -89,7 +89,7 @@ namespace Assets.Editor.Models
         public IRelayCommand RecycleCommand { get; protected set; }
 
 
-        public IRelayCommand MaskToolCommand { get; protected set; }
+        public IRelayCommand ButtonBuildCommand { get; protected set; }
 
 
         public IRelayCommand RegFileTypeCommand { get; protected set; }
@@ -135,7 +135,7 @@ namespace Assets.Editor.Models
             this.RegFileTypeCommand = new RelayCommand(RegFileType_Click);
             this.Bmp2PngCommand = new RelayCommand(Bmp2Png_Click);
             this.PngFormatCommand = new RelayCommand(PngFormat_Click);
-            this.MaskToolCommand = new RelayCommand(MaskTool_Click);
+            this.ButtonBuildCommand = new RelayCommand(ButtonBuild_Click);
             this.ImageDragEnterEventCommand = new EventCommand<DragEventArgs>(Image_DragEnter);
             this.ImageDropEventCommand = new EventCommand<DragEventArgs>(Image_Drop);
             this.currentPage = 0;
@@ -220,7 +220,7 @@ namespace Assets.Editor.Models
             }
         }
 
-        private unsafe void MaskTool_Click()
+        private unsafe void ButtonBuild_Click()
         {
             OpenFileDialog ofd = new OpenFileDialog()
             {
@@ -233,38 +233,48 @@ namespace Assets.Editor.Models
             {
                 using (var fs = File.Open(ofd.FileName, FileMode.Open, FileAccess.ReadWrite))
                 {
-                    using (Bitmap bitmap = new Bitmap(fs))
+                    Bitmap bitmap = new Bitmap(fs);
+                    var hover = this.AdjustBrightness(bitmap, 1.3f);
+                    var pressed = this.AdjustBrightness(bitmap, 0.7f);
+                    Bitmap outBitmap = new Bitmap(bitmap.Width, bitmap.Height * 3);
+                    using (Graphics g = Graphics.FromImage(outBitmap))
                     {
-
-                        var lpdata = bitmap.LockBits(new Rectangle(new System.Drawing.Point(0, 0), bitmap.Size), ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                        var Pixels = new byte[(bitmap.Width * bitmap.Height) * 4];
-                        Marshal.Copy(lpdata.Scan0, Pixels, 0, Pixels.Length);
-                        fixed (Byte* p = &Pixels[0])
-                        {
-                            for (int i = 0; i < Pixels.Length; i += 4)
-                            {
-                                if (p[i + 3] != 255)
-                                {
-                                    p[i + 0] = 0;
-                                    p[i + 1] = 0;
-                                    p[i + 2] = 0;
-                                    p[i + 3] = 0;
-                                }
-                            }
-                        }
-                        Marshal.Copy(Pixels, 0, lpdata.Scan0, Pixels.Length);
-                        bitmap.UnlockBits(lpdata);
-                        bitmap.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
-                    }
+                        g.DrawImage(bitmap, 0, 0);
+                        g.DrawImage(hover, 0, bitmap.Height);
+                        g.DrawImage(pressed, 0, bitmap.Height*2);
+                    };
+                    var dir = Path.GetDirectoryName(ofd.FileName);
+                    var filename = Path.GetFileNameWithoutExtension(ofd.FileName);
+                    var ext = Path.GetExtension(ofd.FileName);
+                    outBitmap.Save($"{dir}\\{filename}_button{ext}" , System.Drawing.Imaging.ImageFormat.Png);
+                    bitmap.Dispose();
+                    MessageBox.Show("按钮纹理已生成至文件所在目录", "按钮生成");
                 };
-
-
-
-
-
-
-
             }
+        }
+        private Bitmap AdjustBrightness(Bitmap image, float factor)
+        {
+            Bitmap adjustedImage = new Bitmap(image.Width, image.Height);
+
+            using (Graphics g = Graphics.FromImage(adjustedImage))
+            {
+                float brightness = Math.Max(0, Math.Min(2, factor)); // 确保亮度在 0 到 2 之间
+
+                ImageAttributes attributes = new ImageAttributes();
+                ColorMatrix colorMatrix = new ColorMatrix(new float[][]
+                {
+                new float[] { brightness, 0, 0, 0, 0 },
+                new float[] { 0, brightness, 0, 0, 0 },
+                new float[] { 0, 0, brightness, 0, 0 },
+                new float[] { 0, 0, 0, 1, 0 },
+                new float[] { 0, 0, 0, 0, 1 }
+                });
+                attributes.SetColorMatrix(colorMatrix);
+
+                g.DrawImage(image, new Rectangle(0, 0, image.Width, image.Height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
+            }
+
+            return adjustedImage;
         }
 
 

@@ -128,9 +128,9 @@
                         
                         <MenuItem
                         Height="20"
-                        Command="{Binding MaskToolCommand}"
+                        Command="{Binding ButtonBuildCommand}"
                         Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
-                        Header="遮罩层格式化工具">
+                        Header="按钮图片工具">
                         </MenuItem>
 
                         

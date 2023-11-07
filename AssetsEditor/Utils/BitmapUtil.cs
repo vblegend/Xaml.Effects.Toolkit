@@ -24,9 +24,6 @@ namespace Assets.Editor
                 encoder.Save(ms);
                 EmptyBitmapData = ms.ToArray();
             }
-
-
-
         }
 
 

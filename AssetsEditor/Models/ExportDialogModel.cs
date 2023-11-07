@@ -4,11 +4,15 @@ using Microsoft.Win32;
 using Resource.Package.Assets;
 using Resource.Package.Assets.Common;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -17,6 +21,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Media.Media3D;
+using System.Xml.Linq;
 using Xaml.Effects.Toolkit.Model;
 
 
@@ -150,9 +156,42 @@ namespace Assets.Editor.Models
                     File.WriteAllLines(f, new String[] { block.OffsetX.ToString(), block.OffsetY.ToString() });
                 }
 
-                System.IO.File.WriteAllBytes(outFileName, block.Data.Length == 0 ? BitmapUtil.EmptyBitmapData : block.Data);
-                this.Progress = (Double)(i - this.StartIndex) / (Double)(this.EndIndex - this.StartIndex) * 100.0f;
+                if (block.Data.Length == 0)
+                {
+                    File.WriteAllBytes(outFileName, BitmapUtil.EmptyBitmapData);
+                }
+                else
+                {
+                    try
+                    {
+                        if (block.lpType == ImageTypes.PNG)
+                        {
+                            AlphaUtil.UnpremultiplyAlpha(block.Data);
+                        }
+                        // 需要转换红蓝通道
+                        AlphaUtil.SwitchRedBlue(block.Data);
+                        System.Drawing.Imaging.ImageFormat outFormat = GetOutFileFormat(block.lpType);
+                        using (var bitmap = new Bitmap(block.Width, block.Height))
+                        {
+                            BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, block.Width, block.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+                            Marshal.Copy(block.Data, 0, bmpData.Scan0, block.Data.Length);
+                            bitmap.UnlockBits(bmpData);
+                            bitmap.Save(outFileName, outFormat);
+                        }
+                    }catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
+                }
 
+                if (i - this.StartIndex == this.EndIndex - this.StartIndex)
+                {
+                    this.Progress = 100.0f;
+                }
+                else
+                {
+                    this.Progress = (Double)(i - this.StartIndex) / (Double)(this.EndIndex - this.StartIndex) * 100.0f;
+                }
             }
 
             if (ImportOptions == ImageUserData.SchemaJson)
@@ -169,6 +208,19 @@ namespace Assets.Editor.Models
                 File.WriteAllText(Path.Combine(this.ExportDirectory, "schema.json"), json);
             }
         }
+
+        private System.Drawing.Imaging.ImageFormat GetOutFileFormat(ImageTypes type)
+        {
+            if (type == ImageTypes.GIF) return System.Drawing.Imaging.ImageFormat.Gif;
+            if (type == ImageTypes.TIFF) return System.Drawing.Imaging.ImageFormat.Tiff;
+            if (type == ImageTypes.BMP) return System.Drawing.Imaging.ImageFormat.Bmp;
+            if (type == ImageTypes.TGA) return System.Drawing.Imaging.ImageFormat.Png;
+            if (type == ImageTypes.JPG) return System.Drawing.Imaging.ImageFormat.Jpeg;
+            if (type == ImageTypes.PNG) return System.Drawing.Imaging.ImageFormat.Png;
+            return System.Drawing.Imaging.ImageFormat.Png;
+        }
+
+
 
         private Dictionary<String, DataInfo> SortDictionary(Dictionary<String, DataInfo> pairs)
         {

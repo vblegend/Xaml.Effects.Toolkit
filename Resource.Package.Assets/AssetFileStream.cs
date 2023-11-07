@@ -254,25 +254,27 @@ namespace Resource.Package.Assets
             return ImageTypes.Unknown;
         }
 
-       
+
 
         private async Task<Byte[]> Compressing(DataBlock item, Action report = null)
         {
             Byte[] bytes = item.Data;
-            if (item.lpType == ImageTypes.PNG && bytes.Length > 0)
+            if (bytes.Length > 0)
             {
                 ImageResult imageResult = ImageResult.FromMemory(bytes, ColorComponents.RedGreenBlueAlpha);
-                AlphaUtil.PremultiplyAlpha(imageResult.Data);
+                // Png 图片需要处理Alpha预乘
+                if(item.lpType == ImageTypes.PNG) AlphaUtil.PremultiplyAlpha(imageResult.Data);
                 item.Width = imageResult.Width;
                 item.Height = imageResult.Height;
                 item.Data = imageResult.Data;
-                if (header.CompressOption == CompressionOption.MuchPossibleCompress || header.CompressOption == CompressionOption.MustCompressed)
+                bytes = imageResult.Data;
+            }
+            if (bytes.Length > 0 && header.CompressOption == CompressionOption.MuchPossibleCompress || header.CompressOption == CompressionOption.MustCompressed)
+            {
+                bytes = await ZLib.Compress(bytes);
+                if (bytes.Length >= item.Data.Length && header.CompressOption == CompressionOption.MuchPossibleCompress)
                 {
-                    bytes = await ZLib.Compress(imageResult.Data);
-                    if (bytes.Length >= item.Data.Length && header.CompressOption == CompressionOption.MuchPossibleCompress)
-                    {
-                        bytes = item.Data;
-                    }
+                    bytes = item.Data;
                 }
             }
             if (report != null) report();
@@ -315,9 +317,9 @@ namespace Resource.Package.Assets
                     if (info.lpSize > 0)
                     {
                         info.lpData = header.TableDataAddr;
-                    header.TableDataAddr = info.lpData + info.lpSize;
-                    writer.Seek((Int32)info.lpData, SeekOrigin.Begin);
-                    writer.Write(bufData);
+                        header.TableDataAddr = info.lpData + info.lpSize;
+                        writer.Seek((Int32)info.lpData, SeekOrigin.Begin);
+                        writer.Write(bufData);
                     }
                     else
                     {

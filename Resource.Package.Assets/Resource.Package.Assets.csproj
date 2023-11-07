@@ -4,13 +4,18 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Optimize>False</Optimize>
+    <Optimize>True</Optimize>
     <PlatformTarget>x64</PlatformTarget>
     <SignAssembly>False</SignAssembly>
     <Platforms>AnyCPU;x64</Platforms>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Resource.Package.Assets</Title>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/vblegend/Resource.Package.Assets</RepositoryUrl>
+    <PackageIcon>Icon.png</PackageIcon>
+    <PackageProjectUrl>https://github.com/vblegend/Resource.Package.Assets</PackageProjectUrl>
+	<Version>1.0.2</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -40,6 +45,13 @@
 
   <ItemGroup>
     <Folder Include="StbImageSharp\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

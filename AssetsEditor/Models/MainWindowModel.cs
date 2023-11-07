@@ -584,7 +584,10 @@ namespace Assets.Editor.Models
             try
             {
                 if (node.Data.Length == 0) return BitmapUtil.EmptyBitmapSource;
-                AlphaUtil.UnpremultiplyAlpha(node.Data);
+                if (node.lpType == ImageTypes.PNG)
+                {
+                    AlphaUtil.UnpremultiplyAlpha(node.Data);
+                }
                 AlphaUtil.SwitchRedBlue(node.Data);
                 return LoadBitmap(node.Data, node.Width, node.Height);
             }

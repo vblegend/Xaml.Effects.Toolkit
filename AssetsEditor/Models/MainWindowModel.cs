@@ -26,6 +26,9 @@ using System.Drawing;
 using System.Windows.Markup;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.Windows.Documents;
+using StbImageSharp;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace Assets.Editor.Models
 {
@@ -99,6 +102,10 @@ namespace Assets.Editor.Models
 
         public IRelayCommand PngFormatCommand { get; protected set; }
 
+        public IRelayCommand BatchImageOptimizeCommand { get; protected set; }
+
+
+
 
         public ICommand ThemesCommand { get; protected set; }
 
@@ -115,14 +122,17 @@ namespace Assets.Editor.Models
             ThemeManager.LoadThemeFromResource("/Assets.Editor;component/Assets/Themes/Black.xaml");
             this.ThemesCommand = new RelayCommand(Themes_Click);
             this.OpenPackageCommand = new RelayCommand(OpenPackage_Click);
-            this.ClosePackageCommand = new RelayCommand(ClosePackage_Click, ClosePackage_CanClick);
-            this.ImportImageCommand = new RelayCommand(ImportImage_Click, ImportImage_CanClick);
-            this.ExportImageCommand = new RelayCommand(ExportImage_Click, ExportImage_CanClick);
+            this.ClosePackageCommand = new RelayCommand(ClosePackage_Click, AssetFileOpened_CanClick);
+            this.ImportImageCommand = new RelayCommand(ImportImage_Click, AssetFileOpened_CanClick);
+            this.ExportImageCommand = new RelayCommand(ExportImage_Click, AssetFileOpened_CanClick);
             this.CleanImageCommand = new RelayCommand(CleanImage_Click, CleanImage_CanClick);
 
-            this.ExpandCommand = new RelayCommand(Expand_Click, Expand_CanClick);
-            this.RecycleCommand = new RelayCommand(Recycle_Click, Recycle_CanClick);
-            this.ChangePasswordCommand = new RelayCommand(ChangePassword_Click, ChangePassword_CanClick);
+            this.ExpandCommand = new RelayCommand(Expand_Click, AssetFileOpened_CanClick);
+            this.RecycleCommand = new RelayCommand(Recycle_Click, AssetFileOpened_CanClick);
+            this.BatchImageOptimizeCommand = new RelayCommand(BatchImageOptimize_Click, AssetFileOpened_CanClick);
+
+
+            this.ChangePasswordCommand = new RelayCommand(ChangePassword_Click, AssetFileOpened_CanClick);
             this.PreviewMouseWheelCommand = new RelayCommand<MouseWheelEventArgs>(ListView_PreviewMouseWheel);
             this.PageChangedCommand = new RelayCommand<RoutedPropertyChangedEventArgs<double>>(ScrollBar_ValueChanged);
             this.SelectionChangedCommand = new RelayCommand<SelectionChangedEventArgs>(ListView_SelectionChanged);
@@ -135,6 +145,7 @@ namespace Assets.Editor.Models
             this.RegFileTypeCommand = new RelayCommand(RegFileType_Click);
             this.Bmp2PngCommand = new RelayCommand(Bmp2Png_Click);
             this.PngFormatCommand = new RelayCommand(PngFormat_Click);
+
             this.ButtonBuildCommand = new RelayCommand(ButtonBuild_Click);
             this.ImageDragEnterEventCommand = new EventCommand<DragEventArgs>(Image_DragEnter);
             this.ImageDropEventCommand = new EventCommand<DragEventArgs>(Image_Drop);
@@ -146,6 +157,8 @@ namespace Assets.Editor.Models
             this.IsRegFileType = FileTypeRegister.FileTypeRegistered(".Asset");
             this.Selected = new ImageModel();
             this.ListGrid = ViewGrids.GRID_16X4;
+            this.ZeroLine = true;
+            this.BoundsLine = true;
 
             resizePage();
             refreshPage();
@@ -241,12 +254,12 @@ namespace Assets.Editor.Models
                     {
                         g.DrawImage(bitmap, 0, 0);
                         g.DrawImage(hover, 0, bitmap.Height);
-                        g.DrawImage(pressed, 0, bitmap.Height*2);
+                        g.DrawImage(pressed, 0, bitmap.Height * 2);
                     };
                     var dir = Path.GetDirectoryName(ofd.FileName);
                     var filename = Path.GetFileNameWithoutExtension(ofd.FileName);
                     var ext = Path.GetExtension(ofd.FileName);
-                    outBitmap.Save($"{dir}\\{filename}_button{ext}" , System.Drawing.Imaging.ImageFormat.Png);
+                    outBitmap.Save($"{dir}\\{filename}_button{ext}", System.Drawing.Imaging.ImageFormat.Png);
                     bitmap.Dispose();
                     MessageBox.Show("按钮纹理已生成至文件所在目录", "按钮生成");
                 };
@@ -277,6 +290,22 @@ namespace Assets.Editor.Models
             return adjustedImage;
         }
 
+        private void BatchImageOptimize_Click()
+        {
+            var dialog = new BatchOptimizeDialog();
+            dialog.Model.stream = this.assetFile;
+            dialog.Model.StartIndex = this.Selected.Index;
+            dialog.Model.EndIndex = this.assetFile.NumberOfFiles - 1;
+            dialog.Owner = MainWindow.Instance;
+            var result = dialog.ShowDialog();
+            if (result.HasValue && result.Value)
+            {
+                resizePage();
+                refreshPage();
+            }
+
+
+        }
 
         private void PngFormat_Click()
         {
@@ -313,11 +342,6 @@ namespace Assets.Editor.Models
             this.IsRegFileType = FileTypeRegister.FileTypeRegistered(".Asset");
         }
 
-
-        private Boolean ImportImage_CanClick()
-        {
-            return this.assetFile != null;
-        }
         private void ImportImage_Click()
         {
             ImportDialog import = new ImportDialog();
@@ -332,12 +356,6 @@ namespace Assets.Editor.Models
             }
         }
 
-
-
-        private Boolean ChangePassword_CanClick()
-        {
-            return this.assetFile != null;
-        }
         private void ChangePassword_Click()
         {
             var dialog = new PasswordInput();
@@ -354,7 +372,7 @@ namespace Assets.Editor.Models
 
 
 
-        private Boolean Expand_CanClick()
+        private Boolean AssetFileOpened_CanClick()
         {
             return this.assetFile != null;
         }
@@ -372,12 +390,6 @@ namespace Assets.Editor.Models
 
         }
 
-
-
-        private Boolean Recycle_CanClick()
-        {
-            return this.assetFile != null;
-        }
         private void Recycle_Click()
         {
             if (this.assetFile.Recycle())
@@ -409,10 +421,6 @@ namespace Assets.Editor.Models
             }
         }
 
-        private Boolean ExportImage_CanClick()
-        {
-            return this.assetFile != null;
-        }
         private void ExportImage_Click()
         {
             ExportDialog export = new ExportDialog();
@@ -448,6 +456,7 @@ namespace Assets.Editor.Models
                 this.ImportImageCommand.NotifyCanExecuteChanged();
                 this.CleanImageCommand.NotifyCanExecuteChanged();
                 this.ExportImageCommand.NotifyCanExecuteChanged();
+                this.BatchImageOptimizeCommand.NotifyCanExecuteChanged();
                 this.ExpandCommand.NotifyCanExecuteChanged();
                 this.RecycleCommand.NotifyCanExecuteChanged();
                 this.ChangePasswordCommand.NotifyCanExecuteChanged();
@@ -458,15 +467,6 @@ namespace Assets.Editor.Models
             }
 
         }
-
-
-
-        private Boolean ClosePackage_CanClick()
-        {
-            return this.assetFile != null;
-        }
-
-
 
         private void ClosePackage_Click()
         {
@@ -488,6 +488,7 @@ namespace Assets.Editor.Models
                 this.offsetChanged = false;
                 this.OffsetCommitCommand.NotifyCanExecuteChanged();
                 this.BatchOffsetCommitCommand.NotifyCanExecuteChanged();
+                this.BatchImageOptimizeCommand.NotifyCanExecuteChanged();
                 this.ImportImageCommand.NotifyCanExecuteChanged();
                 this.CleanImageCommand.NotifyCanExecuteChanged();
                 this.RecycleCommand.NotifyCanExecuteChanged();
@@ -596,7 +597,7 @@ namespace Assets.Editor.Models
                 if (node.Data.Length == 0) return BitmapUtil.EmptyBitmapSource;
                 if (node.lpType == ImageTypes.PNG)
                 {
-                    AlphaUtil.UnpremultiplyAlpha(node.Data);
+                    //AlphaUtil.UnpremultiplyAlpha(node.Data);
                 }
                 AlphaUtil.SwitchRedBlue(node.Data);
                 return LoadBitmap(node.Data, node.Width, node.Height);
@@ -696,7 +697,6 @@ namespace Assets.Editor.Models
         private Boolean offsetChanged = false;
 
 
-
         private void BatchOffsetCommit_Click()
         {
             var dialog = new BatchOffsetDialog();
@@ -710,9 +710,6 @@ namespace Assets.Editor.Models
             var result = dialog.ShowDialog();
             if (result.HasValue && result.Value)
             {
-                //for (UInt32 i = dialog.Model.StartIndex;  i < dialog.Model.EndIndex; i++)
-                //{
-                //}
                 this.refreshPage();
                 this.offsetChanged = false;
                 this.OffsetCommitCommand.NotifyCanExecuteChanged();
@@ -981,5 +978,84 @@ namespace Assets.Editor.Models
         }
 
         private Int32 gridRows;
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        public Boolean ZeroLine
+        {
+            get
+            {
+                return this.zeroLine;
+            }
+            set
+            {
+                base.SetProperty(ref this.zeroLine, value);
+            }
+        }
+
+        private Boolean zeroLine;
+
+        public Boolean HumLine
+        {
+            get
+            {
+                return this.humLine;
+            }
+            set
+            {
+                base.SetProperty(ref this.humLine, value);
+            }
+        }
+
+        private Boolean humLine;
+
+        public Boolean BoundsLine
+        {
+            get
+            {
+                return this.boundsLine;
+            }
+            set
+            {
+                base.SetProperty(ref this.boundsLine, value);
+            }
+        }
+
+        private Boolean boundsLine;
+
+        public Rect CustomRect
+        {
+            get
+            {
+                return this.customRect;
+            }
+            set
+            {
+                base.SetProperty(ref this.customRect, value);
+            }
+        }
+
+        private Rect customRect;
+
+
+
+
+
+
+
+
     }
 }

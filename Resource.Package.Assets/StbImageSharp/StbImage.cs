@@ -5,12 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace StbImageSharp
 {
-#if !STBSHARP_INTERNAL
-	public
-#else
-	internal
-#endif
-	static unsafe partial class StbImage
+	public static unsafe partial class StbImage
 	{
 		public static string stbi__g_failure_reason;
 		public static readonly char[] stbi__parse_png_file_invalid_chunk = new char[25];

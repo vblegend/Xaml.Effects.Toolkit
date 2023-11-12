@@ -5,12 +5,7 @@ using Hebron.Runtime;
 
 namespace StbImageSharp
 {
-#if !STBSHARP_INTERNAL
-	public
-#else
-	internal
-#endif
-	class ImageResultFloat
+	public class ImageResultFloat
 	{
 		public int Width { get; set; }
 		public int Height { get; set; }

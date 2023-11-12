@@ -170,7 +170,7 @@ namespace Assets.Editor.Models
                         }
                         // 需要转换红蓝通道
                         AlphaUtil.SwitchRedBlue(block.Data);
-                        System.Drawing.Imaging.ImageFormat outFormat = GetOutFileFormat(block.lpType);
+                        System.Drawing.Imaging.ImageFormat outFormat = BitmapUtil.GetOutFileFormat(block.lpType);
                         using (var bitmap = new Bitmap(block.Width, block.Height))
                         {
                             BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, block.Width, block.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
@@ -208,18 +208,6 @@ namespace Assets.Editor.Models
                 File.WriteAllText(Path.Combine(this.ExportDirectory, "schema.json"), json);
             }
         }
-
-        private System.Drawing.Imaging.ImageFormat GetOutFileFormat(ImageTypes type)
-        {
-            if (type == ImageTypes.GIF) return System.Drawing.Imaging.ImageFormat.Gif;
-            if (type == ImageTypes.TIFF) return System.Drawing.Imaging.ImageFormat.Tiff;
-            if (type == ImageTypes.BMP) return System.Drawing.Imaging.ImageFormat.Bmp;
-            if (type == ImageTypes.TGA) return System.Drawing.Imaging.ImageFormat.Png;
-            if (type == ImageTypes.JPG) return System.Drawing.Imaging.ImageFormat.Jpeg;
-            if (type == ImageTypes.PNG) return System.Drawing.Imaging.ImageFormat.Png;
-            return System.Drawing.Imaging.ImageFormat.Png;
-        }
-
 
 
         private Dictionary<String, DataInfo> SortDictionary(Dictionary<String, DataInfo> pairs)

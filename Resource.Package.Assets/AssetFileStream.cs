@@ -242,33 +242,11 @@ namespace Resource.Package.Assets
             this.Save();
         }
 
-        private ImageTypes ParseImageFormat(Byte[] data)
-        {
-            if (data.Length == 0) return ImageTypes.Unknown;
-            if (data[0] == 0x42 && data[1] == 0x4D) return ImageTypes.BMP;
-            if (data[0] == 0x89 && data[1] == 0x50 && data[2] == 0x4E && data[3] == 0x47) return ImageTypes.PNG;
-            if (data[0] == 0xFF && data[1] == 0xD8 && data[2] == 0xFF) return ImageTypes.JPG;
-            if (data[0] == 0x47 && data[1] == 0x49 && data[2] == 0x46 && data[3] == 0x38) return ImageTypes.GIF;
-            if (data[0] == 0x00 && data[1] == 0x00 && (data[2] == 0x02 || data[2] == 0x0A)) return ImageTypes.TGA;
-            if (data[0] == 0x49 && data[1] == 0x49 && data[2] == 0x2A && data[3] == 0x00) return ImageTypes.TIFF;
-            return ImageTypes.Unknown;
-        }
-
 
 
         private async Task<Byte[]> Compressing(DataBlock item, Action report = null)
         {
             Byte[] bytes = item.Data;
-            if (bytes.Length > 0)
-            {
-                ImageResult imageResult = ImageResult.FromMemory(bytes, ColorComponents.RedGreenBlueAlpha);
-                // Png 图片需要处理Alpha预乘
-                if(item.lpType == ImageTypes.PNG) AlphaUtil.PremultiplyAlpha(imageResult.Data);
-                item.Width = imageResult.Width;
-                item.Height = imageResult.Height;
-                item.Data = imageResult.Data;
-                bytes = imageResult.Data;
-            }
             if (bytes.Length > 0 && header.CompressOption == CompressionOption.MuchPossibleCompress || header.CompressOption == CompressionOption.MustCompressed)
             {
                 bytes = await ZLib.Compress(bytes);
@@ -280,7 +258,6 @@ namespace Resource.Package.Assets
             if (report != null) report();
             return bytes;
         }
-
 
         public UInt32 Import(IReadOnlyList<DataBlock> items, Action<Double> process = null)
         {
@@ -294,7 +271,6 @@ namespace Resource.Package.Assets
             };
             foreach (var item in items)
             {
-                item.lpType = ParseImageFormat(item.Data);
                 tasks.Add(Compressing(item, report));
             }
             Task.WaitAll(tasks.ToArray());
@@ -313,11 +289,14 @@ namespace Resource.Package.Assets
                     info.OffsetX = item.OffsetX;
                     info.OffsetY = item.OffsetY;
                     info.lpRenderType = item.lpRenderType;
-                    info.lpSize = (UInt32)bufData.Length;
-                    if (info.lpSize > 0)
+                    if (bufData.Length > 0)
                     {
-                        info.lpData = header.TableDataAddr;
-                        header.TableDataAddr = info.lpData + info.lpSize;
+                        if (info.lpSize < bufData.Length)
+                        {
+                            info.lpData = header.TableDataAddr;
+                            header.TableDataAddr = info.lpData + (UInt32)bufData.Length;
+                        }
+                        info.lpSize = (UInt32)bufData.Length;
                         writer.Seek((Int32)info.lpData, SeekOrigin.Begin);
                         writer.Write(bufData);
                     }

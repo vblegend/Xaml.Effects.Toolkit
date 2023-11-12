@@ -2,6 +2,7 @@
 using Microsoft.Toolkit.Mvvm.Input;
 using Resource.Package.Assets;
 using Resource.Package.Assets.Common;
+using StbImageSharp;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -213,21 +214,22 @@ namespace Assets.Editor.Models
                 {
                     block.lpRenderType = RenderTypes.Normal;
                 }
-                block.Data = File.ReadAllBytes(file);
-                if (block.Data.Length < 1024)
-                {
-                    using (var ms = new MemoryStream(block.Data))
-                    {
-                        using (var image = System.Drawing.Bitmap.FromStream(ms))
-                        {
-                            if (image.Width == 1 && image.Height == 1)
-                            {
-                                block.Data = new Byte[0];
-                            }
-                        }
-                    }
-                }
 
+                var bytes = File.ReadAllBytes(file);
+                block.lpType = BitmapUtil.ParseImageFormat(bytes);
+                ImageResult imageResult = ImageResult.FromMemory(bytes, ColorComponents.RedGreenBlueAlpha);
+                if (imageResult.Width > 1 || imageResult.Height > 1)
+                {
+                    // Png 图片需要处理Alpha预乘
+                    if (block.lpType == ImageTypes.PNG) AlphaUtil.PremultiplyAlpha(imageResult.Data);
+                    block.Width = imageResult.Width;
+                    block.Height = imageResult.Height;
+                    block.Data = imageResult.Data;
+                }
+                else
+                {
+                    block.lpType = ImageTypes.Unknown;
+                }
 
                 var filename = Path.GetFileNameWithoutExtension(file);
                 if (this.ImportUserData == ImageUserData.Placements)

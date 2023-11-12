@@ -125,15 +125,13 @@
                         Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
                         Header="Png标准化工具">
                         </MenuItem>
-                        
+
                         <MenuItem
                         Height="20"
                         Command="{Binding ButtonBuildCommand}"
                         Foreground="{DynamicResource GLOBAL_FOREGROUND_COLOR}"
                         Header="按钮图片工具">
                         </MenuItem>
-
-                        
 
                     </MenuItem>
 
@@ -230,6 +228,14 @@
             </Separator>
 
 
+            <Button Content="&#xe678;" FontSize="16"  
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Command="{Binding BatchImageOptimizeCommand}"
+                    ToolTip="优化工具"
+                    FontFamily="{DynamicResource GraceFont}" HorizontalAlignment="Left" Width="32" Height="30" />
+
+
             <Button Content="&#xe6de;" FontSize="16"  
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
@@ -323,7 +329,8 @@
                     <xkit:ZoomScrollViewer.Background>
                         <ImageBrush ImageSource="/Assets/Images/background.png"/>
                     </xkit:ZoomScrollViewer.Background>
-                    <controls:ImageCanvas  Background="#01FFFFFF"  Focusable="True"
+                    <controls:ImageCanvas  Background="#01FFFFFF"  Focusable="True" 
+                                      ZeroLine="{Binding ZeroLine}" HumLine="{Binding HumLine}" BoundsLine="{Binding BoundsLine}" CustomRect="{Binding CustomRect}"
                                       OffsetX="{Binding Selected.OffsetX, Mode=TwoWay}"  OffsetY="{Binding Selected.OffsetY, Mode=TwoWay}">
                         <controls:ImageCanvas.Source>
                             <MultiBinding Converter="{convert:BitmapSourceConverter}">
@@ -337,10 +344,15 @@
                 </xkit:ZoomScrollViewer>
 
                 <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,15,0" Orientation="Horizontal">
-
-                    <Label  Padding="5,0" >零点线</Label>
-
-                    <Label  Padding="5,0" Foreground="Yellow" >人物线</Label>
+                    <CheckBox IsChecked="{Binding ZeroLine,Mode=TwoWay}" Foreground="White">零点线</CheckBox>
+                    <CheckBox IsChecked="{Binding BoundsLine,Mode=TwoWay}" Foreground="Blue">轮廓线</CheckBox>
+                    <CheckBox IsChecked="{Binding HumLine,Mode=TwoWay}" Foreground="Yellow">人物线</CheckBox>
+                    <ComboBox Width="100" Padding="0" SelectedValue="{Binding CustomRect,Mode=TwoWay}">
+                        <Rect/>
+                        <Rect Height="34" Width="34"/>
+                        <Rect Height="38" Width="38"/>
+                        <Rect Height="45" Width="45"/>
+                    </ComboBox>
                     <Label  Padding="5,0,0,0" Foreground="#FFFF0101" >缩放:x</Label>
                     <Label  Padding="0" Foreground="#FFFF0101" Content="{Binding ElementName=zoom,Path=ZoomValue}"></Label>
                 </StackPanel>

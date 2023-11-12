@@ -2,12 +2,8 @@
 
 namespace StbImageSharp
 {
-#if !STBSHARP_INTERNAL
-	public
-#else
-	internal
-#endif
-	struct ImageInfo
+
+	public struct ImageInfo
 	{
 		public int Width;
 		public int Height;

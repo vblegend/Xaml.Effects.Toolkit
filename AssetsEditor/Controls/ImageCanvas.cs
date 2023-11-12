@@ -13,7 +13,75 @@ namespace Assets.Editor.Controls
         public ImageCanvas()
         {
             this.Focusable = true;
+            RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
+            RenderOptions.SetBitmapScalingMode(this, BitmapScalingMode.HighQuality);
+            RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
+
         }
+
+
+
+        public Boolean ZeroLine
+        {
+            get
+            {
+                return (Boolean)GetValue(ZeroLineProperty);
+            }
+            set
+            {
+                SetValue(ZeroLineProperty, value);
+            }
+        }
+        public static readonly DependencyProperty ZeroLineProperty = DependencyProperty.Register("ZeroLine", typeof(Boolean), typeof(ImageCanvas), new FrameworkPropertyMetadata(false, PropertyChangedCallback));
+
+
+
+        public Boolean HumLine
+        {
+            get
+            {
+                return (Boolean)GetValue(HumLineProperty);
+            }
+            set
+            {
+                SetValue(HumLineProperty, value);
+            }
+        }
+        public static readonly DependencyProperty HumLineProperty = DependencyProperty.Register("HumLine", typeof(Boolean), typeof(ImageCanvas), new FrameworkPropertyMetadata(false, PropertyChangedCallback));
+
+
+
+        public Boolean BoundsLine
+        {
+            get
+            {
+                return (Boolean)GetValue(BoundsLineProperty);
+            }
+            set
+            {
+                SetValue(BoundsLineProperty, value);
+            }
+        }
+        public static readonly DependencyProperty BoundsLineProperty = DependencyProperty.Register("BoundsLine", typeof(Boolean), typeof(ImageCanvas), new FrameworkPropertyMetadata(false, PropertyChangedCallback));
+
+
+
+        public Rect CustomRect
+        {
+            get
+            {
+                return (Rect)GetValue(CustomRectProperty);
+            }
+            set
+            {
+                SetValue(CustomRectProperty, value);
+            }
+        }
+        public static readonly DependencyProperty CustomRectProperty = DependencyProperty.Register("CustomRect", typeof(Rect), typeof(ImageCanvas), new FrameworkPropertyMetadata(Rect.Empty, PropertyChangedCallback));
+
+
+
+
 
 
 
@@ -67,21 +135,17 @@ namespace Assets.Editor.Controls
 
 
 
+        private Pen pen1 = new Pen() { Brush = Brushes.White, DashStyle = new DashStyle(new double[] { 1, 3 }, 2), Thickness = 1, };
+        private Pen pen2 = new Pen() { Brush = Brushes.Yellow, DashStyle = new DashStyle(new double[] { 1, 3 }, 2), Thickness = 1, };
+        private Pen pen3 = new Pen() { Brush = Brushes.Blue, DashStyle = new DashStyle(new double[] { 1, 3 }, 2), Thickness = 1, };
+        private Pen pen4 = new Pen() { Brush = Brushes.OrangeRed, DashStyle = new DashStyle(new double[] { 1, 3 }, 2), Thickness = 1 };
+
+
         protected override void OnRender(DrawingContext dc)
         {
             base.OnRender(dc);
-            var pen1 = new Pen()
-            {
-                Brush = Brushes.White,
-                DashStyle = new DashStyle(new double[] { 1, 3 }, 2),
-                Thickness = 1,
-            };
-            var pen2 = new Pen()
-            {
-                Brush = Brushes.Yellow,
-                DashStyle = new DashStyle(new double[] { 1, 3 }, 2),
-                Thickness = 1,
-            };
+
+
 
             if (Source != null)
             {
@@ -91,26 +155,38 @@ namespace Assets.Editor.Controls
 
                 var left = halfWidth + this.OffsetX;
                 var top = halfHeight + this.OffsetY;
-                dc.DrawImage(Source, new Rect(left, top, Source.Width, Source.Height));
-                dc.DrawLine(pen1, new Point(0, halfHeight), new Point(this.RenderSize.Width, halfHeight));
-                dc.DrawLine(pen1, new Point(halfWidth, 0), new Point(halfWidth, this.RenderSize.Height));
+                dc.DrawImage(Source, new Rect(left - 0.5, top - 0.5, Source.Width, Source.Height));
 
 
+                if (this.ZeroLine)
+                {
+                    dc.DrawLine(pen1, new Point(0, halfHeight), new Point(halfWidth * 2, halfHeight));
+                    dc.DrawLine(pen1, new Point(halfWidth, 0), new Point(halfWidth, halfHeight * 2));
+                }
 
+                if (this.HumLine)
+                {
+                    dc.DrawLine(pen2, new Point(0, halfHeight + 20), new Point(halfWidth * 2, halfHeight + 20));
+                    dc.DrawLine(pen2, new Point(halfWidth + 24, 0), new Point(halfWidth + 24, halfHeight * 2));
+                }
 
-                dc.DrawLine(pen2, new Point(0, halfHeight + 20), new Point(this.RenderSize.Width, halfHeight + 20));
-                dc.DrawLine(pen2, new Point(halfWidth + 24, 0), new Point(halfWidth + 24, this.RenderSize.Height));
+                if (this.BoundsLine)
+                {
+                    dc.DrawRectangle(Brushes.Transparent, pen3, new Rect(left - 1, top - 1, Source.Width + 1, Source.Height + 1));
+                }
 
-
-
-                 
+                if (!this.CustomRect.IsEmpty)
+                {
+                    var dst = new Rect(halfWidth, halfHeight, this.CustomRect.Width, this.CustomRect.Height);
+                    dc.DrawRectangle(Brushes.Transparent, pen4, dst);
+                }
             }
 
             this.RenderSize = new Size(this.Width, this.Height);
         }
 
 
-        private Point ?mousePoint { get; set; }
+        private Point? mousePoint { get; set; }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {

@@ -15,7 +15,9 @@
     <RepositoryUrl>https://github.com/vblegend/Resource.Package.Assets</RepositoryUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <PackageProjectUrl>https://github.com/vblegend/Resource.Package.Assets</PackageProjectUrl>
-	<Version>1.0.4</Version>
+	<Version>1.0.8</Version>
+	<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	<PackageReadmeFile>readme.md</PackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -52,6 +54,14 @@
     <None Update="Icon.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
+    </None>
+    <None Update="LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="readme.md">
+      <PackagePath>\</PackagePath>
+      <Pack>True</Pack>
     </None>
   </ItemGroup>
 

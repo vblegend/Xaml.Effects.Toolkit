@@ -2,11 +2,13 @@
 using Resource.Package.Assets.Secure;
 using Resource.Package.Assets.Version;
 using StbImageSharp;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 
 namespace Resource.Package.Assets
@@ -162,12 +164,97 @@ namespace Resource.Package.Assets
 
 
 
-        public IReadOnlyDataBlock Read(UInt32 index)
+
+
+        /// <summary>
+        /// 仅读取图片信息不读取数据
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public IReadOnlyLazyInfo? LazyRead(UInt32 index)
         {
+            if (index >= this.NumberOfFiles) return null;
+            var info = this.Infomations[(Int32)index];
+            var node = new LazyDataInfo();
+            node.Index = (Int32)index;
+            node.lpType = info.lpType;
+            node.lpRenderType = info.lpRenderType;
+            node.Unknown1 = info.Unknown1;
+            node.Unknown2 = info.Unknown2;
+            node.OffsetX = info.OffsetX;
+            node.OffsetY = info.OffsetY;
+            node.Width = info.Width;
+            node.Height = info.Height;
+            node.GetReader = () =>
+            {
+                return () => ReadByLazyInfo((Int32)index);
+            };
+            return node;
+        }
+
+
+
+
+
+        internal Byte[]? ReadByLazyInfo(Int32 index)
+        {
+            var info = this.Infomations[index];
+            using (var reader = new BinaryReader(fileStream, Encoding.UTF8, true))
+            {
+                if (info.lpData > 0 && info.lpSize > 0)
+                {
+                    var data = new Byte[info.lpSize];
+                    reader.BaseStream.Position = info.lpData;
+                    reader.Read(data);
+                    if (info.lpRawSize != info.lpSize)
+                    {
+                        // 解密 data
+                        data = ZLib.Decompress(data, info.lpRawSize);
+                    }
+                    return data;
+                }
+                return null;
+            }
+        }
+
+
+
+        /// <summary>
+        /// 仅读取图片信息不读取数据
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public IReadOnlyDataInfo? ReadInfo(UInt32 index)
+        {
+            if (index >= this.NumberOfFiles) return null;
+            var info = this.Infomations[(Int32)index];
+            var node = new DataBlock();
+            node.Index = (Int32)index;
+            node.lpType = info.lpType;
+            node.lpRenderType = info.lpRenderType;
+            node.Unknown1 = info.Unknown1;
+            node.Unknown2 = info.Unknown2;
+            node.OffsetX = info.OffsetX;
+            node.OffsetY = info.OffsetY;
+            node.Width = info.Width;
+            node.Height = info.Height;
+            return node;
+        }
+
+
+        /// <summary>
+        /// 读取图片信息及数据
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public IReadOnlyDataBlock? Read(UInt32 index)
+        {
+            if (index >= this.NumberOfFiles) return null;
             var info = this.Infomations[(Int32)index];
             using (var reader = new BinaryReader(fileStream, Encoding.UTF8, true))
             {
                 var node = new DataBlock();
+                node.Index = (Int32)index;
                 node.lpType = info.lpType;
                 node.lpRenderType = info.lpRenderType;
                 node.Unknown1 = info.Unknown1;

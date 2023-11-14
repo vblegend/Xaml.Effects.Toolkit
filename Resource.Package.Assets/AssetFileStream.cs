@@ -185,10 +185,7 @@ namespace Resource.Package.Assets
             node.OffsetY = info.OffsetY;
             node.Width = info.Width;
             node.Height = info.Height;
-            node.GetReader = () =>
-            {
-                return () => ReadByLazyInfo((Int32)index);
-            };
+            node.ReadData = this.ReadItemData;
             return node;
         }
 
@@ -196,8 +193,9 @@ namespace Resource.Package.Assets
 
 
 
-        internal Byte[]? ReadByLazyInfo(Int32 index)
+        internal Byte[]? ReadItemData(Int32 index)
         {
+            if (index >= this.NumberOfFiles) return null;
             var info = this.Infomations[index];
             using (var reader = new BinaryReader(fileStream, Encoding.UTF8, true))
             {

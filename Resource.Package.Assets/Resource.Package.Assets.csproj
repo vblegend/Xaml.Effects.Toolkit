@@ -15,7 +15,7 @@
     <RepositoryUrl>https://github.com/vblegend/Resource.Package.Assets</RepositoryUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <PackageProjectUrl>https://github.com/vblegend/Resource.Package.Assets</PackageProjectUrl>
-	<Version>1.0.8</Version>
+	<Version>1.0.9</Version>
 	<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	<PackageReadmeFile>readme.md</PackageReadmeFile>
   </PropertyGroup>

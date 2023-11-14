@@ -98,6 +98,8 @@ namespace Resource.Package.Assets.Common
     }
 
 
+    unsafe public delegate Byte[]? DataReader(Int32 index);
+
 
     public interface IReadOnlyLazyInfo
     {
@@ -111,8 +113,9 @@ namespace Resource.Package.Assets.Common
         public Byte Unknown2 { get; }
         public Byte Unknown1 { get; }
 
-        public Func<Func<Byte[]?>> GetReader { get; }
+        public DataReader ReadData { get; }
     }
+
 
 
 
@@ -131,7 +134,7 @@ namespace Resource.Package.Assets.Common
         public Byte Unknown2 { get; set; }
         public Byte Unknown1 { get; set; }
 
-        public Func<Func<Byte[]?>> GetReader { get; set; }
+        public DataReader ReadData { get; set; }
 
     }
 
